@@ -6,405 +6,317 @@
 <title>Randomised Coffee Trial</title>
 <style>
 :root{
-  --bg:#ffffff; --card:#f3eee4; --ink:#2e2a22; --muted:#7d7466; --line:#e3dac9;
-  --soft:#f8f4ec; --accent:#9c8a66; --accent-ink:#ffffff; --accent-soft:#ece5d4;
-  --good:#5d6e4e; --good-soft:#eceee4; --warn:#8a6440; --warn-soft:#f0e7da;
-  --focus:#1f6feb; --shadow:0 1px 2px rgba(60,50,30,.05),0 4px 14px rgba(60,50,30,.05);
-  --r:12px;
+  --bg:#F7F0E1; --card:#FFFCF4; --ink:#1B160E; --line:#1B160E; --muted:#6E655A;
+  --orange:#EB5A2D; --yellow:#F7C64B; --purple:#C9B8F2; --blue:#3D52E0; --green:#8FD6AD; --pink:#F5A9C6;
+  --accent:#EB5A2D; --accent-ink:#FFFFFF; --accent-soft:#F7C64B;
+  --good:#1F6B3B; --good-soft:#BFE8CF; --warn:#B23A12; --warn-soft:#F7D9CB;
+  --focus:#3D52E0; --sh:3px 3px 0 var(--line); --shbig:5px 5px 0 var(--line); --r:16px; --bw:2px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#1b1711; --card:#292419; --ink:#ebe4d6; --muted:#968c78; --line:#3b352a;
-    --soft:#231e16; --accent:#b4a07a; --accent-ink:#221c12; --accent-soft:#3c352a;
-    --good:#a3b18f; --good-soft:#2e3328; --warn:#c9a37b; --warn-soft:#3a3122;
-    --shadow:0 1px 2px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.3);
+    --bg:#191410; --card:#241E15; --ink:#F4EBDC; --line:#F4EBDC; --muted:#A79A87;
+    --orange:#F26B3F; --yellow:#E9B83F; --purple:#A892E0; --blue:#7D8CF0; --green:#74BD93; --pink:#E295B5;
+    --accent:#F26B3F; --accent-ink:#1B160E; --accent-soft:#E9B83F;
+    --good:#9FE0B8; --good-soft:#2C4434; --warn:#F0A07E; --warn-soft:#45301F;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#1b1711; --card:#292419; --ink:#ebe4d6; --muted:#968c78; --line:#3b352a;
-  --soft:#231e16; --accent:#b4a07a; --accent-ink:#221c12; --accent-soft:#3c352a;
-  --good:#a3b18f; --good-soft:#2e3328; --warn:#c9a37b; --warn-soft:#3a3122;
-  --shadow:0 1px 2px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.3);
+  --bg:#191410; --card:#241E15; --ink:#F4EBDC; --line:#F4EBDC; --muted:#A79A87;
+  --orange:#F26B3F; --yellow:#E9B83F; --purple:#A892E0; --blue:#7D8CF0; --green:#74BD93; --pink:#E295B5;
+  --accent:#F26B3F; --accent-ink:#1B160E; --accent-soft:#E9B83F;
+  --good:#9FE0B8; --good-soft:#2C4434; --warn:#F0A07E; --warn-soft:#45301F;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
   background:var(--bg); color:var(--ink);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-family:ui-rounded,-apple-system,'SF Pro Rounded','Arial Rounded MT Bold','Nunito','Segoe UI',system-ui,sans-serif;
   font-size:15px; line-height:1.5;
 }
-#protoBanner{
-  background:var(--soft); color:var(--muted); text-align:center;
-  font-size:11px; padding:4px 16px; border-bottom:1px solid var(--line);
-}
-/* ---- shell / layouts ---- */
-#shell{display:flex; flex-direction:column; min-height:calc(100vh - 26px)}
-main{flex:1 1 auto; width:100%; max-width:720px; margin:0 auto; padding:6px 16px 96px}
-header.app{
-  display:flex; align-items:center; gap:10px;
-  padding:10px 16px; width:100%; max-width:720px; margin:0 auto;
-}
-.logo{display:flex; color:var(--accent)}
-.brand h1{font-size:16px; margin:0; letter-spacing:.2px; font-weight:700}
-.brand .sub{font-size:11px; color:var(--muted); margin-top:-1px}
-.weekchip{margin-left:auto; background:var(--card); border:1px solid var(--line);
-  border-radius:999px; padding:3px 12px; font-size:12px; white-space:nowrap; color:var(--muted)}
+#protoBanner{background:var(--ink); color:var(--bg); text-align:center; font-size:11px; padding:5px 16px; font-weight:700}
+#shell{display:flex; flex-direction:column; min-height:calc(100vh - 27px)}
+main{flex:1 1 auto; width:100%; max-width:720px; margin:0 auto; padding:8px 16px 110px}
+header.app{display:flex; align-items:center; gap:10px; padding:12px 16px; width:100%; max-width:720px; margin:0 auto}
+.logo{display:flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%;
+  background:var(--orange); color:#fff; border:var(--bw) solid var(--line); box-shadow:var(--sh); flex:0 0 auto}
+.logo svg{width:20px; height:20px}
+.brand h1{font-size:16px; margin:0; font-weight:800; letter-spacing:-.01em; line-height:1.15}
+.weekchip{margin-left:auto; background:var(--yellow); border:var(--bw) solid var(--line); box-shadow:var(--sh);
+  border-radius:999px; padding:4px 13px; font-size:12px; white-space:nowrap; font-weight:800}
 .statusbar{display:none}
-nav.bottom{
-  position:sticky; bottom:0; z-index:30; width:100%; max-width:720px; margin:0 auto;
-  background:color-mix(in srgb,var(--bg) 82%,transparent);
-  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-  border-top:1px solid var(--line);
-  display:flex; justify-content:space-around; padding:4px 4px calc(4px + env(safe-area-inset-bottom));
-}
+nav.bottom{position:sticky; bottom:0; z-index:30; width:100%; max-width:720px; margin:0 auto;
+  background:var(--card); border-top:var(--bw) solid var(--line);
+  display:flex; justify-content:space-around; padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
 nav.bottom:empty{display:none}
-nav.bottom button{
-  background:none; border:none; font-family:inherit; color:var(--muted);
-  font-size:13px; cursor:pointer; padding:9px 14px; border-radius:8px; border-top:2px solid transparent;
-  transition:color .15s;
-}
-nav.bottom button.on{color:var(--ink); font-weight:700; border-top-color:var(--accent)}
-#topnav{display:none; gap:2px; margin-left:16px}
-#topnav button{border:none; background:none; font-family:inherit; font-size:13px; color:var(--muted);
-  padding:7px 13px; border-radius:999px; cursor:pointer; transition:background .15s,color .15s}
-#topnav button:hover{background:var(--soft); color:var(--ink)}
-#topnav button.on{background:var(--card); color:var(--ink); font-weight:700}
-/* desktop layout */
+nav.bottom button{background:none; border:none; font-family:inherit; color:var(--muted); font-size:13px; font-weight:700;
+  cursor:pointer; padding:9px 14px; border-radius:10px}
+nav.bottom button.on{color:var(--ink)}
+#topnav{display:none; gap:6px; margin-left:14px}
+#topnav button{border:var(--bw) solid transparent; background:none; font-family:inherit; font-size:13px; font-weight:700;
+  color:var(--muted); padding:6px 13px; border-radius:999px; cursor:pointer}
+#topnav button:hover{color:var(--ink)}
+#topnav button.on{background:var(--card); color:var(--ink); border-color:var(--line); box-shadow:var(--sh)}
 html[data-layout="desktop"] nav.bottom{display:none}
 html[data-layout="desktop"] #topnav{display:flex}
-html[data-layout="desktop"] header.app{max-width:1000px; padding:12px 28px}
-html[data-layout="desktop"] main{max-width:1000px; padding:10px 28px 90px}
+html[data-layout="desktop"] header.app{max-width:1000px; padding:14px 28px}
+html[data-layout="desktop"] main{max-width:1000px; padding:10px 28px 100px}
 html[data-layout="desktop"] .cols{display:grid; grid-template-columns:320px 1fr; gap:22px; align-items:start}
-html[data-layout="desktop"] .qawrap{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-html[data-layout="desktop"] .qawrap .qa{margin:0}
-/* phone frame when mobile layout is viewed on a wide screen */
-html.wide[data-layout="mobile"] body{background:radial-gradient(1100px 520px at 50% -40px,var(--soft),var(--bg))}
+html[data-layout="desktop"] .qawrap{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+html[data-layout="desktop"] .qawrap .qa{margin:14px 0 0}
+html.wide[data-layout="mobile"] body{background:var(--bg)}
 html.wide[data-layout="mobile"] #framewrap{display:flex; justify-content:center; padding:26px 12px 90px}
-html.wide[data-layout="mobile"] #shell{
-  width:394px; height:min(830px,calc(100vh - 150px)); min-height:480px;
+html.wide[data-layout="mobile"] #shell{width:394px; height:min(830px,calc(100vh - 150px)); min-height:480px;
   background:var(--bg); border:10px solid #16130d; border-radius:48px; overflow:hidden;
-  box-shadow:0 34px 90px rgba(35,24,6,.38); position:relative;
-}
-html.wide[data-layout="mobile"] main{overflow-y:auto; min-height:0; padding-bottom:28px}
+  box-shadow:0 34px 90px rgba(27,22,14,.4); position:relative}
+html.wide[data-layout="mobile"] main{overflow-y:auto; min-height:0; padding-bottom:40px}
 html.wide[data-layout="mobile"] nav.bottom{position:static}
-html.wide[data-layout="mobile"] .statusbar{
-  display:flex; justify-content:space-between; align-items:center;
-  padding:12px 26px 0; font-size:13px; font-weight:700; letter-spacing:.02em;
-}
+html.wide[data-layout="mobile"] .statusbar{display:flex; justify-content:space-between; align-items:center;
+  padding:12px 26px 0; font-size:13px; font-weight:800}
 .sbicons{display:flex; gap:5px; align-items:center}
 .sbicons i{display:block; background:var(--ink)}
-.sbicons i:nth-child(1){width:15px; height:9px; border-radius:2px; opacity:.85;
-  clip-path:polygon(0 100%,100% 100%,100% 0,75% 25%,0 75%)}
-.sbicons i:nth-child(2){width:20px; height:10px; border-radius:3px; opacity:.9}
-/* ---- typography / layout bits ---- */
-.pagetitle{font-size:18px; margin:16px 2px 6px; font-weight:800; letter-spacing:-.01em}
-.pagetitle.center{text-align:center}
-.muted{color:var(--muted); font-size:13px}
-.small{font-size:12px}
-.center{text-align:center}
-.footer{color:var(--muted); font-size:11px; text-align:center; margin:30px 0 10px; padding:0 10px}
-hr.soft{border:none; border-top:1px solid var(--line); margin:12px 0}
-details{margin:10px 0}
-details summary{cursor:pointer; font-weight:600; font-size:13px}
-/* ---- panels (chunked sections) ---- */
-.card{
-  background:var(--card); border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
-  border-radius:16px; padding:16px; margin:12px 0; box-shadow:var(--shadow);
-}
-.card h2{margin:0 0 6px; font-size:16px; font-weight:800; letter-spacing:-.01em}
-.card h3{margin:14px 0 6px; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted)}
-.card p{margin:6px 0}
-.notice{background:var(--soft); border:none; border-radius:var(--r); padding:9px 12px; font-size:13px; margin:8px 0}
-.notice.good{background:var(--good-soft)}
-.notice.warn{background:var(--warn-soft)}
-/* ---- hero (welcome) ---- */
-.hero{background:linear-gradient(120deg,var(--accent-soft),var(--card) 45%,var(--accent-soft) 90%);
-  background-size:220% 220%; border:none}
-.hero .mark{width:46px; height:46px; color:var(--accent)}
-/* ---- buttons / inputs ---- */
-.btn{
-  display:inline-block; border:1px solid var(--accent); background:var(--card); color:var(--accent);
-  border-radius:999px; padding:7px 16px; font-size:14px; cursor:pointer; font-weight:600;
-  font-family:inherit; margin:4px 6px 4px 0;
-  transition:transform .12s ease, box-shadow .2s ease, background .2s ease;
-}
-.btn:hover{background:var(--accent-soft); box-shadow:0 3px 12px rgba(100,80,40,.14)}
-.btn:active{transform:scale(.96)}
-.btn.primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
-.btn.primary:hover{filter:brightness(.96)}
-.btn.small{padding:4px 11px; font-size:12px}
-.btn.danger{color:var(--warn); border-color:var(--warn)}
-.btn.danger:hover{background:var(--warn-soft)}
-.btn[disabled]{opacity:.5; cursor:not-allowed}
-.linkbtn{background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer;
-  font-family:inherit; text-decoration:underline; padding:4px 2px; margin:2px 8px 2px 0}
-.btn:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
-.linkbtn:focus-visible, .chip:focus-visible, .ttile:focus-visible, .cctile:focus-visible, .fab:focus-visible, .seg button:focus-visible{
-  outline:3px solid var(--focus); outline-offset:2px;
-}
-label.f{display:block; margin:12px 0 3px; font-weight:600; font-size:13px}
-label.f .opt{font-weight:400; color:var(--muted)}
-input[type=text],input[type=search],input[type=password],select,textarea{
-  width:100%; padding:8px 11px; border:1px solid var(--line); border-radius:8px;
-  background:var(--bg); color:var(--ink); font-family:inherit; font-size:14px;
-}
-textarea{min-height:64px; resize:vertical}
-/* ---- chips / tags / tiers ---- */
-.chips{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0}
-.chip{background:var(--bg); border:1px solid var(--line); border-radius:999px;
-  padding:4px 12px; font-size:12px; cursor:pointer; font-family:inherit; color:var(--ink);
-  transition:border-color .15s, background .15s}
-.chip:hover{border-color:var(--accent); background:var(--accent-soft)}
-.chip.on{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
-.chip.static{cursor:default}
-.tag{display:inline-block; background:var(--accent-soft); color:var(--ink);
-  border-radius:6px; padding:2px 8px; font-size:11px; margin:2px 3px 2px 0}
-.tier{display:inline-block; border-radius:6px; padding:2px 10px; font-size:12px; font-weight:600}
-.tier.mutual{background:var(--good-soft); color:var(--good)}
-.tier.wild{background:var(--warn-soft); color:var(--warn)}
-.badge{display:inline-block; background:var(--warn); color:#fff; border-radius:999px; font-size:11px; padding:1px 7px; margin-left:6px; vertical-align:1px}
-/* ---- profile ---- */
-.pcard{background:var(--card); border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
-  border-radius:16px; overflow:hidden; margin:12px 0; box-shadow:var(--shadow)}
-.pcover{height:88px; background:linear-gradient(135deg,var(--accent-soft) 0%,var(--accent) 100%);
-  background-size:180% 180%}
-.avatar{width:72px; height:72px; border-radius:50%; background:var(--accent); color:var(--accent-ink);
-  display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:700;
-  border:3px solid var(--card); margin:-40px 0 0 16px; position:relative}
-.phead{padding:4px 16px 14px}
-.phead h2{margin:6px 0 0; font-size:18px}
-.qawrap{margin:4px 0}
-.qa{margin:10px 0; background:var(--card); border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
-  border-radius:var(--r); padding:10px 14px; box-shadow:var(--shadow)}
-.qa .q{font-size:11px; color:var(--muted); margin-bottom:2px; text-transform:uppercase; letter-spacing:.04em}
-.qa .a{font-size:14px}
-/* panels nested inside .card lose double chrome */
-.card .qa{box-shadow:none; background:var(--soft)}
-/* ---- countdown ---- */
-.countdown{display:flex; gap:12px; justify-content:center; margin:12px 0}
-.countdown .tcell{text-align:center; min-width:78px; background:var(--bg); border:1px solid var(--line);
-  border-radius:14px; padding:12px 8px; box-shadow:var(--shadow)}
-.countdown .n{font-size:26px; font-weight:800; font-variant-numeric:tabular-nums}
-.countdown .l{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
-/* ---- topic tiles ---- */
-.topicwrap{text-align:center}
-.topicwrap .grphead{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-top:14px}
-.topicgrid{display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:10px 0}
-.ttile{background:var(--bg); border:1px solid var(--line); border-radius:14px;
-  width:160px; min-height:64px; display:flex; align-items:center; justify-content:center; text-align:center;
-  padding:10px; font-size:13px; font-family:inherit; color:var(--ink); cursor:pointer;
-  transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease}
-.ttile:hover{transform:translateY(-2px); box-shadow:0 8px 20px rgba(90,70,35,.14); border-color:var(--accent)}
-.ttile.on{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
-/* ---- circular topic carousel (React-Bits-style 3D ring) ---- */
-.carwrap{margin:6px 0}
-.carousel{position:relative; height:252px; overflow:hidden; touch-action:pan-y; cursor:grab;
-  user-select:none; -webkit-user-select:none; perspective:2500px;
-  opacity:0; animation:stageIn .45s ease .1s forwards}
-.carousel.dragging{cursor:grabbing}
-@keyframes stageIn{to{opacity:1}}
-.ring3d{position:absolute; inset:0; transform-style:preserve-3d}
-.ccard{position:absolute; left:50%; top:50%; width:var(--cw,150px); height:126px;
-  margin:0; background:var(--bg); border:1px solid var(--line); border-radius:12px;
-  padding:0; font-family:inherit; color:var(--ink); cursor:pointer; text-align:center;
-  box-shadow:var(--shadow); overflow:hidden}
-.ccard .cin{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
-  justify-content:center; gap:6px; padding:10px;
-  animation:riseIn .9s cubic-bezier(.22,1,.36,1) both; animation-delay:calc(var(--i,0)*55ms)}
-@keyframes riseIn{from{opacity:0; transform:translateY(-24px)} to{opacity:1; transform:none}}
-.ccard .cfade{position:absolute; inset:0; background:#000; opacity:var(--fade,0);
-  pointer-events:none; border-radius:11px}
-.ccard .csub{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em}
-.ccard .clab{font-size:14px; font-weight:700; line-height:1.25}
-.ccard .ctick{font-size:11px; font-weight:700}
-.ccard.front{border-color:var(--accent); box-shadow:0 12px 28px rgba(90,70,35,.2)}
-.ccard.on{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
-.ccard.on .csub{color:color-mix(in srgb,var(--accent-ink) 70%,transparent)}
-@media (prefers-reduced-motion: reduce){ .ccard .cin{animation:none} .carousel{animation:none; opacity:1} }
-/* ---- scroll-expand hero (React-Bits-style) ---- */
-.xtrack{height:165vh; margin-top:6px}
-.xsec{min-height:76vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; gap:6px; padding:10px 0}
-.xbig{font-size:17px; max-width:34em; margin:0}
+.sbicons i:nth-child(1){width:15px; height:9px; border-radius:2px; clip-path:polygon(0 100%,100% 100%,100% 0,75% 25%,0 75%)}
+.sbicons i:nth-child(2){width:20px; height:10px; border-radius:3px}
 html.welcome{scrollbar-width:none}
 html.welcome::-webkit-scrollbar{display:none}
 html.welcome main{scrollbar-width:none}
 html.welcome main::-webkit-scrollbar{display:none}
-.howlist{display:flex; flex-direction:column; gap:18px; font-size:17px; font-weight:700; align-items:flex-start}
-.hnum{display:inline-flex; width:26px; height:26px; border-radius:50%; background:var(--accent); color:var(--accent-ink);
-  align-items:center; justify-content:center; font-size:13px; margin-right:10px; flex:0 0 auto}
-.safetyscreen{display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; gap:8px; height:calc(100vh - 175px); padding:0 10px}
-html.wide[data-layout="mobile"] .safetyscreen{height:100%}
-body.lock{overflow:hidden}
-body.lock main{overflow:hidden !important}
-html.wide[data-layout="mobile"] .xtrack{height:1150px}
-html.wide[data-layout="mobile"] .xsec{min-height:520px}
-.xhero{position:sticky; top:max(8px,calc(50vh - 250px)); height:calc(320px + 150px*var(--xp,0));
-  margin-inline:calc(0px - 16px*var(--xp,0));
-  border-radius:calc(26px*(1 - var(--xp,0)));
-  background:linear-gradient(120deg,var(--accent-soft),var(--card) 45%,var(--accent-soft) 90%);
-  background-size:220% 220%;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
-  border:1px solid color-mix(in srgb,var(--line) 70%,transparent); box-shadow:var(--shadow);
-  overflow:hidden; position:sticky}
-.xhero .mark{width:calc(46px + 20px*var(--xp,0)); height:auto; color:var(--accent)}
-.xhero h2{font-size:calc(22px + 4px*var(--xp,0)); margin:10px 0 2px; letter-spacing:-.01em}
-html.wide[data-layout="mobile"] .xhero{top:110px}
-.xhint{position:absolute; bottom:12px; left:0; right:0; font-size:11px; color:var(--muted);
-  animation:hintBob 1.6s ease-in-out infinite}
-@keyframes hintBob{0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)}}
-.xbody{padding-top:10px}
-/* ---- flip card (React-Bits-style) ---- */
-.flip{perspective:1400px; margin:12px 0}
-.flipinner{position:relative; width:100%; height:440px; transform-style:preserve-3d;
-  transition:transform .8s cubic-bezier(.3,1.25,.35,1)}
-.flip.flipped .flipinner{transform:rotateY(180deg)}
-.flip .face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
-  background:var(--card); border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
-  border-radius:18px; box-shadow:var(--shadow); overflow:hidden}
-.flip .face.front{display:flex; flex-direction:column; align-items:center; justify-content:center;
-  padding:18px; cursor:pointer; text-align:center}
-.flip .face.back{transform:rotateY(180deg); display:flex; flex-direction:column; padding:12px}
-.backscroll{flex:1; overflow-y:auto; padding:4px 6px; scrollbar-width:none}
-.backscroll::-webkit-scrollbar{display:none}
-.flipback{align-self:center; margin-top:8px; flex:0 0 auto}
-.avatar.big{width:84px; height:84px; font-size:34px; margin:0 0 10px; border-color:var(--bg)}
-.fliphint{margin-top:14px}
-@media (prefers-reduced-motion: reduce){ .flipinner{transition:none} }
-/* ---- peek rating (React-Bits-style) ---- */
-.rate{display:flex; gap:4px; align-items:flex-end; margin:4px 0 2px; padding-top:12px}
-.rstar{border:none; background:none; padding:2px; cursor:pointer; color:var(--line); font-family:inherit;
-  transition:transform .18s cubic-bezier(.3,1.6,.4,1), color .15s}
-.rstar svg{display:block; fill:currentColor}
-.rstar:hover{color:var(--accent)}
-.rstar.on{color:var(--accent)}
-.rstar.pop{animation:popStar .32s cubic-bezier(.3,1.8,.4,1)}
-@keyframes popStar{0%{transform:scale(1)} 45%{transform:scale(1.4) translateY(-4px)} 100%{transform:scale(1)}}
-/* ---- spotlight (React-Bits-style) ---- */
+/* ---- typography / helpers ---- */
+.pagetitle{font-size:20px; margin:16px 2px 8px; font-weight:800; letter-spacing:-.01em}
+.pagetitle.center{text-align:center}
+.muted{color:var(--muted); font-size:13px}
+.small{font-size:12px}
+.center{text-align:center}
+.footer{color:var(--muted); font-size:11px; text-align:center; margin:30px 0 10px}
+hr.soft{border:none; border-top:var(--bw) dashed var(--line); opacity:.35; margin:14px 0}
+details{margin:10px 0}
+details summary{cursor:pointer; font-weight:800; font-size:13px}
+.sectlabel{font-size:11px; color:var(--ink); text-transform:uppercase; letter-spacing:.08em; margin:12px 2px 6px; font-weight:800}
+/* ---- cards ---- */
+.card{background:var(--card); border:var(--bw) solid var(--line); border-radius:18px;
+  padding:16px; margin:14px 0; box-shadow:var(--sh)}
+.card h2{margin:0 0 6px; font-size:17px; font-weight:800; letter-spacing:-.01em}
+.card h3{margin:14px 0 6px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.07em}
+.card p{margin:6px 0}
+.notice{background:var(--card); border:var(--bw) dashed var(--line); border-radius:14px; padding:10px 13px; font-size:13px; margin:10px 0}
+.notice.good{background:var(--good-soft); border-style:solid}
+.notice.warn{background:var(--warn-soft); border-style:solid}
+.darkcard{background:var(--ink); color:var(--bg); border-radius:18px; padding:16px; margin:14px 0; border:var(--bw) solid var(--line)}
+.darkcard h2{color:var(--bg); margin:0 0 6px; font-size:17px; font-weight:800}
+.darkcard .muted{color:color-mix(in srgb,var(--bg) 70%,transparent)}
+.ruletag{display:inline-block; border:var(--bw) solid var(--bg); border-radius:999px; padding:2px 10px;
+  font-size:11px; font-weight:700; margin:3px 4px 0 0; color:var(--bg)}
+.ruletag.ok{background:var(--green); color:var(--ink); border-color:var(--ink)}
+/* ---- buttons / inputs ---- */
+.btn{display:inline-block; border:var(--bw) solid var(--line); background:var(--card); color:var(--ink);
+  border-radius:999px; padding:9px 18px; font-size:14px; cursor:pointer; font-weight:800; font-family:inherit;
+  margin:4px 6px 4px 0; box-shadow:var(--sh); transition:transform .1s ease, box-shadow .1s ease}
+.btn:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--line)}
+.btn:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--line)}
+.btn.primary{background:var(--yellow); color:var(--ink)}
+.btn.dark{background:var(--ink); color:var(--bg)}
+.btn.orange{background:var(--orange); color:#fff}
+.btn.small{padding:5px 13px; font-size:12px}
+.btn.danger{background:var(--warn-soft); color:var(--warn)}
+.btn[disabled]{opacity:.5; cursor:not-allowed}
+.linkbtn{background:none; border:none; color:var(--muted); font-size:12px; font-weight:700; cursor:pointer;
+  font-family:inherit; text-decoration:underline; padding:4px 2px; margin:2px 8px 2px 0}
+.btn:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,
+.linkbtn:focus-visible,.chip:focus-visible,.tchip:focus-visible,.cctile:focus-visible,.fab:focus-visible,.seg button:focus-visible,.daypill:focus-visible{
+  outline:3px solid var(--focus); outline-offset:2px}
+label.f{display:block; margin:12px 0 4px; font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.06em}
+label.f .opt{font-weight:600; color:var(--muted); text-transform:none; letter-spacing:0}
+input[type=text],input[type=search],input[type=password],select,textarea{
+  width:100%; padding:9px 12px; border:var(--bw) solid var(--line); border-radius:12px;
+  background:var(--card); color:var(--ink); font-family:inherit; font-size:14px}
+textarea{min-height:64px; resize:vertical}
+/* ---- chips / tags ---- */
+.chips{display:flex; flex-wrap:wrap; gap:7px; margin:8px 0}
+.chip{background:var(--card); border:var(--bw) solid var(--line); border-radius:999px;
+  padding:5px 13px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; color:var(--ink); box-shadow:var(--sh)}
+.chip:hover{transform:translate(-1px,-1px)}
+.chip.on{background:var(--ink); color:var(--bg)}
+.tag{display:inline-block; background:var(--purple); border:var(--bw) solid var(--line);
+  border-radius:999px; padding:2px 10px; font-size:11px; font-weight:700; margin:2px 4px 2px 0}
+.tier{display:inline-block; border:var(--bw) solid var(--line); border-radius:999px; padding:2px 11px; font-size:12px; font-weight:800}
+.tier.mutual{background:var(--green)}
+.tier.wild{background:var(--yellow)}
+.badge{display:inline-block; background:var(--orange); color:#fff; border:var(--bw) solid var(--line);
+  border-radius:999px; font-size:11px; font-weight:800; padding:1px 7px; margin-left:6px; vertical-align:1px}
+/* ---- topic chips (picker cloud) ---- */
+.tcloud{display:flex; flex-wrap:wrap; gap:9px; justify-content:center; margin:12px 0}
+.tchip{display:inline-flex; flex-direction:column; align-items:flex-start; gap:1px;
+  background:var(--card); border:var(--bw) solid var(--line); border-radius:14px; padding:7px 12px;
+  font-family:inherit; color:var(--ink); cursor:pointer; text-align:left; box-shadow:var(--sh);
+  transition:transform .1s ease}
+.tchip:hover{transform:translate(-1px,-1px)}
+.tchip:active{transform:translate(1px,1px)}
+.tchip .tcat{display:flex; align-items:center; gap:4px; font-size:8.5px; font-weight:800; letter-spacing:.07em;
+  text-transform:uppercase; color:var(--muted)}
+.tchip .tcat i{width:7px; height:7px; border-radius:50%; border:1.5px solid var(--line); background:var(--tc,var(--yellow)); display:inline-block}
+.tchip .tname{font-size:13px; font-weight:800}
+.tchip .tk{display:none; font-size:11px; font-weight:800}
+.tchip.on{background:var(--tc,var(--yellow))}
+.tchip.on .tcat{color:var(--ink)}
+.tchip.on .tk{display:inline; margin-left:4px}
+.topicwrap{text-align:center}
+/* ---- countdown ---- */
+.countdown{display:flex; gap:12px; justify-content:center; margin:12px 0}
+.countdown .tcell{text-align:center; min-width:80px; background:var(--ink); color:var(--bg);
+  border:var(--bw) solid var(--line); border-radius:16px; padding:12px 8px}
+.countdown .tcell:nth-child(1){box-shadow:4px 4px 0 var(--orange)}
+.countdown .tcell:nth-child(2){box-shadow:4px 4px 0 var(--yellow)}
+.countdown .tcell:nth-child(3){box-shadow:4px 4px 0 var(--purple)}
+.countdown .n{font-size:28px; font-weight:800; font-variant-numeric:tabular-nums}
+.countdown .l{font-size:9px; color:color-mix(in srgb,var(--bg) 70%,transparent); text-transform:uppercase; letter-spacing:.09em; font-weight:800}
+.odo{display:inline-flex}
+.odigit{display:inline-block; height:1em; line-height:1; overflow:hidden}
+.ostack{display:block; transition:transform .8s cubic-bezier(.25,1.2,.35,1)}
+.ostack b{display:block; height:1em; line-height:1; font-weight:inherit}
+/* ---- welcome ---- */
+.bigtitle{font-size:40px; line-height:1.08; font-weight:800; letter-spacing:-.02em; margin:18px 0 10px}
+.titlehl{display:inline-block; background:var(--orange); color:#fff; border:var(--bw) solid var(--line);
+  border-radius:14px; padding:0 10px; box-shadow:var(--sh); transform:rotate(-1.5deg)}
+.illus{border:var(--bw) solid var(--line); border-radius:18px; box-shadow:var(--shbig); overflow:hidden; margin:16px 0; background:var(--purple)}
+.illus svg{display:block; width:100%; height:auto}
+.how2{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0}
+.how2 div{border:var(--bw) solid var(--line); border-radius:16px; padding:14px; font-weight:800; font-size:14px;
+  box-shadow:var(--sh); min-height:88px}
+.how2 .c1{background:var(--yellow)} .how2 .c2{background:var(--purple)}
+.how2 .c3{background:var(--green)} .how2 .c4{background:var(--orange); color:#fff}
+.how2 .hnum{display:inline-flex; width:24px; height:24px; border-radius:50%; background:var(--card); color:var(--ink);
+  border:var(--bw) solid var(--line); align-items:center; justify-content:center; font-size:12px; margin-bottom:8px}
+.brandnew{display:inline-block; background:var(--card); border:var(--bw) solid var(--line); border-radius:999px;
+  padding:1px 10px; font-size:10px; font-weight:800; letter-spacing:.07em; margin-bottom:6px}
+/* ---- blue match-reveal hero ---- */
+.bluehero{position:relative; background:var(--blue); border:var(--bw) solid var(--line); border-radius:20px;
+  padding:20px 16px 22px; margin:14px 0; box-shadow:var(--shbig); overflow:hidden}
+.bluehero .pagetitle{color:#fff; margin:4px 0 14px; position:relative; z-index:2}
+.bluehero .deco{position:absolute; inset:0; pointer-events:none; z-index:1}
+.revealcard{position:relative; z-index:2; background:var(--card); border:var(--bw) solid var(--line);
+  border-radius:18px; padding:18px 16px; text-align:center; box-shadow:var(--sh)}
+.revealcard .dashes{border-top:var(--bw) dashed var(--line); opacity:.5; margin:12px 20px}
+.bluehero .btn.ghost{background:transparent; color:#fff; border-color:#fff; box-shadow:3px 3px 0 rgba(0,0,0,.4)}
+/* ---- profile ---- */
+.pcard{background:var(--purple); border:var(--bw) solid var(--line); border-radius:18px; overflow:hidden;
+  margin:14px 0; box-shadow:var(--sh)}
+.pcover{display:none}
+.avatar{width:64px; height:64px; border-radius:50%; background:var(--orange); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:800;
+  border:var(--bw) solid var(--line); margin:14px 0 0 16px; position:relative}
+.avatar.big{width:84px; height:84px; font-size:34px; margin:0 0 10px}
+.phead{padding:4px 16px 14px}
+.phead h2{margin:4px 0 0; font-size:19px; font-weight:800}
+.qawrap{margin:4px 0}
+.qa{margin:18px 0 0; background:var(--card); border:var(--bw) solid var(--line);
+  border-radius:14px; padding:16px 14px 11px; box-shadow:var(--sh); position:relative}
+.qa .q{position:absolute; top:-11px; left:12px; background:var(--qc,var(--yellow));
+  border:var(--bw) solid var(--line); border-radius:999px; padding:1px 9px;
+  font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; white-space:nowrap;
+  max-width:calc(100% - 24px); overflow:hidden; text-overflow:ellipsis}
+.qa .a{font-size:14px; font-weight:600}
+.qawrap .qa:nth-child(5n+1){--qc:var(--yellow)}
+.qawrap .qa:nth-child(5n+2){--qc:var(--pink)}
+.qawrap .qa:nth-child(5n+3){--qc:var(--orange)}
+.qawrap .qa:nth-child(5n+4){--qc:var(--green)}
+.qawrap .qa:nth-child(5n+5){--qc:var(--purple)}
+.card .qa{box-shadow:none}
+.proftools{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:8px 0 12px}
+.proftools .listlink{margin:0}
+.proftools .listlink b{color:var(--ink)}
+.proftools .chev{margin-left:auto; font-size:20px; line-height:1}
+@media (max-width:380px){ .proftools{grid-template-columns:1fr} }
+/* ---- spotlight (kept subtle) ---- */
 .spot{position:relative; overflow:hidden}
 .spot::after{content:''; position:absolute; inset:0; opacity:0; transition:opacity .25s; pointer-events:none;
-  background:radial-gradient(150px circle at var(--mx,50%) var(--my,50%), color-mix(in srgb,var(--accent) 20%,transparent), transparent 70%)}
+  background:radial-gradient(150px circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,.35), transparent 70%)}
 .spot:hover::after{opacity:1}
 /* ---- list rows ---- */
 .listlink{display:flex; align-items:center; gap:12px; width:100%; text-align:left;
-  background:var(--card); border:1px solid color-mix(in srgb,var(--line) 70%,transparent); border-radius:14px;
-  padding:13px 14px; margin:8px 0; font-family:inherit; font-size:14px; color:var(--ink); cursor:pointer;
-  box-shadow:var(--shadow); transition:transform .15s ease, box-shadow .2s ease}
-.listlink:hover{transform:translateY(-1px); box-shadow:0 8px 20px rgba(90,70,35,.13)}
-.listlink .d{color:var(--muted); font-size:12px; display:block; font-weight:400}
-.listlink b{font-weight:700}
-/* ---- profile section tools ---- */
-.sectlabel{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin:12px 2px 2px; font-weight:700}
-.proftools{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:6px 0 12px}
-.proftools .listlink{margin:0; background:var(--bg); border:1px solid color-mix(in srgb,var(--accent) 55%,transparent)}
-.proftools .listlink b{color:var(--accent)}
-.proftools .chev{margin-left:auto; color:var(--accent); font-size:20px; line-height:1}
-@media (max-width:380px){ .proftools{grid-template-columns:1fr} }
+  background:var(--card); border:var(--bw) solid var(--line); border-radius:14px;
+  padding:13px 14px; margin:10px 0; font-family:inherit; font-size:14px; color:var(--ink); cursor:pointer;
+  box-shadow:var(--sh); transition:transform .1s ease}
+.listlink:hover{transform:translate(-1px,-1px)}
+.listlink .d{color:var(--muted); font-size:12px; display:block; font-weight:600}
+.listlink b{font-weight:800}
 /* ---- chat / slots ---- */
-.msg{max-width:85%; padding:7px 11px; border-radius:14px; margin:4px 0; font-size:13px}
-.msg.me{background:var(--accent); color:var(--accent-ink); margin-left:auto; border-bottom-right-radius:4px}
-.msg.them{background:var(--bg); border:1px solid var(--line); border-bottom-left-radius:4px}
-.msg .who{font-size:10px; opacity:.75; display:block}
-.chatbox{display:flex; gap:6px; margin-top:8px}
+.chatcard{padding:0; overflow:hidden}
+.darkhead{background:var(--ink); color:var(--bg); font-weight:800; font-size:16px; padding:12px 16px;
+  border-bottom:var(--bw) solid var(--line)}
+.chatbody{padding:12px 16px 16px}
+.msg{max-width:85%; padding:8px 12px; border-radius:14px; margin:6px 0; font-size:13px; font-weight:600;
+  border:var(--bw) solid var(--line)}
+.msg.me{background:var(--yellow); margin-left:auto; border-bottom-right-radius:4px}
+.msg.them{background:var(--card); border-bottom-left-radius:4px}
+.msg .who{font-size:10px; opacity:.7; display:block; font-weight:800}
+.chatbox{display:flex; gap:8px; margin-top:10px}
 .chatbox input{flex:1}
-.slot{display:flex; align-items:center; gap:8px; background:var(--bg); border:1px solid var(--line);
-  border-radius:var(--r); padding:8px 11px; margin:6px 0; font-size:13px; box-shadow:var(--shadow)}
+.slot{display:flex; align-items:center; gap:8px; background:var(--card); border:var(--bw) solid var(--line);
+  border-radius:14px; padding:9px 12px; margin:8px 0; font-size:13px; font-weight:700; box-shadow:var(--sh)}
 .slot .btn{margin:0 0 0 auto}
-.slot.chosen{background:var(--good-soft); font-weight:600}
+.slot.chosen{background:var(--green)}
+/* ---- plan pills ---- */
+.safebanner{display:flex; align-items:center; gap:10px; background:var(--green); border:var(--bw) solid var(--line);
+  border-radius:16px; padding:11px 14px; margin:14px 0; font-size:13px; font-weight:700; box-shadow:var(--sh)}
+.safebanner svg{flex:0 0 auto}
+.planhead .with{color:var(--muted); font-weight:700; font-size:13px; margin-top:-4px}
+.pillgrp{display:flex; flex-wrap:wrap; gap:7px; margin:6px 0 2px}
+.daypill{border:var(--bw) solid var(--line); background:var(--card); color:var(--ink); border-radius:999px;
+  padding:5px 11px; font-size:12px; font-weight:800; font-family:inherit; cursor:pointer; box-shadow:var(--sh)}
+.daypill.on{background:var(--ink); color:var(--bg)}
+.daypill.day{padding:5px 9px}
+.sumpill{display:inline-block; background:var(--yellow); border:var(--bw) solid var(--line); border-radius:14px;
+  padding:9px 14px; font-size:13px; font-weight:800; margin:14px 0 4px; box-shadow:var(--sh)}
 /* ---- stats / sparks ---- */
-.statrow{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin:12px 0}
-.stat{background:var(--card); border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
-  border-radius:14px; padding:12px; text-align:center; box-shadow:var(--shadow)}
-.stat .n{font-size:22px; font-weight:800}
-.stat .l{font-size:11px; color:var(--muted)}
-.spark{border-left:3px solid var(--accent); padding:4px 12px; margin:12px 0}
-.spark .meta{font-size:11px; color:var(--muted)}
-.spark .t{font-size:14px; font-style:italic}
+.statrow{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin:12px 0}
+.stat{background:var(--card); border:var(--bw) solid var(--line); border-radius:14px; padding:12px; text-align:center; box-shadow:var(--sh)}
+.stat .n{font-size:24px; font-weight:800}
+.stat .l{font-size:11px; color:var(--muted); font-weight:700}
+.spark{border:var(--bw) solid var(--line); border-left:8px solid var(--orange); border-radius:12px;
+  background:var(--card); padding:8px 12px; margin:12px 0; box-shadow:var(--sh)}
+.spark .meta{font-size:11px; color:var(--muted); font-weight:700}
+.spark .t{font-size:14px; font-style:italic; font-weight:600}
 /* ---- misc ---- */
 .steps{display:flex; gap:6px; margin:6px 0 14px}
-.steps span{flex:1; height:4px; border-radius:2px; background:var(--line)}
-.steps span.on{background:var(--accent)}
-.howgrid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
-.howgrid div{background:color-mix(in srgb,var(--bg) 65%,transparent); border-radius:12px; padding:10px 12px; font-size:13px}
-.howgrid b{display:block; margin-bottom:2px}
-.orcidbox{border:1px solid var(--line); border-radius:var(--r); padding:14px; margin:10px 0; background:var(--soft)}
-.orcidbox .obh{font-weight:700; font-size:13px; margin-bottom:6px}
-.searchres{border:1px solid var(--line); border-radius:var(--r); margin-top:6px; overflow:hidden; background:var(--bg)}
-.searchres .grp{background:var(--soft); padding:4px 12px; font-size:11px; color:var(--muted); font-weight:600}
-.searchres button{display:block; width:100%; text-align:left; background:var(--bg); color:var(--ink);
-  border:none; border-top:1px solid var(--line); padding:8px 12px; font-size:13px; font-family:inherit; cursor:pointer}
-.searchres button:hover{background:var(--accent-soft)}
+.steps span{flex:1; height:8px; border-radius:4px; background:var(--card); border:var(--bw) solid var(--line)}
+.steps span.on{background:var(--orange)}
+.orcidbox{border:var(--bw) solid var(--line); border-radius:16px; padding:14px; margin:10px 0; background:var(--card); box-shadow:var(--sh)}
+.orcidbox .obh{font-weight:800; font-size:13px; margin-bottom:6px}
+.searchres{border:var(--bw) solid var(--line); border-radius:14px; margin-top:8px; overflow:hidden; background:var(--card); box-shadow:var(--sh)}
+.searchres .grp{background:var(--bg); padding:5px 12px; font-size:10px; color:var(--muted); font-weight:800; text-transform:uppercase; letter-spacing:.06em}
+.searchres button{display:block; width:100%; text-align:left; background:var(--card); color:var(--ink);
+  border:none; border-top:1px solid color-mix(in srgb,var(--line) 25%,transparent); padding:9px 12px; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer}
+.searchres button:hover{background:var(--yellow)}
 .diag{font-size:12px}
 .diag table{width:100%; border-collapse:collapse; margin:8px 0}
-.diag td,.diag th{border-bottom:1px solid var(--line); padding:5px 6px; text-align:left; vertical-align:top}
-.toastwrap{position:fixed; bottom:96px; left:0; right:0; display:flex; justify-content:center; z-index:70; pointer-events:none}
-.toast{background:var(--ink); color:var(--bg); border-radius:10px; padding:8px 16px; font-size:13px;
-  box-shadow:0 10px 30px rgba(0,0,0,.25); animation:ccIn .22s ease both}
-/* ---- control centre ---- */
-.fab{position:fixed; right:18px; bottom:18px; z-index:60; height:48px; padding:0 18px 0 14px; gap:8px;
-  border-radius:999px; font-family:inherit; font-size:13px; font-weight:700; letter-spacing:.02em;
-  border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
-  background:color-mix(in srgb,var(--card) 78%,transparent);
-  backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
-  box-shadow:0 8px 28px rgba(45,32,10,.22); cursor:pointer; color:var(--ink);
-  display:flex; align-items:center; justify-content:center; transition:transform .15s ease, box-shadow .2s ease}
-.fab:hover{transform:translateY(-2px); box-shadow:0 12px 34px rgba(45,32,10,.28)}
-.fab:active{transform:scale(.92)}
-html[data-layout="mobile"]:not(.wide) .fab{bottom:72px}
-.ccpanel{position:fixed; right:18px; bottom:82px; z-index:59; width:350px; max-width:calc(100vw - 24px);
-  max-height:calc(100vh - 120px); overflow-y:auto;
-  background:color-mix(in srgb,var(--card) 74%,transparent);
-  backdrop-filter:blur(26px) saturate(1.4); -webkit-backdrop-filter:blur(26px) saturate(1.4);
-  border:1px solid color-mix(in srgb,var(--line) 70%,transparent); border-radius:22px;
-  box-shadow:0 24px 70px rgba(35,24,6,.3); padding:14px; animation:ccIn .25s cubic-bezier(.2,.7,.3,1) both}
-html[data-layout="mobile"]:not(.wide) .ccpanel{left:12px; right:12px; width:auto; bottom:134px}
-@keyframes ccIn{from{opacity:0; transform:translateY(12px) scale(.97)} to{opacity:1; transform:none}}
-.cchead{display:flex; align-items:baseline; gap:8px; margin-bottom:10px}
-.cchead b{font-size:14px}
-.ccclose{margin-left:auto; border:none; background:var(--soft); color:var(--muted); width:26px; height:26px;
-  border-radius:50%; cursor:pointer; font-size:15px; line-height:1; font-family:inherit}
-.ccstats{display:flex; gap:8px; margin-bottom:10px}
-.ccstats>div{flex:1; background:color-mix(in srgb,var(--bg) 70%,transparent); border-radius:12px; padding:8px 10px}
-.ccstats b{display:block; font-size:13px}
-.ccstats span{display:block; font-size:11px; color:var(--muted)}
-.ccgrid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0}
-.cctile{background:color-mix(in srgb,var(--bg) 70%,transparent);
-  border:1px solid color-mix(in srgb,var(--line) 60%,transparent); border-radius:14px; padding:10px 12px;
-  text-align:left; font-family:inherit; color:var(--ink)}
-.cctile.wide{margin:8px 0}
-.cctile.act{cursor:pointer; transition:transform .13s ease, box-shadow .2s ease}
-.cctile.act:hover{transform:translateY(-1px); box-shadow:0 6px 18px rgba(45,32,10,.16)}
-.cctile.act:active{transform:scale(.96)}
-.cctile .ck{display:block; font-weight:700; font-size:13px}
-.cctile .cv{display:block; font-size:11px; color:var(--muted); margin-top:1px}
-.cctile.prime{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
-.cctile.prime .cv{color:color-mix(in srgb,var(--accent-ink) 72%,transparent)}
-.cctile.dim{opacity:.45}
-.cctile.dangert .ck{color:var(--warn)}
-.cclabel{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:3px}
-.seg{display:flex; background:color-mix(in srgb,var(--bg) 70%,transparent); border-radius:10px; padding:3px; gap:3px; margin:2px 0 8px}
-.seg button{flex:1; border:none; background:none; border-radius:8px; padding:5px 0; font-size:12px;
-  font-family:inherit; color:var(--muted); cursor:pointer; transition:background .15s,color .15s}
-.seg button.on{background:var(--card); color:var(--ink); font-weight:700; box-shadow:0 1px 4px rgba(0,0,0,.14)}
-/* ---- staggered side menu (React-Bits-style) ---- */
+.diag td,.diag th{border-bottom:1px solid color-mix(in srgb,var(--line) 30%,transparent); padding:5px 6px; text-align:left; vertical-align:top}
+.toastwrap{position:fixed; bottom:100px; left:0; right:0; display:flex; justify-content:center; z-index:70; pointer-events:none}
+.toast{background:var(--ink); color:var(--bg); border:var(--bw) solid var(--bg); outline:var(--bw) solid var(--ink);
+  border-radius:12px; padding:8px 16px; font-size:13px; font-weight:800; animation:ccIn .22s ease both}
+.safetyscreen{display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; gap:8px; height:calc(100vh - 185px); padding:0 10px}
+html.wide[data-layout="mobile"] .safetyscreen{height:100%}
+body.lock{overflow:hidden}
+body.lock main{overflow:hidden !important}
+.xbig{font-size:17px; max-width:34em; margin:0; font-weight:700}
+.cols{display:block}
+/* ---- staggered side menu ---- */
 #menuBtn{border:none; background:none; cursor:pointer; padding:9px 8px; margin-right:2px;
   display:flex; flex-direction:column; gap:5px; z-index:56; position:relative}
-#menuBtn i{display:block; width:20px; height:2px; background:var(--ink); border-radius:2px;
+#menuBtn i{display:block; width:20px; height:3px; background:var(--ink); border-radius:2px;
   transition:transform .3s cubic-bezier(.2,.8,.25,1), opacity .25s}
-#menuBtn.x i:nth-child(1){transform:translateY(7px) rotate(45deg)}
+#menuBtn.x i:nth-child(1){transform:translateY(8px) rotate(45deg)}
 #menuBtn.x i:nth-child(2){opacity:0}
-#menuBtn.x i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+#menuBtn.x i:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
 .smenu{position:fixed; inset:0; z-index:55}
 html.wide[data-layout="mobile"] .smenu{position:absolute}
-.sback{position:absolute; inset:0; background:rgba(30,22,8,0); transition:background .4s}
-.smenu.open .sback{background:rgba(30,22,8,.35)}
+.sback{position:absolute; inset:0; background:rgba(27,22,14,0); transition:background .4s}
+.smenu.open .sback{background:rgba(27,22,14,.4)}
 .spanel{position:absolute; top:0; bottom:0; left:0; width:min(320px,82%);
   transform:translateX(-103%); transition:transform .5s cubic-bezier(.2,.8,.25,1);
-  background:var(--card); box-shadow:20px 0 60px rgba(35,24,6,.18);
+  background:var(--card); border-right:var(--bw) solid var(--line);
   padding:74px 28px 20px; display:flex; flex-direction:column; overflow:hidden}
 .smenu.open .spanel{transform:none}
-.slayer{position:absolute; inset:0; background:var(--accent); transform:translateX(0);
+.slayer{position:absolute; inset:0; background:var(--orange); transform:translateX(0);
   transition:transform .55s cubic-bezier(.2,.8,.25,1) .08s; pointer-events:none}
 .smenu.open .slayer{transform:translateX(103%)}
 .sitems{display:flex; flex-direction:column; align-items:flex-start}
@@ -413,55 +325,93 @@ html.wide[data-layout="mobile"] .smenu{position:absolute}
   text-align:left; opacity:0; transform:translateY(26px);
   transition:opacity .45s ease, transform .5s cubic-bezier(.2,.8,.25,1), color .2s}
 .smenu.open .sitem{opacity:1; transform:none}
-.sitem .snum{font-size:12px; color:var(--accent); font-weight:700}
-.sitem.on, .sitem:hover{color:var(--accent)}
+.sitem .snum{font-size:12px; color:var(--orange); font-weight:800}
+.sitem.on,.sitem:hover{color:var(--orange)}
 .sfoot{margin-top:auto; opacity:0; transition:opacity .5s ease .4s}
 .smenu.open .sfoot{opacity:1}
-@media (prefers-reduced-motion: reduce){
-  .spanel,.slayer,.sitem,.sback{transition:none}
-}
-/* ---- papers folder (exact React Bits Folder port, flap mode) ---- */
+/* ---- control centre ---- */
+.fab{position:fixed; right:18px; bottom:18px; z-index:60; height:48px; padding:0 18px 0 14px; gap:8px;
+  border-radius:999px; font-family:inherit; font-size:13px; font-weight:800;
+  border:var(--bw) solid var(--line); background:var(--yellow); color:var(--ink);
+  box-shadow:var(--shbig); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:transform .12s ease}
+.fab:hover{transform:translate(-1px,-1px)}
+.fab:active{transform:translate(2px,2px)}
+html[data-layout="mobile"]:not(.wide) .fab{bottom:72px}
+.ccpanel{position:fixed; right:18px; bottom:82px; z-index:59; width:350px; max-width:calc(100vw - 24px);
+  max-height:calc(100vh - 120px); overflow-y:auto;
+  background:var(--card); border:var(--bw) solid var(--line); border-radius:20px;
+  box-shadow:var(--shbig); padding:14px; animation:ccIn .25s cubic-bezier(.2,.7,.3,1) both}
+html[data-layout="mobile"]:not(.wide) .ccpanel{left:12px; right:12px; width:auto; bottom:134px}
+@keyframes ccIn{from{opacity:0; transform:translateY(12px) scale(.97)} to{opacity:1; transform:none}}
+.cchead{display:flex; align-items:baseline; gap:8px; margin-bottom:10px}
+.cchead b{font-size:14px}
+.ccclose{margin-left:auto; border:var(--bw) solid var(--line); background:var(--card); color:var(--ink);
+  width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:14px; line-height:1; font-family:inherit; font-weight:800}
+.ccstats{display:flex; gap:8px; margin-bottom:10px}
+.ccstats>div{flex:1; background:var(--bg); border:var(--bw) solid var(--line); border-radius:12px; padding:8px 10px}
+.ccstats b{display:block; font-size:13px}
+.ccstats span{display:block; font-size:11px; color:var(--muted); font-weight:700}
+.ccgrid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0}
+.cctile{background:var(--bg); border:var(--bw) solid var(--line); border-radius:14px; padding:10px 12px;
+  text-align:left; font-family:inherit; color:var(--ink)}
+.cctile.wide{margin:8px 0}
+.cctile.act{cursor:pointer; box-shadow:var(--sh); transition:transform .1s ease}
+.cctile.act:hover{transform:translate(-1px,-1px)}
+.cctile.act:active{transform:translate(1px,1px)}
+.cctile .ck{display:block; font-weight:800; font-size:13px}
+.cctile .cv{display:block; font-size:11px; color:var(--muted); margin-top:1px; font-weight:600}
+.cctile.prime{background:var(--yellow)}
+.cctile.dim{opacity:.45}
+.cctile.dangert .ck{color:var(--warn)}
+.cclabel{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; display:block; margin-bottom:3px; font-weight:800}
+.seg{display:flex; background:var(--bg); border:var(--bw) solid var(--line); border-radius:12px; padding:3px; gap:3px; margin:2px 0 8px}
+.seg button{flex:1; border:none; background:none; border-radius:8px; padding:5px 0; font-size:12px; font-weight:700;
+  font-family:inherit; color:var(--muted); cursor:pointer}
+.seg button.on{background:var(--ink); color:var(--bg)}
+/* ---- papers folder (React Bits flap port, reskinned) ---- */
 .rbscene{perspective:1100px; margin:4px 0 10px}
 .rbfolder{position:relative; width:var(--fw); height:calc(var(--fh) + var(--tab));
   margin:calc(var(--dh) + 26px) auto 4px; cursor:pointer; outline-offset:6px;
   transform:rotateX(var(--rtx,0deg)) rotateY(var(--rty,0deg)); transform-style:preserve-3d;
   transition:transform .3s ease}
-.rbtab{position:absolute; top:0; left:0; width:34%; height:calc(var(--tab) + 10px);
-  border-radius:8px 8px 0 0; background:color-mix(in srgb,var(--accent) 92%,#000); z-index:1}
+.rbtab{position:absolute; top:-3px; left:-2px; width:36%; height:calc(var(--tab) + 12px);
+  border-radius:10px 10px 0 0; background:var(--orange); border:var(--bw) solid var(--line); z-index:1}
 .rbback{position:absolute; left:0; right:0; top:var(--tab); bottom:0; z-index:1;
-  border-radius:0 10px 10px 10px;
-  background:linear-gradient(color-mix(in srgb,var(--accent) 92%,#000),color-mix(in srgb,var(--accent) 84%,#000))}
+  border-radius:0 12px 12px 12px; background:var(--orange); border:var(--bw) solid var(--line)}
 .rbfront{position:absolute; left:0; right:0; top:calc(var(--tab) + var(--fh)*0.3); bottom:0; z-index:3;
-  border-radius:4px 10px 12px 12px; transform-origin:50% 100%; pointer-events:none;
-  background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 88%,#fff),color-mix(in srgb,var(--accent) 94%,#000));
+  border-radius:6px 12px 14px 14px; transform-origin:50% 100%; pointer-events:none;
+  background:var(--yellow); border:var(--bw) solid var(--line);
   transition:transform .5s cubic-bezier(.34,1.3,.64,1)}
 .folderwrap.open .rbfront{transform:perspective(1100px) rotateX(-64deg)}
 .folderwrap:not(.open) .rbfolder:hover .rbfront{transform:perspective(1100px) rotateX(-15deg)}
 .rbpaper{position:absolute; left:50%; bottom:6px; width:var(--dw); height:var(--dh); z-index:2;
-  background:var(--bg); border:1px solid var(--line); border-radius:7px;
+  background:var(--card); border:var(--bw) solid var(--line); border-radius:8px;
   display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:4px;
   padding:10px 8px; font-size:10px; line-height:1.3; cursor:pointer; text-align:center; color:var(--ink);
-  box-shadow:0 5px 16px rgba(40,30,10,.14); overflow:hidden;
+  box-shadow:var(--sh); overflow:hidden;
   transform:translate(calc(-50% + var(--cx)),calc(-1*var(--cy))) rotate(var(--crot));
-  transition:transform .55s cubic-bezier(.34,1.45,.64,1), box-shadow .25s}
-.rbpaper b{display:block; font-size:10px}
-.rbpaper .d{color:var(--muted); font-size:9px}
-.rblink{display:inline-block; margin-top:2px; color:var(--accent); font-weight:700; font-size:10px; text-decoration:underline}
+  transition:transform .55s cubic-bezier(.34,1.45,.64,1)}
+.rbpaper b{display:block; font-size:10px; font-weight:800}
+.rbpaper .d{color:var(--muted); font-size:9px; font-weight:700}
+.rblink{display:inline-block; margin-top:2px; color:var(--orange); font-weight:800; font-size:10px; text-decoration:underline}
 .folderwrap:not(.open) .rbfolder:hover .rbpaper{
   transform:translate(calc(-50% + var(--cx)),calc(-1*var(--cy) - 10px)) rotate(var(--crot))}
 .folderwrap.open .rbpaper{z-index:4;
   transform:translate(calc(-50% + var(--ox)),var(--oy)) rotate(var(--orot)) scale(var(--osc))}
-.folderwrap.open .rbpaper:hover{box-shadow:0 10px 24px rgba(40,30,10,.22);
+.folderwrap.open .rbpaper:hover{
   transform:translate(calc(-50% + var(--ox)),calc(var(--oy) - 8px)) rotate(var(--orot)) scale(calc(var(--osc) + 0.05))}
 .folderwrap.open .rbpaper.zoom{z-index:9;
   transform:translate(-50%,calc(var(--oy) - 20px)) rotate(0deg) scale(1.5)}
-@media (prefers-reduced-motion: reduce){ .rbpaper,.rbfront,.rbfolder{transition:none} }
-/* ---- odometer counter (React-Bits-style) ---- */
-.odo{display:inline-flex}
-.odigit{display:inline-block; height:1em; line-height:1; overflow:hidden}
-.ostack{display:block; transition:transform .8s cubic-bezier(.25,1.2,.35,1)}
-.ostack b{display:block; height:1em; line-height:1; font-weight:inherit}
-@media (prefers-reduced-motion: reduce){ .ostack{transition:none} }
+/* ---- peek rating ---- */
+.rate{display:flex; gap:4px; align-items:flex-end; margin:4px 0 2px; padding-top:12px}
+.rstar{border:none; background:none; padding:2px; cursor:pointer; color:var(--card); font-family:inherit;
+  transition:transform .18s cubic-bezier(.3,1.6,.4,1), color .15s}
+.rstar svg{display:block; fill:currentColor; stroke:var(--line); stroke-width:1.6}
+.rstar:hover{color:var(--yellow)}
+.rstar.on{color:var(--yellow)}
+.rstar.pop{animation:popStar .32s cubic-bezier(.3,1.8,.4,1)}
+@keyframes popStar{0%{transform:scale(1)} 45%{transform:scale(1.4) translateY(-4px)} 100%{transform:scale(1)}}
 /* ---- motion ---- */
 @media (prefers-reduced-motion: no-preference){
   #app>*{animation:fadeUp .4s cubic-bezier(.2,.7,.3,1) both}
@@ -469,15 +419,14 @@ html.wide[data-layout="mobile"] .smenu{position:absolute}
   #app>*:nth-child(3){animation-delay:.1s}
   #app>*:nth-child(4){animation-delay:.15s}
   #app>*:nth-child(5){animation-delay:.2s}
-  #app>*:nth-child(6){animation-delay:.25s}
-  #app>*:nth-child(n+7){animation-delay:.3s}
-  .hero{animation:heroShift 12s ease-in-out infinite alternate}
-  .pcover{animation:heroShift 16s ease-in-out infinite alternate}
-  .xhero{animation:heroShift 12s ease-in-out infinite alternate}
+  #app>*:nth-child(n+6){animation-delay:.25s}
 }
 #app.noanim>*{animation:none !important}
 @keyframes fadeUp{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
-@keyframes heroShift{from{background-position:0% 0%} to{background-position:100% 100%}}
+@media (prefers-reduced-motion: reduce){
+  .ostack,.rbpaper,.rbfront,.rbfolder,.spanel,.slayer,.sitem,.sback{transition:none}
+  .rstar.pop{animation:none}
+}
 </style>
 </head>
 <body>
@@ -1214,6 +1163,8 @@ function xexpand(){
   const sc=Math.max(0,Math.min(1,(8-r.top)/dist));
   hero.style.setProperty('--xp',sc.toFixed(3));
 }
+let PROP={day:'Monday',win:'wm',ven:'Caf\u00e9',dur:'30 minutes'};
+function propSummary(){ return PROP.day+' \u00b7 '+WNAME[PROP.win]+' \u00b7 '+PROP.ven+' \u00b7 '+PROP.dur; }
 const MSTATE={plan:false,proposeOpen:false,chatOpen:false,surveyOpen:false,notesOpen:false,editOpen:false,aboutOpen:false,safety:false};
 function resetMstate(){MSTATE.plan=false;MSTATE.proposeOpen=false;MSTATE.chatOpen=false;MSTATE.surveyOpen=false;MSTATE.notesOpen=false;MSTATE.editOpen=false;MSTATE.aboutOpen=false;MSTATE.safety=false;}
 const WHOUR={wm:9,wl:12.5,we:18,wk:10};
@@ -1391,17 +1342,16 @@ function topicArr(kind){
 }
 function refreshPicksUI(){
   const arr=topicArr('int');
-  document.querySelectorAll('.ccard').forEach(c=>{
+  document.querySelectorAll('.tchip').forEach(c=>{
     const on=arr.includes(c.dataset.topic);
-    c.classList.toggle('on',on); c.setAttribute('aria-selected',on?'true':'false');
-    const tk=c.querySelector('.ctick');
-    if(on&&!tk){ const cin=c.querySelector('.cin'); if(cin)cin.insertAdjacentHTML('beforeend','<span class="ctick">✓ picked</span>'); }
-    if(!on&&tk)tk.remove();
+    c.classList.toggle('on',on); c.setAttribute('aria-pressed',on?'true':'false');
   });
   const row=document.getElementById('picksrow');
   if(row)row.innerHTML=arr.length
-    ?arr.map(id=>'<button type="button" class="chip on" data-action="unpickHome" data-topic="'+id+'">'+esc(TOPIC[id].label)+' ✕</button>').join('')
-    :'<p class="muted small center" style="width:100%">No picks yet. Choose a few from the wheel above.</p>';
+    ?arr.map(id=>'<button type="button" class="chip on" data-action="unpickHome" data-topic="'+id+'">'+esc(TOPIC[id].label)+' \u2715</button>').join('')
+    :'<p class="muted small center" style="width:100%">No picks yet. Tap a few topics above.</p>';
+  const pl=document.getElementById('pickslabel');
+  if(pl)pl.textContent='Your picks \u00b7 '+arr.length;
   const lw=document.getElementById('lockwrap');
   if(lw)lw.style.display=arr.length?'':'none';
   const ci=document.getElementById('chips-int');
@@ -1422,47 +1372,58 @@ function topicsNearby(u){
   return [...set];
 }
 let NEARBY_SHUFFLE=1;
+function divColor(div){
+  const m={health:'var(--orange)',psych:'var(--pink)',built:'var(--purple)',bioenv:'var(--green)',
+    computing:'var(--yellow)',physsci:'var(--purple)',humanities:'var(--pink)',society:'var(--green)'};
+  return m[div]||'var(--yellow)';
+}
 function nearbyListHtml(u,selected){
   const all=topicsNearby(u);
   if(all.length===0)return '<div class="notice center">No topics from nearby researchers yet. '+esc(HONESTY)+'</div>';
-  /* deterministic shuffle so Refresh visibly reorders */
   const arr=[...all].sort((a,b)=>((a+NEARBY_SHUFFLE).split('').reduce((x,c)=>x+c.charCodeAt(0),0))-((b+NEARBY_SHUFFLE).split('').reduce((x,c)=>x+c.charCodeAt(0),0)));
-  const show=arr.slice(0,12);
-  return '<div class="topicwrap"><h2 class="pagetitle center" style="margin:0 0 4px">What I’d love to learn about this week</h2>'
-   +'<div class="carwrap">'
-   +'<div class="carousel" id="carousel" role="listbox" aria-label="Topics on offer near you" tabindex="0">'
-   +'<div class="ring3d" id="ring3d">'
-   +show.map((id,i)=>{
+  const show=arr.slice(0,14);
+  return '<div class="topicwrap"><h2 class="pagetitle center" style="margin:0 0 2px">What I’d love to learn about this week</h2>'
+   +'<p class="muted small center" style="margin-top:0">Tap topics to pick them.</p>'
+   +'<div class="tcloud">'+show.map(id=>{
       const t=TOPIC[id]; const on=selected.includes(id);
-      return '<button type="button" class="ccard'+(on?' on':'')+'" data-idx="'+i+'" data-action="carCard" data-topic="'+id+'" style="--i:'+i+'" role="option" aria-selected="'+on+'">'
-        +'<span class="cin"><span class="csub">'+esc(t.subLabel)+'</span><span class="clab">'+esc(t.label)+'</span>'
-        +(on?'<span class="ctick">✓ picked</span>':'')+'</span><span class="cfade"></span></button>';
-    }).join('')
-   +'</div></div>'
-   +'</div>'
-   +'</div>';
+      return '<button type="button" class="tchip'+(on?' on':'')+'" data-action="tapTopic" data-topic="'+id+'" style="--tc:'+divColor(t.div)+'" aria-pressed="'+(on?'true':'false')+'">'
+        +'<span class="tcat"><i></i>'+esc(t.subLabel)+'</span>'
+        +'<span class="tname">'+esc(t.label)+'<span class="tk">✓</span></span></button>';
+    }).join('')+'</div></div>';
 }
 /* --- views --- */
 const V={};
 V.welcome=function(){
-  return '<div class="xtrack"><div class="xhero" id="xhero">'
-   +'<svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 9.5h12v5.5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M16 10.5h2.3a2.4 2.4 0 0 1 0 4.8H16"/><path d="M7.5 6c0-1 .5-1.2.5-2.2M11 6c0-1 .5-1.2.5-2.2M14.5 6c0-1 .5-1.2.5-2.2"/></svg>'
-   +'<h2>Randomised Coffee Trial</h2>'
-   +'<div class="muted">one coffee a week with a curious stranger</div>'
-   +'<div class="xhint" aria-hidden="true">scroll ↓</div>'
-   +'</div></div>'
-   +'<section class="xsec"><p class="xbig">Once a week, we match you with one other researcher nearby for an in-person coffee.</p><p class="muted">A conversation with a curious stranger.</p></section>'
-   +'<section class="xsec"><div class="howlist">'
-   +'<div><span class="hnum">1</span>Tell us about you</div>'
-   +'<div><span class="hnum">2</span>Pick what you’re curious about</div>'
-   +'<div><span class="hnum">3</span>Get one match a week</div>'
-   +'<div><span class="hnum">4</span>Have a coffee</div>'
-   +'</div></section>'
-   +'<section class="xsec"><p class="notice" style="text-align:left">'+esc(HONESTY)+'</p>'
-   +'<p class="muted small"><b>House rules:</b> this is for curiosity and conversation. Not recruitment, not sales, not dating.</p></section>'
-   +'<section class="xsec"><h2 style="font-size:22px;margin:0">Ready for a coffee?</h2>'
-   +'<div style="margin-top:10px"><button class="btn primary" data-action="startOnboard">Create my profile</button>'
-   +'<button class="btn" data-action="exploreSample">Explore as a sample researcher</button></div></section>';
+  return '<div class="bigtitle center">Randomised <span class="titlehl">Coffee</span> Trial</div>'
+   +'<p class="center" style="font-weight:700;margin-top:0">One coffee a week with a curious stranger.</p>'
+   +'<div class="illus"><svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+   +'<rect width="360" height="150" fill="#C9B8F2"/>'
+   +'<circle cx="38" cy="34" r="12" fill="#F7C64B" stroke="#1B160E" stroke-width="3"/>'
+   +'<path d="M300 24q10 -12 20 0t20 0" fill="none" stroke="#1B160E" stroke-width="4" stroke-linecap="round"/>'
+   +'<path d="M318 120l8 8m0 -8l-8 8" stroke="#1B160E" stroke-width="4" stroke-linecap="round"/>'
+   +'<rect x="26" y="112" width="60" height="18" rx="9" fill="#8FD6AD" stroke="#1B160E" stroke-width="3"/>'
+   +'<path d="M140 52c4 -10 0 -14 4 -22m18 22c4 -10 0 -14 4 -22" stroke="#1B160E" stroke-width="4" stroke-linecap="round" fill="none"/>'
+   +'<path d="M118 62h78v26a30 30 0 0 1 -30 30h-18a30 30 0 0 1 -30 -30z" fill="#EB5A2D" stroke="#1B160E" stroke-width="4"/>'
+   +'<path d="M196 68h12a12 12 0 0 1 0 24h-12" fill="none" stroke="#1B160E" stroke-width="4"/>'
+   +'<path d="M236 70c3 -8 0 -11 3 -17" stroke="#1B160E" stroke-width="4" stroke-linecap="round" fill="none"/>'
+   +'<path d="M222 78h52v18a24 24 0 0 1 -24 24h-6a24 24 0 0 1 -22 -24z" fill="#F7C64B" stroke="#1B160E" stroke-width="4"/>'
+   +'<ellipse cx="190" cy="126" rx="80" ry="7" fill="#1B160E" opacity=".18"/>'
+   +'</svg></div>'
+   +'<p style="font-weight:700" class="center">Once a week, we match you with <b>one other researcher nearby</b> for an in-person coffee.</p>'
+   +'<h2 class="pagetitle">How it works</h2>'
+   +'<div class="how2">'
+   +'<div class="c1"><span class="hnum">1</span><br>Tell us about you</div>'
+   +'<div class="c2"><span class="hnum">2</span><br>Pick what you’re curious about</div>'
+   +'<div class="c3"><span class="hnum">3</span><br>Get one match a week</div>'
+   +'<div class="c4"><span class="hnum">4</span><br>Have a coffee</div>'
+   +'</div>'
+   +'<div class="notice"><span class="brandnew">Brand new</span><br>'+esc(HONESTY)+'</div>'
+   +'<div class="darkcard"><h2>House rules</h2><div class="muted small">This is for curiosity and conversation.</div>'
+   +'<div style="margin-top:8px"><span class="ruletag ok">✓ Curiosity</span><span class="ruletag ok">✓ Conversation</span>'
+   +'<span class="ruletag">✕ Not recruitment</span><span class="ruletag">✕ Not sales</span><span class="ruletag">✕ Not dating</span></div></div>'
+   +'<h2 class="pagetitle center" style="margin-top:22px">Ready for a coffee?</h2>'
+   +'<div class="center"><button class="btn primary" data-action="startOnboard">Create my profile</button>'
+   +'<button class="btn" data-action="exploreSample">Explore as a sample researcher</button></div>';
 };
 V.onboard=function(){
   const st=S.onb.step,d=S.onb.draft;
@@ -1547,33 +1508,49 @@ V.home=function(){
     return picksBody(u,false);
   }
   const m=matchFor(u.id,S.week);
+  const deco='<svg class="deco" viewBox="0 0 360 300" preserveAspectRatio="none" aria-hidden="true">'
+   +'<circle cx="330" cy="30" r="34" fill="#C9B8F2" stroke="#1B160E" stroke-width="3"/>'
+   +'<circle cx="24" cy="250" r="22" fill="#F5A9C6" stroke="#1B160E" stroke-width="3"/>'
+   +'<path d="M20 60q10 -12 20 0t20 0" fill="none" stroke="#F7C64B" stroke-width="5" stroke-linecap="round"/>'
+   +'<path d="M300 268q10 -12 20 0t20 0" fill="none" stroke="#F7C64B" stroke-width="5" stroke-linecap="round"/>'
+   +'</svg>';
   if(!m){
-    return '<h2 class="pagetitle center">Your match this week</h2>'
-     +'<div class="card center"><h2>No match this week</h2>'
+    return '<div class="bluehero">'+deco+'<h2 class="pagetitle center">Your match this week</h2>'
+     +'<div class="revealcard"><h2>No match this week</h2>'
      +'<p>This is a new app, so there aren’t many people near you yet and we couldn’t find a match this week. <b>You’ll be first in line next week.</b></p>'
-     +'<p>The best thing you can do is tell a friend or a colleague.</p>'
      +'<button class="btn primary" data-action="nav" data-v="invite">Invite a friend</button>'
      +'<button class="btn" data-action="nav" data-v="pause">Pause for a while</button></div>'
-     +'<div class="center"><button class="btn small" data-action="editTopics">Modify topics for next week</button></div>';
+     +'<div class="center" style="margin-top:14px"><button class="btn ghost" data-action="editTopics">Modify topics for next week</button></div>'
+     +'</div>';
   }
   const p=partnerOf(m,u.id);
-  return '<h2 class="pagetitle center">Your match this week</h2>'
-   +'<div class="card center"><h2>'+esc(p.displayName)+'</h2>'
-   +'<div class="notice small center" style="margin-top:8px">'+(m.tier==='mutual'?'You are each curious about the other’s field.':'There wasn’t a perfect match this week, but everyone has something to share. We think this person is worth a coffee.')+'</div>'
-   +'<button class="btn primary" data-action="openMatch" data-m="'+m.id+'">Open match</button></div>'
-   +'<div class="center"><button class="btn small" data-action="editTopics">Modify topics for next week</button></div>';
+  const initial=esc((p.displayName||'?').trim().charAt(0).toUpperCase());
+  return '<div class="bluehero">'+deco+'<h2 class="pagetitle center">Your match this week</h2>'
+   +'<div class="revealcard">'
+   +'<div class="avatar big" style="margin:0 auto 8px" aria-hidden="true">'+initial+'</div>'
+   +'<h2 style="margin:0">'+esc(p.displayName)+'</h2>'
+   +'<div class="muted small">Around '+esc(AREA[p.area].name)+', '+esc(AREA[p.area].city)+'</div>'
+   +'<div class="dashes"></div>'
+   +'<p style="font-weight:800;margin:6px 0">'+(m.tier==='mutual'?'You are each curious about the other’s field.':'Everyone has something to share. We think this person is worth a coffee.')+'</p>'
+   +'<div>'+p.backgroundTopics.slice(0,3).map(t=>'<span class="tag">'+esc(TOPIC[t].label)+'</span>').join('')+'</div>'
+   +'<div style="margin-top:12px"><button class="btn primary" data-action="openMatch" data-m="'+m.id+'">Open match →</button></div>'
+   +'</div>'
+   +'<div class="center" style="margin-top:14px"><button class="btn ghost" data-action="editTopics">Modify topics for next week</button></div>'
+   +'</div>';
 };
 function picksBody(u,editMode){
   return '<div class="cols"><div class="colA">'
+   +'<div class="sectlabel center" style="margin-top:16px">Next match drops in</div>'
    +countdownHtml(nextMondayMidnight(),'')
    +(editMode?'':'<p class="muted small center">Demo: “Run this week’s matching” in the control centre triggers the drop.</p>')
    +'</div><div class="colB">'
    +'<div class="card">'+nearbyListHtml(u,u.interestTopics)
    +'<hr class="soft">'
+   +'<div class="sectlabel center" id="pickslabel">Your picks · '+u.interestTopics.length+'</div>'
    +'<div class="chips" style="justify-content:center" id="picksrow">'
    +(u.interestTopics.length
      ?u.interestTopics.map(id=>'<button type="button" class="chip on" data-action="unpickHome" data-topic="'+id+'">'+esc(TOPIC[id].label)+' ✕</button>').join('')
-     :'<p class="muted small center" style="width:100%">No picks yet. Choose a few from the wheel above.</p>')
+     :'<p class="muted small center" style="width:100%">No picks yet. Tap a few topics above.</p>')
    +'</div>'
    +(editMode?'':'<div class="center" id="lockwrap"'+(u.interestTopics.length?'':' style="display:none"')+'><button class="btn primary" data-action="lockPicks">Lock in my topics</button></div>')
    +'</div>'
@@ -1598,38 +1575,11 @@ V.match=function(){
   }
   if(m.status==='happened')return out+wentWellHtml(m,u,p);
   if(m.status==='scheduled'&&timeReached(m))return out+afterMeetHtml(m,u,p);
-  if(MSTATE.safety){
-    return '<div class="safetyscreen">'
-     +'<svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>'
-     +'<p class="xbig" style="max-width:24em">Meet in a public place, tell a friend where you\u2019re going, and trust your gut.</p>'
-     +'<div class="muted small">Opening the planner\u2026</div>'
-     +'</div>';
-  }
   if(!MSTATE.plan){
-    const tierLine=m.tier==='mutual'
-      ?'You are each curious about the other’s field.'
-      :'There wasn’t a perfect match this week, but everyone has something to share. We think this person is worth a coffee.';
-    const initial=esc((p.displayName||'?').trim().charAt(0).toUpperCase());
-    out+='<div class="flip'+(MSTATE.aboutOpen?' flipped':'')+'" id="flipcard">'
-      +'<div class="flipinner">'
-      +'<div class="face front" data-action="flipMatch" role="button" tabindex="0" aria-label="Flip to see '+esc(p.displayName)+'’s profile">'
-        +'<div class="avatar big" aria-hidden="true">'+initial+'</div>'
-        +'<h2 style="margin:0">'+esc(p.displayName)+'</h2>'
-        +'<div class="muted">Around '+esc(AREA[p.area].name)+', '+esc(AREA[p.area].city)+'</div>'
-        +'<div class="muted small fliphint">Tap or flick the card to see their profile</div>'
-      +'</div>'
-      +'<div class="face back">'
-        +'<div class="backscroll">'
-        +'<h2 style="margin:0 0 2px">'+esc(p.displayName)+(p.pronouns?' <span class="muted small">('+esc(p.pronouns)+')</span>':'')+'</h2>'
-        +(p.institution?'<div class="muted small">'+esc(p.institution)+'</div>':'')
-        +qaListHtml(p)
-        +'</div>'
-        +'<button type="button" class="btn small flipback" data-action="flipMatch">↺ Flip back</button>'
-      +'</div>'
-      +'</div></div>'
+    out+=profileCard(p,true)
       +papersHtml(p,false)
-      +'<div class="center" style="margin:16px 0 4px"><button class="btn primary" data-action="planCoffee">Plan coffee →</button></div>'
-      +'<div class="center" style="margin-top:22px"><button class="linkbtn" data-action="cantMake" data-m="'+m.id+'">Can’t make it this week</button>'
+      +'<div class="center" style="margin:16px 0 4px"><button class="btn dark" data-action="planCoffee">Plan coffee \u2192</button></div>'
+      +'<div class="center" style="margin-top:14px"><button class="linkbtn" data-action="cantMake" data-m="'+m.id+'">Can\u2019t make it this week</button>'
       +'<button class="linkbtn" data-action="blockUser" data-m="'+m.id+'">Block</button>'
       +'<button class="linkbtn" data-action="reportUser" data-m="'+m.id+'">Report</button></div>';
     return out;
@@ -1645,13 +1595,15 @@ V.match=function(){
     if(MSTATE.chatOpen)out+=chatCard(m,u,p,false);
     return out;
   }
-  const theirs=m.slots.map((x,i)=>Object.assign({},x,{i})).filter(x=>x.by!==u.id);
-  const mine=m.slots.map((x,i)=>Object.assign({},x,{i})).filter(x=>x.by===u.id);
-  out+='<div class="card"><h2>Propose a time</h2>';
+  const theirs=m.slots.map((x,i2)=>Object.assign({},x,{i:i2})).filter(x=>x.by!==u.id);
+  const mine=m.slots.map((x,i2)=>Object.assign({},x,{i:i2})).filter(x=>x.by===u.id);
+  out+='<div class="safebanner"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>'
+   +'<span>Meet in a public place, tell a friend where you\u2019re going, and trust your gut.</span></div>';
+  out+='<div class="card planhead"><h2 style="margin-bottom:0">Propose a time</h2><div class="with">with '+esc(p.displayName)+'</div>';
   if(theirs.length){
     out+='<h3>Proposed times by '+esc(p.displayName)+'</h3>'
      +theirs.map(x=>'<div class="slot">'+esc(x.day)+', '+esc(WNAME[x.window].toLowerCase())
-       +(x.venue?' · '+esc(x.venue.toLowerCase()):'')+(x.duration?' · '+esc(x.duration.toLowerCase()):'')
+       +(x.venue?' \u00b7 '+esc(x.venue.toLowerCase()):'')+(x.duration?' \u00b7 '+esc(x.duration.toLowerCase()):'')
        +'<button class="btn small primary" data-action="acceptSlot" data-m="'+m.id+'" data-i="'+x.i+'">Accept</button></div>').join('');
   }
   out+='<div id="mineslots">'+(mine.length?'<h3>Your proposals</h3>'+mine.map(x=>'<div class="slot">'+esc(x.day)+', '+esc(WNAME[x.window].toLowerCase())
@@ -1661,16 +1613,19 @@ V.match=function(){
   if(!showPickers){
     out+='<button class="linkbtn" data-action="proposeOther">or propose another time</button>';
   }else if(mine.length<3){
-    out+='<div class="chips" id="proposerow" style="gap:8px">'
-     +'<select id="slotDay" aria-label="Day" style="width:auto">'+['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(d=>'<option>'+d+'</option>').join('')+'</select>'
-     +'<select id="slotWin" aria-label="Time of day" style="width:auto">'+WINDOWS.map(w=>'<option value="'+w.id+'">'+esc(w.label)+'</option>').join('')+'</select>'
-     +'<select id="slotVenue" aria-label="Venue type" style="width:auto">'+VENUES.map(v=>'<option>'+esc(v)+'</option>').join('')+'</select>'
-     +'<select id="slotDur" aria-label="Duration" style="width:auto">'+DURATIONS.map(v=>'<option>'+esc(v)+'</option>').join('')+'</select>'
-     +'<button class="btn small" data-action="proposeSlot" data-m="'+m.id+'">Propose</button></div>';
+    const DAYS=[['Monday','Mon'],['Tuesday','Tue'],['Wednesday','Wed'],['Thursday','Thu'],['Friday','Fri'],['Saturday','Sat'],['Sunday','Sun']];
+    out+='<div id="proposerow">'
+     +'<h3>Day</h3><div class="pillgrp" data-pk="day">'+DAYS.map(dd=>'<button type="button" class="daypill day'+(PROP.day===dd[0]?' on':'')+'" data-action="propSet" data-k="day" data-v="'+dd[0]+'">'+dd[1]+'</button>').join('')+'</div>'
+     +'<h3>When</h3><div class="pillgrp" data-pk="win">'+WINDOWS.map(w=>'<button type="button" class="daypill'+(PROP.win===w.id?' on':'')+'" data-action="propSet" data-k="win" data-v="'+w.id+'">'+esc(w.label)+'</button>').join('')+'</div>'
+     +'<h3>Where</h3><div class="pillgrp" data-pk="ven">'+VENUES.map(v=>'<button type="button" class="daypill'+(PROP.ven===v?' on':'')+'" data-action="propSet" data-k="ven" data-v="'+esc(v)+'">'+esc(v)+'</button>').join('')+'</div>'
+     +'<h3>How long</h3><div class="pillgrp" data-pk="dur">'+DURATIONS.map(v=>'<button type="button" class="daypill'+(PROP.dur===v?' on':'')+'" data-action="propSet" data-k="dur" data-v="'+esc(v)+'">'+esc(v)+'</button>').join('')+'</div>'
+     +'<div class="center"><span class="sumpill" id="sumpill">'+esc(propSummary())+'</span></div>'
+     +'<div class="center"><button class="btn orange" data-action="proposeSlot" data-m="'+m.id+'">Propose \u2192</button></div>'
+     +'</div>';
   }
-  out+='<hr class="soft"><button class="linkbtn" data-action="cantMake" data-m="'+m.id+'">Can’t make it this week</button>'
+  out+='<div class="center" style="margin-top:8px"><button class="linkbtn" data-action="cantMake" data-m="'+m.id+'">Can\u2019t make it this week</button>'
    +'<button class="linkbtn" data-action="blockUser" data-m="'+m.id+'">Block</button>'
-   +'<button class="linkbtn" data-action="reportUser" data-m="'+m.id+'">Report</button>'
+   +'<button class="linkbtn" data-action="reportUser" data-m="'+m.id+'">Report</button></div>'
    +'</div>';
   out+=chatCard(m,u,p,false);
   return out;
@@ -1681,13 +1636,12 @@ function unreadCount(m,u){
 }
 function chatCard(m,u,p,locked){
   m.seen=m.seen||{}; m.seen[u.id]=m.messages.length;
-  let out='<div class="card"><h2>Chat</h2>';
+  let out='<div class="card chatcard"><div class="darkhead">Chat</div><div class="chatbody">';
   out+='<div id="msgs">'+m.messages.map(msg=>'<div class="msg '+(msg.from===u.id?'me':'them')+'"><span class="who">'+esc(S.users[msg.from]?S.users[msg.from].displayName:msg.from)+'</span>'+esc(msg.text)+'</div>').join('')+'</div>';
-
   if(locked||m.week<S.week)out+='<p class="notice small">This chat is closed now the meetup is wrapped up.</p>';
-  else out+='<div class="chatbox"><input type="text" id="chatIn" placeholder="Message about the plan…" aria-label="Chat message"><button class="btn small primary" data-action="sendMsg" data-m="'+m.id+'">Send</button></div>'
+  else out+='<div class="chatbox"><input type="text" id="chatIn" placeholder="Message about the plan\u2026" aria-label="Chat message"><button class="btn small primary" data-action="sendMsg" data-m="'+m.id+'">Send</button></div>'
    +'<p class="muted small">Demo tip: switch persona in the control centre to reply as '+esc(p.displayName)+'.</p>';
-  return out+'</div>';
+  return out+'</div></div>';
 }
 function afterMeetHtml(m,u,p){
   return '<div class="card"><h2>After you meet</h2>'
@@ -2139,9 +2093,7 @@ const ACTIONS={
   openMatch:d=>{ S.sel=d.m; S.view='match'; resetMstate(); render(); scrollTopAll(); },
   proposeSlot:d=>{
     const m=S.matches.find(x=>x.id===d.m);
-    const day=document.getElementById('slotDay').value, win=document.getElementById('slotWin').value;
-    const venEl=document.getElementById('slotVenue'), durEl=document.getElementById('slotDur');
-    const ven=venEl?venEl.value:null, dur=durEl?durEl.value:null;
+    const day=PROP.day, win=PROP.win, ven=PROP.ven, dur=PROP.dur;
     m.slots.push({day,window:win,venue:ven,duration:dur,by:S.me});
     save();
     const box=document.getElementById('mineslots');
@@ -2164,8 +2116,18 @@ const ACTIONS={
     render(); toast('Meet up organised!');
   },
   planCoffee:()=>{
-    MSTATE.safety=true; render(); scrollTopAll();
-    setTimeout(()=>{ if(MSTATE.safety){ MSTATE.safety=false; MSTATE.plan=true; render(); scrollTopAll(); } },3500);
+    PROP={day:'Monday',win:'wm',ven:'Caf\u00e9',dur:'30 minutes'};
+    MSTATE.plan=true; render(); scrollTopAll();
+  },
+  propSet:(d,el)=>{
+    PROP[d.k]=d.v;
+    if(el){ el.parentElement.querySelectorAll('.daypill').forEach(b=>b.classList.toggle('on',b===el)); }
+    const sp=document.getElementById('sumpill'); if(sp)sp.textContent=propSummary();
+  },
+  tapTopic:d=>{
+    const arr=topicArr('int'); const k=arr.indexOf(d.topic);
+    k>=0?arr.splice(k,1):arr.push(d.topic);
+    refreshPicksUI();
   },
   toggleEdit:()=>{ MSTATE.editOpen=!MSTATE.editOpen; render(); },
   flipMatch:()=>{
