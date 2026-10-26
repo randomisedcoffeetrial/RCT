@@ -83,7 +83,7 @@ html.wide[data-layout="mobile"] #framewrap{display:flex; justify-content:center;
 html.wide[data-layout="mobile"] #shell{
   width:394px; height:min(830px,calc(100vh - 150px)); min-height:480px;
   background:var(--bg); border:10px solid #16130d; border-radius:48px; overflow:hidden;
-  box-shadow:0 34px 90px rgba(35,24,6,.38);
+  box-shadow:0 34px 90px rgba(35,24,6,.38); position:relative;
 }
 html.wide[data-layout="mobile"] main{overflow-y:auto; min-height:0; padding-bottom:28px}
 html.wide[data-layout="mobile"] nav.bottom{position:static}
@@ -196,6 +196,91 @@ textarea{min-height:64px; resize:vertical}
   transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease}
 .ttile:hover{transform:translateY(-2px); box-shadow:0 8px 20px rgba(90,70,35,.14); border-color:var(--accent)}
 .ttile.on{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+/* ---- circular topic carousel (React-Bits-style 3D ring) ---- */
+.carwrap{margin:6px 0}
+.carousel{position:relative; height:252px; overflow:hidden; touch-action:pan-y; cursor:grab;
+  user-select:none; -webkit-user-select:none; perspective:2500px;
+  opacity:0; animation:stageIn .45s ease .1s forwards}
+.carousel.dragging{cursor:grabbing}
+@keyframes stageIn{to{opacity:1}}
+.ring3d{position:absolute; inset:0; transform-style:preserve-3d}
+.ccard{position:absolute; left:50%; top:50%; width:var(--cw,150px); height:126px;
+  margin:0; background:var(--bg); border:1px solid var(--line); border-radius:12px;
+  padding:0; font-family:inherit; color:var(--ink); cursor:pointer; text-align:center;
+  box-shadow:var(--shadow); overflow:hidden}
+.ccard .cin{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:6px; padding:10px;
+  animation:riseIn .9s cubic-bezier(.22,1,.36,1) both; animation-delay:calc(var(--i,0)*55ms)}
+@keyframes riseIn{from{opacity:0; transform:translateY(-24px)} to{opacity:1; transform:none}}
+.ccard .cfade{position:absolute; inset:0; background:#000; opacity:var(--fade,0);
+  pointer-events:none; border-radius:11px}
+.ccard .csub{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em}
+.ccard .clab{font-size:14px; font-weight:700; line-height:1.25}
+.ccard .ctick{font-size:11px; font-weight:700}
+.ccard.front{border-color:var(--accent); box-shadow:0 12px 28px rgba(90,70,35,.2)}
+.ccard.on{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+.ccard.on .csub{color:color-mix(in srgb,var(--accent-ink) 70%,transparent)}
+@media (prefers-reduced-motion: reduce){ .ccard .cin{animation:none} .carousel{animation:none; opacity:1} }
+/* ---- scroll-expand hero (React-Bits-style) ---- */
+.xtrack{height:165vh; margin-top:6px}
+.xsec{min-height:76vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; gap:6px; padding:10px 0}
+.xbig{font-size:17px; max-width:34em; margin:0}
+html.welcome{scrollbar-width:none}
+html.welcome::-webkit-scrollbar{display:none}
+html.welcome main{scrollbar-width:none}
+html.welcome main::-webkit-scrollbar{display:none}
+.howlist{display:flex; flex-direction:column; gap:18px; font-size:17px; font-weight:700; align-items:flex-start}
+.hnum{display:inline-flex; width:26px; height:26px; border-radius:50%; background:var(--accent); color:var(--accent-ink);
+  align-items:center; justify-content:center; font-size:13px; margin-right:10px; flex:0 0 auto}
+.safetyscreen{display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; gap:8px; height:calc(100vh - 175px); padding:0 10px}
+html.wide[data-layout="mobile"] .safetyscreen{height:100%}
+body.lock{overflow:hidden}
+body.lock main{overflow:hidden !important}
+html.wide[data-layout="mobile"] .xtrack{height:1150px}
+html.wide[data-layout="mobile"] .xsec{min-height:520px}
+.xhero{position:sticky; top:max(8px,calc(50vh - 250px)); height:calc(320px + 150px*var(--xp,0));
+  margin-inline:calc(0px - 16px*var(--xp,0));
+  border-radius:calc(26px*(1 - var(--xp,0)));
+  background:linear-gradient(120deg,var(--accent-soft),var(--card) 45%,var(--accent-soft) 90%);
+  background-size:220% 220%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+  border:1px solid color-mix(in srgb,var(--line) 70%,transparent); box-shadow:var(--shadow);
+  overflow:hidden; position:sticky}
+.xhero .mark{width:calc(46px + 20px*var(--xp,0)); height:auto; color:var(--accent)}
+.xhero h2{font-size:calc(22px + 4px*var(--xp,0)); margin:10px 0 2px; letter-spacing:-.01em}
+html.wide[data-layout="mobile"] .xhero{top:110px}
+.xhint{position:absolute; bottom:12px; left:0; right:0; font-size:11px; color:var(--muted);
+  animation:hintBob 1.6s ease-in-out infinite}
+@keyframes hintBob{0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)}}
+.xbody{padding-top:10px}
+/* ---- flip card (React-Bits-style) ---- */
+.flip{perspective:1400px; margin:12px 0}
+.flipinner{position:relative; width:100%; height:440px; transform-style:preserve-3d;
+  transition:transform .8s cubic-bezier(.3,1.25,.35,1)}
+.flip.flipped .flipinner{transform:rotateY(180deg)}
+.flip .face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  background:var(--card); border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
+  border-radius:18px; box-shadow:var(--shadow); overflow:hidden}
+.flip .face.front{display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:18px; cursor:pointer; text-align:center}
+.flip .face.back{transform:rotateY(180deg); display:flex; flex-direction:column; padding:12px}
+.backscroll{flex:1; overflow-y:auto; padding:4px 6px; scrollbar-width:none}
+.backscroll::-webkit-scrollbar{display:none}
+.flipback{align-self:center; margin-top:8px; flex:0 0 auto}
+.avatar.big{width:84px; height:84px; font-size:34px; margin:0 0 10px; border-color:var(--bg)}
+.fliphint{margin-top:14px}
+@media (prefers-reduced-motion: reduce){ .flipinner{transition:none} }
+/* ---- peek rating (React-Bits-style) ---- */
+.rate{display:flex; gap:4px; align-items:flex-end; margin:4px 0 2px; padding-top:12px}
+.rstar{border:none; background:none; padding:2px; cursor:pointer; color:var(--line); font-family:inherit;
+  transition:transform .18s cubic-bezier(.3,1.6,.4,1), color .15s}
+.rstar svg{display:block; fill:currentColor}
+.rstar:hover{color:var(--accent)}
+.rstar.on{color:var(--accent)}
+.rstar.pop{animation:popStar .32s cubic-bezier(.3,1.8,.4,1)}
+@keyframes popStar{0%{transform:scale(1)} 45%{transform:scale(1.4) translateY(-4px)} 100%{transform:scale(1)}}
 /* ---- spotlight (React-Bits-style) ---- */
 .spot{position:relative; overflow:hidden}
 .spot::after{content:''; position:absolute; inset:0; opacity:0; transition:opacity .25s; pointer-events:none;
@@ -257,7 +342,8 @@ textarea{min-height:64px; resize:vertical}
 .toast{background:var(--ink); color:var(--bg); border-radius:10px; padding:8px 16px; font-size:13px;
   box-shadow:0 10px 30px rgba(0,0,0,.25); animation:ccIn .22s ease both}
 /* ---- control centre ---- */
-.fab{position:fixed; right:18px; bottom:18px; z-index:60; width:52px; height:52px; border-radius:50%;
+.fab{position:fixed; right:18px; bottom:18px; z-index:60; height:48px; padding:0 18px 0 14px; gap:8px;
+  border-radius:999px; font-family:inherit; font-size:13px; font-weight:700; letter-spacing:.02em;
   border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
   background:color-mix(in srgb,var(--card) 78%,transparent);
   backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
@@ -301,6 +387,81 @@ html[data-layout="mobile"]:not(.wide) .ccpanel{left:12px; right:12px; width:auto
 .seg button{flex:1; border:none; background:none; border-radius:8px; padding:5px 0; font-size:12px;
   font-family:inherit; color:var(--muted); cursor:pointer; transition:background .15s,color .15s}
 .seg button.on{background:var(--card); color:var(--ink); font-weight:700; box-shadow:0 1px 4px rgba(0,0,0,.14)}
+/* ---- staggered side menu (React-Bits-style) ---- */
+#menuBtn{border:none; background:none; cursor:pointer; padding:9px 8px; margin-right:2px;
+  display:flex; flex-direction:column; gap:5px; z-index:56; position:relative}
+#menuBtn i{display:block; width:20px; height:2px; background:var(--ink); border-radius:2px;
+  transition:transform .3s cubic-bezier(.2,.8,.25,1), opacity .25s}
+#menuBtn.x i:nth-child(1){transform:translateY(7px) rotate(45deg)}
+#menuBtn.x i:nth-child(2){opacity:0}
+#menuBtn.x i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.smenu{position:fixed; inset:0; z-index:55}
+html.wide[data-layout="mobile"] .smenu{position:absolute}
+.sback{position:absolute; inset:0; background:rgba(30,22,8,0); transition:background .4s}
+.smenu.open .sback{background:rgba(30,22,8,.35)}
+.spanel{position:absolute; top:0; bottom:0; left:0; width:min(320px,82%);
+  transform:translateX(-103%); transition:transform .5s cubic-bezier(.2,.8,.25,1);
+  background:var(--card); box-shadow:20px 0 60px rgba(35,24,6,.18);
+  padding:74px 28px 20px; display:flex; flex-direction:column; overflow:hidden}
+.smenu.open .spanel{transform:none}
+.slayer{position:absolute; inset:0; background:var(--accent); transform:translateX(0);
+  transition:transform .55s cubic-bezier(.2,.8,.25,1) .08s; pointer-events:none}
+.smenu.open .slayer{transform:translateX(103%)}
+.sitems{display:flex; flex-direction:column; align-items:flex-start}
+.sitem{display:flex; align-items:baseline; gap:12px; background:none; border:none; font-family:inherit;
+  color:var(--ink); font-size:30px; font-weight:800; letter-spacing:-.02em; padding:12px 0; cursor:pointer;
+  text-align:left; opacity:0; transform:translateY(26px);
+  transition:opacity .45s ease, transform .5s cubic-bezier(.2,.8,.25,1), color .2s}
+.smenu.open .sitem{opacity:1; transform:none}
+.sitem .snum{font-size:12px; color:var(--accent); font-weight:700}
+.sitem.on, .sitem:hover{color:var(--accent)}
+.sfoot{margin-top:auto; opacity:0; transition:opacity .5s ease .4s}
+.smenu.open .sfoot{opacity:1}
+@media (prefers-reduced-motion: reduce){
+  .spanel,.slayer,.sitem,.sback{transition:none}
+}
+/* ---- papers folder (exact React Bits Folder port, flap mode) ---- */
+.rbscene{perspective:1100px; margin:4px 0 10px}
+.rbfolder{position:relative; width:var(--fw); height:calc(var(--fh) + var(--tab));
+  margin:calc(var(--dh) + 26px) auto 4px; cursor:pointer; outline-offset:6px;
+  transform:rotateX(var(--rtx,0deg)) rotateY(var(--rty,0deg)); transform-style:preserve-3d;
+  transition:transform .3s ease}
+.rbtab{position:absolute; top:0; left:0; width:34%; height:calc(var(--tab) + 10px);
+  border-radius:8px 8px 0 0; background:color-mix(in srgb,var(--accent) 92%,#000); z-index:1}
+.rbback{position:absolute; left:0; right:0; top:var(--tab); bottom:0; z-index:1;
+  border-radius:0 10px 10px 10px;
+  background:linear-gradient(color-mix(in srgb,var(--accent) 92%,#000),color-mix(in srgb,var(--accent) 84%,#000))}
+.rbfront{position:absolute; left:0; right:0; top:calc(var(--tab) + var(--fh)*0.3); bottom:0; z-index:3;
+  border-radius:4px 10px 12px 12px; transform-origin:50% 100%; pointer-events:none;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 88%,#fff),color-mix(in srgb,var(--accent) 94%,#000));
+  transition:transform .5s cubic-bezier(.34,1.3,.64,1)}
+.folderwrap.open .rbfront{transform:perspective(1100px) rotateX(-64deg)}
+.folderwrap:not(.open) .rbfolder:hover .rbfront{transform:perspective(1100px) rotateX(-15deg)}
+.rbpaper{position:absolute; left:50%; bottom:6px; width:var(--dw); height:var(--dh); z-index:2;
+  background:var(--bg); border:1px solid var(--line); border-radius:7px;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:4px;
+  padding:10px 8px; font-size:10px; line-height:1.3; cursor:pointer; text-align:center; color:var(--ink);
+  box-shadow:0 5px 16px rgba(40,30,10,.14); overflow:hidden;
+  transform:translate(calc(-50% + var(--cx)),calc(-1*var(--cy))) rotate(var(--crot));
+  transition:transform .55s cubic-bezier(.34,1.45,.64,1), box-shadow .25s}
+.rbpaper b{display:block; font-size:10px}
+.rbpaper .d{color:var(--muted); font-size:9px}
+.rblink{display:inline-block; margin-top:2px; color:var(--accent); font-weight:700; font-size:10px; text-decoration:underline}
+.folderwrap:not(.open) .rbfolder:hover .rbpaper{
+  transform:translate(calc(-50% + var(--cx)),calc(-1*var(--cy) - 10px)) rotate(var(--crot))}
+.folderwrap.open .rbpaper{z-index:4;
+  transform:translate(calc(-50% + var(--ox)),var(--oy)) rotate(var(--orot)) scale(var(--osc))}
+.folderwrap.open .rbpaper:hover{box-shadow:0 10px 24px rgba(40,30,10,.22);
+  transform:translate(calc(-50% + var(--ox)),calc(var(--oy) - 8px)) rotate(var(--orot)) scale(calc(var(--osc) + 0.05))}
+.folderwrap.open .rbpaper.zoom{z-index:9;
+  transform:translate(-50%,calc(var(--oy) - 20px)) rotate(0deg) scale(1.5)}
+@media (prefers-reduced-motion: reduce){ .rbpaper,.rbfront,.rbfolder{transition:none} }
+/* ---- odometer counter (React-Bits-style) ---- */
+.odo{display:inline-flex}
+.odigit{display:inline-block; height:1em; line-height:1; overflow:hidden}
+.ostack{display:block; transition:transform .8s cubic-bezier(.25,1.2,.35,1)}
+.ostack b{display:block; height:1em; line-height:1; font-weight:inherit}
+@media (prefers-reduced-motion: reduce){ .ostack{transition:none} }
 /* ---- motion ---- */
 @media (prefers-reduced-motion: no-preference){
   #app>*{animation:fadeUp .4s cubic-bezier(.2,.7,.3,1) both}
@@ -312,6 +473,7 @@ html[data-layout="mobile"]:not(.wide) .ccpanel{left:12px; right:12px; width:auto
   #app>*:nth-child(n+7){animation-delay:.3s}
   .hero{animation:heroShift 12s ease-in-out infinite alternate}
   .pcover{animation:heroShift 16s ease-in-out infinite alternate}
+  .xhero{animation:heroShift 12s ease-in-out infinite alternate}
 }
 #app.noanim>*{animation:none !important}
 @keyframes fadeUp{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
@@ -323,16 +485,17 @@ html[data-layout="mobile"]:not(.wide) .ccpanel{left:12px; right:12px; width:auto
 <div id="framewrap"><div id="shell">
 <div class="statusbar" aria-hidden="true"><span>9:41</span><span class="sbicons"><i></i><i></i></span></div>
 <header class="app">
+  <button id="menuBtn" data-action="menuToggle" aria-label="Menu" aria-expanded="false" style="display:none"><i></i><i></i><i></i></button>
   <div class="logo" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 9.5h12v5.5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M16 10.5h2.3a2.4 2.4 0 0 1 0 4.8H16"/><path d="M7.5 6c0-1 .5-1.2.5-2.2M11 6c0-1 .5-1.2.5-2.2M14.5 6c0-1 .5-1.2.5-2.2"/></svg></div>
   <div class="brand">
     <h1>Randomised Coffee Trial</h1>
-    <div class="sub">one coffee a week with a curious stranger</div>
   </div>
   <nav id="topnav" aria-label="Main navigation"></nav>
   <div class="weekchip" id="weekChip">Week 1</div>
 </header>
 <main id="app" aria-live="polite"></main>
 <nav class="bottom" id="nav" aria-label="Main navigation"></nav>
+<div id="smenu"></div>
 </div></div>
 <div id="demoDrawer"></div>
 <div class="toastwrap" id="toastwrap"></div>
@@ -578,6 +741,34 @@ function U(id,name,area,maxKm,avail,bg,ints,p){
     pausedUntilWeek:p.paused||0,pauseReason:p.pauseReason||'',
     unmatchedLastWeek:!!p.carry,blocked:p.blocked||[],matchedBefore:p.met||[]};
 }
+const PAPERS={
+ sam:[{t:'Reframing protection: how pain explanations change behaviour',v:'J. Pain Education',y:'2024'},
+      {t:'Words that stick: metaphor retention in the pain consult',v:'Clinical Communication',y:'2023'},
+      {t:'The waiting room as intervention',v:'Health Environments Review',y:'2025'}],
+ priya:[{t:'Co-designing calm: participatory methods in clinic design',v:'Design for Health',y:'2024'},
+      {t:'What patients draw when you ask about fear',v:'Healthcare Spaces',y:'2023'},
+      {t:'Post-occupancy lessons from a children’s ward',v:'Built Environment Studies',y:'2022'}],
+ noah:[{t:'Why back pain recovery curves refuse to average',v:'Spine Rehabilitation',y:'2024'},
+      {t:'Reassurance that survives the car park',v:'Physiotherapy Practice',y:'2023'}],
+ tara:[{t:'Dose and dosage in ward-based music therapy',v:'Music & Medicine',y:'2024'},
+      {t:'Who is playing matters: live versus recorded music in recovery',v:'Arts in Health',y:'2023'},
+      {t:'Three chords for a lower heart rate',v:'Music Therapy Today',y:'2022'}],
+ hana:[{t:'Where ideas jump: brokerage in collaboration networks',v:'Network Science Letters',y:'2024'},
+      {t:'Interdisciplinarity is a path, not a node',v:'Complex Systems Review',y:'2023'},
+      {t:'Mapping the loneliness of single-field authors',v:'Scientometrics Notes',y:'2022'}],
+ raj:[{t:'Right for the wrong reasons: shortcut learning in biology models',v:'Machine Learning in Biology',y:'2024'},
+      {t:'A pen-and-paper introduction to neural networks',v:'Education in Computing',y:'2023'}],
+ aiko:[{t:'Ashes to atmospheres: tracing supernova seeding',v:'Stellar Archaeology',y:'2024'},
+      {t:'What the first stars left behind',v:'Astrophysical Surveys',y:'2023'},
+      {t:'Observing the unobservable, carefully',v:'Astronomy Methods',y:'2022'}],
+ rosa:[{t:'When replication rescues and when it merely repeats',v:'Philosophy of Science Quarterly',y:'2024'},
+      {t:'Evidence as a social agreement',v:'Epistemics',y:'2023'}],
+ ruby:[{t:'Heatwave survivors: traits of resilient corals',v:'Reef Futures',y:'2024'},
+      {t:'Assisted evolution: rescue or hubris?',v:'Marine Conservation Ethics',y:'2023'},
+      {t:'A field guide to bleaching up close',v:'Coral Science',y:'2022'}],
+ edie:[{t:'Reporting outcomes without bending the program to the form',v:'Community Health Practice',y:'2024'},
+      {t:'Country as clinic: lessons from the Kimberley',v:'Indigenous Health Review',y:'2023'}]
+};
 function seedUsers(){ const L=[
 /* --- Sydney (14) --- */
 U('sam','Sam','camperdown',10,['wl','we'],['chronic-pain','pain-education'],['co-design','healthcare-environments'],
@@ -764,7 +955,7 @@ U('theo','Theo','geelong',20,['wl','we'],['behavioural-economics'],['network-sci
   stuck:'Whether trust can be designed or only grown.',
   want:'What network science says about how cooperation spreads.',
   can:'Why incentives backfire more often than they work.',fun:'Pottery wheel in the shed.'})
-]; const m={}; L.forEach(u=>m[u.id]=u); return m; }
+]; const m={}; L.forEach(u=>{u.papers=PAPERS[u.id]||[]; m[u.id]=u;}); return m; }
 /* ============ seed past matches + surveys (so history, dashboard and Sparks are not empty) ============ */
 function seedPast(){
   const matches=[
@@ -809,7 +1000,7 @@ function freshState(){
   const past=seedPast();
   return {week:1,theme:'auto',runWeeks:[],users:seedUsers(),matches:past.matches,
     surveys:past.surveys,feedback:[{userId:'pete',week:1,kind:'pause',text:'Fieldwork: tagging season up the coast.'}],
-    view:'home',me:null,sel:null,onb:{step:0,draft:{}},diag:{},ccOpen:false,layout:'auto'};
+    view:'home',me:null,sel:null,onb:{step:0,draft:{}},diag:{},ccOpen:false,layout:'auto',customTopics:[],pickEdit:false};
 }
 function save(){ store.set(S); }
 function load(){
@@ -818,6 +1009,8 @@ function load(){
   else { S=freshState(); save(); }
   if(!S.layout)S.layout='auto';
   if(typeof S.ccOpen!=='boolean')S.ccOpen=false;
+  if(!S.customTopics)S.customTopics=[];
+  S.customTopics.forEach(t=>{ TOPIC[t.id]={id:t.id,label:t.label,syn:[],sub:'sub-'+t.id,subLabel:'Custom topics',div:'div-'+t.id,divLabel:'Custom'}; });
 }
 function resetDemo(){
   if(!confirm('Reset the demo? All local demo data will be cleared.'))return;
@@ -929,6 +1122,7 @@ function advanceWeek(){
 }
 /* ============ per-open match view state + time helpers ============ */
 let SKIPANIM=false;
+window.ONB_OPEN=false;
 function scrollTopAll(){ window.scrollTo(0,0); const m=document.getElementById('app'); if(m)m.scrollTop=0; }
 function applyLayout(){
   const mode=(S&&S.layout&&S.layout!=='auto')?S.layout:(window.innerWidth>=900?'desktop':'mobile');
@@ -937,7 +1131,7 @@ function applyLayout(){
 }
 function animateCounts(){
   if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  document.querySelectorAll('.countdown .n,.stat .n').forEach(el=>{
+  document.querySelectorAll('.stat .n').forEach(el=>{
     const target=parseFloat(el.textContent); if(isNaN(target)||target===0)return;
     const dec=el.textContent.includes('.')?2:0;
     const t0=performance.now(), dur=600;
@@ -949,8 +1143,79 @@ function animateCounts(){
     requestAnimationFrame(step);
   });
 }
-const MSTATE={plan:false,proposeOpen:false,chatOpen:false,surveyOpen:false,notesOpen:false,editOpen:false,aboutOpen:false};
-function resetMstate(){MSTATE.plan=false;MSTATE.proposeOpen=false;MSTATE.chatOpen=false;MSTATE.surveyOpen=false;MSTATE.notesOpen=false;MSTATE.editOpen=false;MSTATE.aboutOpen=false;}
+const CAR={angle:0,vel:0,n:0,step:30,r:300,drag:null,dragged:false,mode:'idle',target:0,hold:0,hover:false,ptx:0,pty:0,raf:null,lastT:0};
+const FLIP={drag:null,dx:0,dragged:false};
+const MENU={open:false};
+let RATE_EL=null;
+function layoutCarousel(){
+  const stage=document.getElementById('carousel');
+  if(!stage){ if(CAR.raf){cancelAnimationFrame(CAR.raf);CAR.raf=null;} return; }
+  const cards=[...stage.querySelectorAll('.ccard')];
+  CAR.n=cards.length; if(!CAR.n)return;
+  CAR.step=360/CAR.n;
+  const cw=Math.max(110,Math.min(150,stage.clientWidth*0.38));
+  stage.style.setProperty('--cw',cw.toFixed(0)+'px');
+  const gap=25;
+  /* chord-based ring radius, as in the original (floor 0.6 * card length) */
+  CAR.r=Math.max(0.6*cw,(cw+gap)/(2*Math.tan(Math.PI/CAR.n)));
+  cards.forEach(c=>{
+    const i2=+c.dataset.idx;
+    c.style.transform='translate(-50%,-50%) rotateY('+(i2*CAR.step)+'deg) translateZ('+CAR.r.toFixed(1)+'px)';
+  });
+  applyAngle();
+  if(!CAR.raf){ CAR.lastT=0; CAR.raf=requestAnimationFrame(carTick); }
+}
+function applyAngle(){
+  const ring=document.getElementById('ring3d'); if(!ring)return;
+  ring.style.transform='translateZ('+(-CAR.r).toFixed(1)+'px) rotateX(-5deg) rotateY('+CAR.angle.toFixed(2)+'deg)';
+  ring.querySelectorAll('.ccard').forEach(c=>{
+    const i2=+c.dataset.idx;
+    let a=((i2*CAR.step+CAR.angle)%360+360)%360; if(a>180)a-=360;
+    const fade=0.55*Math.pow((1-Math.cos(a*Math.PI/180))/2,1.25);
+    c.style.setProperty('--fade',fade.toFixed(3));
+    c.classList.toggle('front',Math.abs(a)<CAR.step/2);
+  });
+}
+function carReduced(){ return window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches; }
+function carTick(ts){
+  CAR.raf=null;
+  const stage=document.getElementById('carousel');
+  if(!stage)return;
+  if(!CAR.lastT)CAR.lastT=ts;
+  const dt=Math.min(0.05,(ts-CAR.lastT)/1000); CAR.lastT=ts;
+  if(CAR.mode==='spring'){
+    /* spring: stiffness 118, critical damping, 1/240s substeps */
+    const k=118, cd=2*Math.sqrt(k);
+    const steps=Math.max(1,Math.round(dt*240)), h=dt/steps;
+    for(let z=0;z<steps;z++){
+      const x=CAR.angle-CAR.target;
+      CAR.vel+=(-k*x-cd*CAR.vel)*h;
+      CAR.angle+=CAR.vel*h;
+    }
+    if(Math.abs(CAR.angle-CAR.target)<0.004&&Math.abs(CAR.vel)<0.03){ CAR.angle=CAR.target; CAR.vel=0; CAR.mode='idle'; }
+    applyAngle();
+  }else if(CAR.mode!=='drag'){
+    /* autoplay drift at 14 deg/s; pauses on hover, drags and holds */
+    if(!CAR.hover&&!carReduced()&&Date.now()>CAR.hold){ CAR.angle-=14*dt; applyAngle(); }
+  }
+  CAR.raf=requestAnimationFrame(carTick);
+}
+function carGo(i){
+  let target=-i*CAR.step;
+  target+=Math.round((CAR.angle-target)/360)*360;
+  CAR.target=target; CAR.mode='spring'; CAR.hold=Date.now()+2800;
+}
+function carFrontIndex(){ if(!CAR.n)return 0; return ((Math.round(-CAR.angle/CAR.step)%CAR.n)+CAR.n)%CAR.n; }
+function xexpand(){
+  const hero=document.getElementById('xhero'); if(!hero)return;
+  const track=hero.parentElement;
+  const r=track.getBoundingClientRect();
+  const dist=Math.max(60,track.offsetHeight-hero.offsetHeight-8);
+  const sc=Math.max(0,Math.min(1,(8-r.top)/dist));
+  hero.style.setProperty('--xp',sc.toFixed(3));
+}
+const MSTATE={plan:false,proposeOpen:false,chatOpen:false,surveyOpen:false,notesOpen:false,editOpen:false,aboutOpen:false,safety:false};
+function resetMstate(){MSTATE.plan=false;MSTATE.proposeOpen=false;MSTATE.chatOpen=false;MSTATE.surveyOpen=false;MSTATE.notesOpen=false;MSTATE.editOpen=false;MSTATE.aboutOpen=false;MSTATE.safety=false;}
 const WHOUR={wm:9,wl:12.5,we:18,wk:10};
 function nextDayDate(dayName,hourF){
   const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -970,13 +1235,32 @@ function nextMondayMidnight(){
 function cdCells(ms){ if(ms<0)ms=0;
   return {d:Math.floor(ms/86400000),h:Math.floor(ms%86400000/3600000),mi:Math.floor(ms%3600000/60000)};
 }
+function odoHtml(val){
+  const str=String(Math.max(0,Math.min(99,val))).padStart(2,'0');
+  return '<span class="odo">'+[...str].map(d=>'<span class="odigit"><span class="ostack" data-t="'+d+'" style="transform:translateY(0)">'
+    +'0123456789'.split('').map(x=>'<b>'+x+'</b>').join('')+'</span></span>').join('')+'</span>';
+}
+function setOdo(nEl,val){
+  const str=String(Math.max(0,Math.min(99,val))).padStart(2,'0');
+  const digs=nEl.querySelectorAll('.ostack');
+  if(digs.length!==2){ nEl.textContent=String(val); return; }
+  digs.forEach((dg,i)=>{ dg.style.transform='translateY(-'+str[i]+'em)'; });
+}
+function rollOdos(){
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    document.querySelectorAll('.ostack[data-t]').forEach(st=>{
+      st.style.transform='translateY(-'+st.dataset.t+'em)';
+      st.removeAttribute('data-t');
+    });
+  }));
+}
 function countdownHtml(ts,label){
   if(!ts)return'';
   const c=cdCells(ts-Date.now());
   return '<div class="countdown" data-deadline="'+ts+'">'
-   +'<div class="tcell"><div class="n">'+c.d+'</div><div class="l">days</div></div>'
-   +'<div class="tcell"><div class="n">'+c.h+'</div><div class="l">hours</div></div>'
-   +'<div class="tcell"><div class="n">'+c.mi+'</div><div class="l">minutes</div></div></div>'
+   +'<div class="tcell"><div class="n">'+odoHtml(c.d)+'</div><div class="l">days</div></div>'
+   +'<div class="tcell"><div class="n">'+odoHtml(c.h)+'</div><div class="l">hours</div></div>'
+   +'<div class="tcell"><div class="n">'+odoHtml(c.mi)+'</div><div class="l">minutes</div></div></div>'
    +(label?'<div class="muted small center">'+esc(label)+'</div>':'');
 }
 function timeReached(m){ return !!m.meetAt&&Date.now()>=m.meetAt; }
@@ -986,7 +1270,7 @@ function updateTimers(){
     const ms=+el.dataset.deadline-Date.now();
     if(ms<=0)crossed=true;
     const c=cdCells(ms), ns=el.querySelectorAll('.n');
-    if(ns.length===3){ns[0].textContent=c.d;ns[1].textContent=c.h;ns[2].textContent=c.mi;}
+    if(ns.length===3){ setOdo(ns[0],c.d); setOdo(ns[1],c.h); setOdo(ns[2],c.mi); }
   });
   if(crossed)render();
 }
@@ -1006,13 +1290,44 @@ function profileCard(u,showArea,editBtn){
    +(u.institution?'<div class="muted">'+esc(u.institution)+'</div>':'')
    +(showArea?'<div class="muted small">'+esc(AREA[u.area].name)+', '+esc(AREA[u.area].city)+'</div>':'')
    +'</div></div>'
-   +'<div class="qawrap">'
-   +'<div class="qa"><div class="q">My background</div><div class="a">'+esc(u.background)+'</div></div>'
+   +'<div class="qawrap">'+qaListHtml(u)+'</div>';
+}
+function qaListHtml(u){
+  return '<div class="qa"><div class="q">My background</div><div class="a">'+esc(u.background)+'</div></div>'
    +'<div class="qa"><div class="q">A question I’m stuck on</div><div class="a">'+esc(u.stuckOn)+'</div></div>'
    +'<div class="qa"><div class="q">Something I’d love someone to explain to me</div><div class="a">'+esc(u.wantExplained)+'</div></div>'
    +'<div class="qa"><div class="q">Something I can explain over coffee</div><div class="a">'+esc(u.canExplain)+'</div></div>'
    +'<div class="qa"><div class="q">One non-work thing about me</div><div class="a">'+esc(u.nonWork)+'</div></div>'
    +'<div class="qa"><div class="q">What I know about</div><div>'+u.backgroundTopics.map(t=>'<span class="tag">'+esc(TOPIC[t].label)+'</span>').join('')+'</div></div>'
+
+}
+function papersHtml(u,own){
+  const ps=(u.papers||[]).slice(0,5);
+  if(!ps.length)return own?'<p class="muted small center">Tip: attach three to five optional reads via Edit on your profile.</p>':'';
+  /* geometry per the React Bits Folder (flap mode), size 0.75 */
+  const SZ=0.75, W=224*SZ, H=176*SZ, TAB=20*SZ;
+  const dw=W*0.54, dh=dw*1.22, n=ps.length;
+  const scale=Math.min(0.94,(W*2.3-12*(n-1))/(n*dw));
+  const stepX=dw*scale+12;
+  const TURN=[4,-5,3,-4,4.5];
+  const REST=[[0.16*W,0,3],[-0.17*W,0.05*H,-3.5],[0,0.10*H,0.5],[0.08*W,0.07*H,-1.5],[-0.08*W,0.03*H,2]];
+  return '<div class="qa" style="background:none;border:none;box-shadow:none;margin:14px 0 0;padding:0;text-align:center"><div class="q">Optional reads</div></div>'
+   +'<div class="folderwrap rbscene center" style="--fw:'+W.toFixed(0)+'px;--fh:'+H.toFixed(0)+'px;--tab:'+TAB.toFixed(0)+'px;--dw:'+dw.toFixed(0)+'px;--dh:'+dh.toFixed(0)+'px">'
+   +'<div class="rbfolder" data-action="folderToggle" role="button" tabindex="0" aria-expanded="false" aria-label="Optional reads folder, '+n+' paper'+(n>1?'s':'')+'">'
+   +'<span class="rbtab"></span><span class="rbback"></span>'
+   +ps.map((pp,i)=>{
+      const rs=REST[i%REST.length];
+      const ox=((i-(n-1)/2)*stepX).toFixed(1);
+      const oy=(-(H*0.62+dh*scale*0.5)+(i%2?8:0)).toFixed(1);
+      const orot=(TURN[i%TURN.length]*0.55).toFixed(2);
+      const meta=[pp.v,pp.y].filter(Boolean).join(' · ');
+      return '<span class="rbpaper" data-action="paperTap" role="button" tabindex="0" style="--cx:'+rs[0].toFixed(1)+'px;--cy:'+rs[1].toFixed(1)+'px;--crot:'+rs[2]+'deg;--ox:'+ox+'px;--oy:'+oy+'px;--orot:'+orot+'deg;--osc:'+scale.toFixed(2)+';transition-delay:'+(0.05+i*0.045).toFixed(3)+'s">'
+        +'<b>'+esc(pp.t)+'</b>'+(meta?'<span class="d">'+esc(meta)+'</span>':'')
+        +(pp.u?'<a class="rblink" data-action="paperLink" href="'+esc(pp.u)+'" target="_blank" rel="noopener">Open ↗</a>':'')
+        +'</span>';
+    }).join('')
+   +'<span class="rbfront"></span>'
+   +'</div>'
    +'</div>';
 }
 /* --- topic search picker --- */
@@ -1047,7 +1362,10 @@ function pickerHtml(kind,selected,placeholder){
   const res=PICK.kind===kind?searchTopics(PICK.q):[];
   let resHtml='';
   if(PICK.kind===kind&&PICK.q.trim().length>=2){
-    if(res.length===0)resHtml='<div class="notice small">No topic found for that yet. Try another word, or a broader one.</div>';
+    const qq=PICK.q.trim();
+    const exact=res.some(id=>TOPIC[id].label.toLowerCase()===qq.toLowerCase());
+    const addRow=exact?'':'<div class="grp">Not listed?</div><button type="button" data-action="addCustom" data-kind="'+kind+'">+ Add \u201C'+esc(qq)+'\u201D as a new topic</button>';
+    if(res.length===0)resHtml='<div class="searchres">'+addRow+'</div>';
     else{
       /* group results under their subcategory so the mapping is visible */
       const bySub={};
@@ -1056,13 +1374,13 @@ function pickerHtml(kind,selected,placeholder){
         const first=TOPIC[bySub[sub][0]];
         return '<div class="grp">'+esc(first.divLabel)+' &rsaquo; '+esc(first.subLabel)+'</div>'
           +bySub[sub].map(id=>'<button type="button" data-action="pickTopic" data-kind="'+kind+'" data-topic="'+id+'">'
-            +esc(TOPIC[id].label)+(selected.includes(id)?' ✓':'')+'</button>').join('');
-      }).join('')+'</div>';
+            +esc(TOPIC[id].label)+(selected.includes(id)?' \u2713':'')+'</button>').join('');
+      }).join('')+addRow+'</div>';
     }
   }
   return '<input type="search" data-input="picker" data-kind="'+kind+'" placeholder="'+esc(placeholder)+'" value="'+(PICK.kind===kind?esc(PICK.q):'')+'" aria-label="'+esc(placeholder)+'">'
     +resHtml
-    +'<div class="chips">'+selected.map(id=>'<button type="button" class="chip on" data-action="unpickTopic" data-kind="'+kind+'" data-topic="'+id+'">'+esc(TOPIC[id].label)+' ✕</button>').join('')
+    +'<div class="chips" id="chips-'+kind+'">'+selected.map(id=>'<button type="button" class="chip on" data-action="unpickTopic" data-kind="'+kind+'" data-topic="'+id+'">'+esc(TOPIC[id].label)+' ✕</button>').join('')
     +(selected.length?'':'<span class="muted small">Nothing picked yet</span>')+'</div>';
 }
 function topicArr(kind){
@@ -1070,6 +1388,27 @@ function topicArr(kind){
   if(!target)return[];
   if(kind==='bg'){ target.backgroundTopics=target.backgroundTopics||[]; return target.backgroundTopics; }
   target.interestTopics=target.interestTopics||[]; return target.interestTopics;
+}
+function refreshPicksUI(){
+  const arr=topicArr('int');
+  document.querySelectorAll('.ccard').forEach(c=>{
+    const on=arr.includes(c.dataset.topic);
+    c.classList.toggle('on',on); c.setAttribute('aria-selected',on?'true':'false');
+    const tk=c.querySelector('.ctick');
+    if(on&&!tk){ const cin=c.querySelector('.cin'); if(cin)cin.insertAdjacentHTML('beforeend','<span class="ctick">✓ picked</span>'); }
+    if(!on&&tk)tk.remove();
+  });
+  const row=document.getElementById('picksrow');
+  if(row)row.innerHTML=arr.length
+    ?arr.map(id=>'<button type="button" class="chip on" data-action="unpickHome" data-topic="'+id+'">'+esc(TOPIC[id].label)+' ✕</button>').join('')
+    :'<p class="muted small center" style="width:100%">No picks yet. Choose a few from the wheel above.</p>';
+  const lw=document.getElementById('lockwrap');
+  if(lw)lw.style.display=arr.length?'':'none';
+  const ci=document.getElementById('chips-int');
+  if(ci)ci.innerHTML=(arr.length
+    ?arr.map(id=>'<button type="button" class="chip on" data-action="unpickTopic" data-kind="int" data-topic="'+id+'">'+esc(TOPIC[id].label)+' \u2715</button>').join('')
+    :'<span class="muted small">Nothing picked yet</span>');
+  save();
 }
 function topicsNearby(u){
   /* topics held by active profiles within the user's travel range; names only, no counts, no identities */
@@ -1089,85 +1428,97 @@ function nearbyListHtml(u,selected){
   /* deterministic shuffle so Refresh visibly reorders */
   const arr=[...all].sort((a,b)=>((a+NEARBY_SHUFFLE).split('').reduce((x,c)=>x+c.charCodeAt(0),0))-((b+NEARBY_SHUFFLE).split('').reduce((x,c)=>x+c.charCodeAt(0),0)));
   const show=arr.slice(0,12);
-  const bySub={};
-  show.forEach(id=>{const t=TOPIC[id];(bySub[t.sub]=bySub[t.sub]||[]).push(id);});
-  return '<div class="topicwrap"><p class="muted small">Things a few researchers near you could talk about (no names, no numbers):</p>'
-    +Object.keys(bySub).map(sub=>{
-      const first=TOPIC[bySub[sub][0]];
-      return '<div class="grphead">'+esc(first.subLabel)+'</div><div class="topicgrid">'
-        +bySub[sub].map(id=>'<button type="button" class="ttile spot'+(selected.includes(id)?' on':'')+'" data-action="toggleNearby" data-topic="'+id+'">'+esc(TOPIC[id].label)+'</button>').join('')+'</div>';
+  return '<div class="topicwrap"><h2 class="pagetitle center" style="margin:0 0 4px">What I’d love to learn about this week</h2>'
+   +'<div class="carwrap">'
+   +'<div class="carousel" id="carousel" role="listbox" aria-label="Topics on offer near you" tabindex="0">'
+   +'<div class="ring3d" id="ring3d">'
+   +show.map((id,i)=>{
+      const t=TOPIC[id]; const on=selected.includes(id);
+      return '<button type="button" class="ccard'+(on?' on':'')+'" data-idx="'+i+'" data-action="carCard" data-topic="'+id+'" style="--i:'+i+'" role="option" aria-selected="'+on+'">'
+        +'<span class="cin"><span class="csub">'+esc(t.subLabel)+'</span><span class="clab">'+esc(t.label)+'</span>'
+        +(on?'<span class="ctick">✓ picked</span>':'')+'</span><span class="cfade"></span></button>';
     }).join('')
-    +'<button class="btn small" data-action="refreshNearby">↻ Refresh this list</button></div>';
+   +'</div></div>'
+   +'</div>'
+   +'</div>';
 }
 /* --- views --- */
 const V={};
 V.welcome=function(){
-  return '<div class="card center hero"><svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 9.5h12v5.5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M16 10.5h2.3a2.4 2.4 0 0 1 0 4.8H16"/><path d="M7.5 6c0-1 .5-1.2.5-2.2M11 6c0-1 .5-1.2.5-2.2M14.5 6c0-1 .5-1.2.5-2.2"/></svg>'
+  return '<div class="xtrack"><div class="xhero" id="xhero">'
+   +'<svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 9.5h12v5.5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M16 10.5h2.3a2.4 2.4 0 0 1 0 4.8H16"/><path d="M7.5 6c0-1 .5-1.2.5-2.2M11 6c0-1 .5-1.2.5-2.2M14.5 6c0-1 .5-1.2.5-2.2"/></svg>'
    +'<h2>Randomised Coffee Trial</h2>'
-   +'<p>Once a week, we match you with one other researcher nearby for an in-person coffee. Any field, any level, honours upward. No titles, no rankings, no feeds. Just a conversation with a curious stranger.</p>'
-   +'<div class="howgrid" style="text-align:left">'
-   +'<div><b>1. Tell us about you</b>A short, human profile. No titles, ever.</div>'
-   +'<div><b>2. Pick what you’re curious about</b>Privately. Nobody sees your picks.</div>'
-   +'<div><b>3. Get one match a week</b>Mutual curiosity first. A wildcard otherwise.</div>'
-   +'<div><b>4. Have a coffee</b>Plan it in a tiny chat, meet in a public place.</div></div>'
-   +'<p class="notice" style="text-align:left">'+esc(HONESTY)+'</p>'
-   +'<p class="muted small" style="text-align:left"><b>House rules:</b> this is for curiosity and conversation. Not recruitment, not sales, not dating.</p>'
-   +'<button class="btn primary" data-action="startOnboard">Create my profile</button>'
-   +'<button class="btn" data-action="exploreSample">Explore as a sample researcher</button>'
-   +'</div>';
+   +'<div class="muted">one coffee a week with a curious stranger</div>'
+   +'<div class="xhint" aria-hidden="true">scroll ↓</div>'
+   +'</div></div>'
+   +'<section class="xsec"><p class="xbig">Once a week, we match you with one other researcher nearby for an in-person coffee.</p><p class="muted">A conversation with a curious stranger.</p></section>'
+   +'<section class="xsec"><div class="howlist">'
+   +'<div><span class="hnum">1</span>Tell us about you</div>'
+   +'<div><span class="hnum">2</span>Pick what you’re curious about</div>'
+   +'<div><span class="hnum">3</span>Get one match a week</div>'
+   +'<div><span class="hnum">4</span>Have a coffee</div>'
+   +'</div></section>'
+   +'<section class="xsec"><p class="notice" style="text-align:left">'+esc(HONESTY)+'</p>'
+   +'<p class="muted small"><b>House rules:</b> this is for curiosity and conversation. Not recruitment, not sales, not dating.</p></section>'
+   +'<section class="xsec"><h2 style="font-size:22px;margin:0">Ready for a coffee?</h2>'
+   +'<div style="margin-top:10px"><button class="btn primary" data-action="startOnboard">Create my profile</button>'
+   +'<button class="btn" data-action="exploreSample">Explore as a sample researcher</button></div></section>';
 };
 V.onboard=function(){
   const st=S.onb.step,d=S.onb.draft;
   let body='';
-  const steps='<div class="steps">'+[1,2,3,4].map(i=>'<span class="'+(st>=i?'on':'')+'"></span>').join('')+'</div>';
+  const steps='<div class="steps">'+[1,2,3,4,5].map(i=>'<span class="'+(st>=i?'on':'')+'"></span>').join('')+'</div>';
   if(st===1){
-    body='<h2>Verify it’s you</h2>'
-     +'<p>Every researcher signs in with <b>ORCID</b> to prove they’re a real, unique person. We only confirm your identity: your ORCID iD is <b>never shown to anyone</b> and never appears on your profile.</p>'
-     +'<p class="muted small">Don’t have an ORCID? It’s free and takes about two minutes at orcid.org/register. Honours students welcome.</p>';
-    if(d.orcidVerified){
-      body+='<div class="notice good">✓ Signed in with ORCID (simulated). Your iD stays private.</div>'
-       +'<button class="btn primary" data-action="onbNext">Continue</button>';
-    }else if(S.onb.login){
-      body+='<div class="orcidbox"><div class="obh">ORCID sign-in (simulated – this is a demo, nothing is sent anywhere)</div>'
-       +'<label class="f" for="orc-em">Email or ORCID iD</label><input type="text" id="orc-em" autocomplete="off">'
-       +'<label class="f" for="orc-pw">Password</label><input type="password" id="orc-pw" autocomplete="off">'
-       +'<p class="muted small">Demo shortcut: <button type="button" class="linkbtn" data-action="orcidSampleLogin">fill a sample account</button></p>'
-       +'<button class="btn primary" data-action="orcidAuth">Sign in and authorise</button>'
-       +'<button class="btn" data-action="orcidCancel">Cancel</button></div>';
-    }else{
-      body+='<button class="btn primary" data-action="orcidLoginOpen">Sign in with ORCID (simulated)</button>'
-       +'<p class="muted small">Signing in (rather than typing an iD) means nobody can claim someone else’s ORCID.</p>';
-    }
-  }else if(st===2){  }else if(st===2){
-    body='<h2>About you</h2><p class="muted small">Hand-written and human. No titles, no career stage, ever.</p>'
+    body='<h2>Let’s start with you</h2><p class="muted small">No titles, no career stage, ever.</p>'
      +'<label class="f" for="f-name">First name or display name</label><input type="text" id="f-name" value="'+esc(d.displayName||'')+'">'
      +'<label class="f" for="f-pr">Pronouns <span class="opt">(optional)</span></label><input type="text" id="f-pr" value="'+esc(d.pronouns||'')+'">'
      +'<label class="f" for="f-inst">Where you’re based <span class="opt">(optional)</span></label><input type="text" id="f-inst" value="'+esc(d.institution||'')+'">'
+     +'<button class="btn primary" data-action="onbStep2Next">Next</button>';
+  }else if(st===2){
+    body='<h2>About you</h2><p class="muted small">Hand-written and human.</p>'
      +'<label class="f" for="f-bg">My background (2–3 sentences)</label><textarea id="f-bg">'+esc(d.background||'')+'</textarea>'
      +'<label class="f" for="f-stuck">A question I’m stuck on</label><textarea id="f-stuck">'+esc(d.stuckOn||'')+'</textarea>'
      +'<label class="f" for="f-want">Something I’d love someone to explain to me</label><input type="text" id="f-want" value="'+esc(d.wantExplained||'')+'">'
      +'<label class="f" for="f-can">Something I can explain over coffee</label><input type="text" id="f-can" value="'+esc(d.canExplain||'')+'">'
      +'<label class="f" for="f-fun">One non-work thing about me</label><input type="text" id="f-fun" value="'+esc(d.nonWork||'')+'">'
-     +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbStep2Next">Continue</button>';
+     +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbAboutNext">Next</button>';
   }else if(st===3){
-    body='<h2>Where and when</h2><p class="muted small">Only a coarse area is ever shown to a match, and only after you match.</p>'
-     +'<label class="f" for="f-area">Home area</label><select id="f-area">'
-     +AREAS.map(a=>'<option value="'+a.id+'"'+(d.area===a.id?' selected':'')+'>'+esc(a.name)+' ('+esc(a.city)+')</option>').join('')+'</select>'
+    body='<h2>Where you can meet</h2><p class="muted small">Only a coarse area is ever shown to a match, and only after you match.</p>'
+     +'<label class="f" for="f-area-q">Home area</label>'
+     +'<input type="search" id="f-area-q" data-input="areaq" placeholder="Search your suburb or city" autocomplete="off" value="'+(d.area&&AREA[d.area]?esc(AREA[d.area].name+', '+AREA[d.area].city):'')+'">'
+     +'<div class="searchres" id="areaRes" style="display:none"></div>'
+     +'<p class="muted small">The demo includes a sample of Australian areas. The real app will search any city.</p>'
      +'<label class="f" for="f-km">How far will you travel for a good coffee?</label><select id="f-km">'
      +MAXKM.map(k=>'<option value="'+k.v+'"'+(d.maxKm===k.v?' selected':'')+'>'+esc(k.l)+'</option>').join('')+'</select>'
-     +'<label class="f">When are you usually free?</label><div class="chips">'
-     +WINDOWS.map(w=>'<button type="button" class="chip'+((d.availability||[]).includes(w.id)?' on':'')+'" data-action="onbAvail" data-w="'+w.id+'">'+esc(w.label)+'</button>').join('')+'</div>'
-     +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbStep3Next">Continue</button>';
+     +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbStep3Next">Next</button>';
   }else if(st===4){
     const draftUser={id:'me',area:d.area,maxKm:d.maxKm,backgroundTopics:d.backgroundTopics||[],interestTopics:d.interestTopics||[]};
-    body='<h2>Topics</h2>'
-     +'<h3>What I know about</h3><p class="muted small">Shown on your profile after a match. Used to find people curious about your world.</p>'
-     +pickerHtml('bg',d.backgroundTopics||[],'Search your field, e.g. "back pain", "co design", "ML"')
+    body='<h2>Topics I know about</h2>'
+     +pickerHtml('bg',d.backgroundTopics||[],'Search or add your field, e.g. "back pain", "co design", "ML"')
      +'<hr class="soft"><h3>What I’d love to learn about</h3>'
-     +'<p class="muted small"><b>Private.</b> Never shown to anyone, not even your match. Pick several.</p>'
-     +pickerHtml('int',d.interestTopics||[],'Search what you’re curious about')
-     +'<details><summary>Or browse what’s on offer near you</summary>'+nearbyListHtml(draftUser,d.interestTopics||[])+'</details>'
-     +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbFinish">Finish</button>';
+     +pickerHtml('int',d.interestTopics||[],'Search or add what you’re curious about')
+     +'<details id="onbBrowse" ontoggle="window.ONB_OPEN=this.open"'+(window.ONB_OPEN?' open':'')+'><summary>Or browse what’s on offer near you</summary>'+nearbyListHtml(draftUser,d.interestTopics||[])+'</details>'
+     +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbTopicsNext">Next</button>';
+  }else if(st===5){
+    body='<h2>Last step: verify it’s you</h2>'
+     +'<p>Every researcher signs in with <b>ORCID</b> to prove they’re a real, unique person. We only confirm your identity: your ORCID iD is <b>never shown to anyone</b> and never appears on your profile.</p>'
+     +'<p class="muted small">Don’t have an ORCID? It’s free and takes about two minutes at orcid.org/register. Honours students welcome.</p>'
+     +'<div class="notice small center">ORCID is not public or shared.</div>';
+    if(d.orcidVerified){
+      body+='<div class="notice good">✓ Signed in with ORCID (simulated). Your iD stays private.</div>'
+       +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbFinish">Finish</button>';
+    }else if(S.onb.login){
+      body+='<div class="orcidbox"><div class="obh">ORCID sign-in (simulated – this is a demo, nothing is sent anywhere)</div>'
+       +'<label class="f" for="orc-em">Email or ORCID iD</label><input type="text" id="orc-em" autocomplete="off">'
+       +'<label class="f" for="orc-pw">Password</label><input type="password" id="orc-pw" autocomplete="off">'
+       +'<p class="muted small">Demo shortcut: <button type="button" class="linkbtn" data-action="orcidSampleLogin">fill a sample account</button></p>'
+       +'<button class="btn primary" data-action="orcidAuth">Sign in and finish</button>'
+       +'<button class="btn" data-action="orcidCancel">Cancel</button></div>';
+    }else{
+      body+='<button class="btn" data-action="onbBack">Back</button>'
+       +'<button class="btn primary" data-action="orcidLoginOpen">Sign in with ORCID (simulated)</button>'
+       +'<p class="muted small">Signing in (rather than typing an iD) means nobody can claim someone else’s ORCID.</p>';
+    }
   }
   return '<div class="card">'+steps+body+'</div>';
 };
@@ -1179,22 +1530,21 @@ V.home=function(){
       +(u.pauseReason?'<p class="muted small">Your note: '+esc(u.pauseReason)+'</p>':'')
       +'<button class="btn primary" data-action="resumeNow">Resume matching</button></div>';
   }
+  if(S.pickEdit){
+    return '<button class="btn small" data-action="editTopicsDone">← Done</button>'
+     +'<h2 class="pagetitle center" style="margin-top:4px">Modify topics for next week</h2>'
+     +picksBody(u,true);
+  }
   if(!weekRun(S.week)){
-    return '<h2 class="pagetitle center">What I’d love to learn about this week</h2>'
-     +'<div class="cols"><div class="colA">'
-     +'<div class="card center"><div class="muted small">Time left to lock in your picks</div>'
-     +countdownHtml(nextMondayMidnight(),'Matches drop Monday midnight. Your picks decide who you meet.')
-     +'</div>'
-     +'<div class="notice small center">'+esc(HONESTY)+'</div>'
-     +'<p class="muted small center">Demo: “Run this week’s matching” in the control centre triggers the drop.</p>'
-     +'</div><div class="colB">'
-     +'<div class="card">'+nearbyListHtml(u,u.interestTopics)
-     +'<hr class="soft">'
-     +(u.interestTopics.length
-       ?'<div class="muted small center">Your picks this week (private, carried over until you change them):</div><div class="chips" style="justify-content:center">'+u.interestTopics.map(id=>'<button type="button" class="chip on" data-action="unpickTopic" data-kind="int" data-topic="'+id+'">'+esc(TOPIC[id].label)+' ✕</button>').join('')+'</div>'
-       :'<p class="muted small center">No picks yet. Choose a few from the list above.</p>')
-     +'</div>'
-     +'</div></div>';
+    if(u.lockedWeek===S.week){
+      return '<div class="safetyscreen">'
+       +'<h2 style="font-size:22px;margin:0 0 4px">Your topics are locked in!</h2>'
+       +countdownHtml(nextMondayMidnight(),'')
+       +'<button class="btn small" data-action="unlockPicks" style="margin-top:10px">Modify selection</button>'
+       +'<p class="muted small center">Demo: “Run this week’s matching” in the control centre triggers the drop.</p>'
+       +'</div>';
+    }
+    return picksBody(u,false);
   }
   const m=matchFor(u.id,S.week);
   if(!m){
@@ -1203,20 +1553,43 @@ V.home=function(){
      +'<p>This is a new app, so there aren’t many people near you yet and we couldn’t find a match this week. <b>You’ll be first in line next week.</b></p>'
      +'<p>The best thing you can do is tell a friend or a colleague.</p>'
      +'<button class="btn primary" data-action="nav" data-v="invite">Invite a friend</button>'
-     +'<button class="btn" data-action="nav" data-v="pause">Pause for a while</button></div>';
+     +'<button class="btn" data-action="nav" data-v="pause">Pause for a while</button></div>'
+     +'<div class="center"><button class="btn small" data-action="editTopics">Modify topics for next week</button></div>';
   }
   const p=partnerOf(m,u.id);
-  const status={planning:'Not planned yet',scheduled:'Organised',happened:'Happened',cancelled:'Called off',noShow:'Didn’t happen'}[m.status];
   return '<h2 class="pagetitle center">Your match this week</h2>'
    +'<div class="card center"><h2>'+esc(p.displayName)+'</h2>'
-   +'<div class="muted">Around '+esc(AREA[p.area].name)+', '+esc(AREA[p.area].city)+'</div>'
-   +'<div class="muted small">'+esc(status)+'</div>'
-   +'<button class="btn primary" data-action="openMatch" data-m="'+m.id+'">Open match</button></div>';
+   +'<div class="notice small center" style="margin-top:8px">'+(m.tier==='mutual'?'You are each curious about the other’s field.':'There wasn’t a perfect match this week, but everyone has something to share. We think this person is worth a coffee.')+'</div>'
+   +'<button class="btn primary" data-action="openMatch" data-m="'+m.id+'">Open match</button></div>'
+   +'<div class="center"><button class="btn small" data-action="editTopics">Modify topics for next week</button></div>';
 };
+function picksBody(u,editMode){
+  return '<div class="cols"><div class="colA">'
+   +countdownHtml(nextMondayMidnight(),'')
+   +(editMode?'':'<p class="muted small center">Demo: “Run this week’s matching” in the control centre triggers the drop.</p>')
+   +'</div><div class="colB">'
+   +'<div class="card">'+nearbyListHtml(u,u.interestTopics)
+   +'<hr class="soft">'
+   +'<div class="chips" style="justify-content:center" id="picksrow">'
+   +(u.interestTopics.length
+     ?u.interestTopics.map(id=>'<button type="button" class="chip on" data-action="unpickHome" data-topic="'+id+'">'+esc(TOPIC[id].label)+' ✕</button>').join('')
+     :'<p class="muted small center" style="width:100%">No picks yet. Choose a few from the wheel above.</p>')
+   +'</div>'
+   +(editMode?'':'<div class="center" id="lockwrap"'+(u.interestTopics.length?'':' style="display:none"')+'><button class="btn primary" data-action="lockPicks">Lock in my topics</button></div>')
+   +'</div>'
+   +'</div>';
+}
 V.match=function(){
   const u=me(); const m=S.matches.find(x=>x.id===S.sel);
   if(!u||!m)return V.home();
   const p=partnerOf(m,u.id);
+  /* past weeks are archived: only the profile and the chat history remain */
+  if(m.week<S.week){
+    return '<button class="btn small" data-action="nav" data-v="history">← History</button>'
+     +'<div class="muted small center" style="margin-top:6px">Week '+m.week+' · '+(m.tier==='mutual'?'mutual match':'wildcard')+'</div>'
+     +profileCard(p,true)
+     +chatCard(m,u,p,true);
+  }
   let out='<button class="btn small" data-action="nav" data-v="home">← Meet up</button>';
   if(['cancelled','noShow'].includes(m.status)){
     out+='<div class="card"><h2>'+(m.status==='cancelled'?'This match has ended for the week':'This one didn’t happen')+'</h2>'
@@ -1225,24 +1598,40 @@ V.match=function(){
   }
   if(m.status==='happened')return out+wentWellHtml(m,u,p);
   if(m.status==='scheduled'&&timeReached(m))return out+afterMeetHtml(m,u,p);
+  if(MSTATE.safety){
+    return '<div class="safetyscreen">'
+     +'<svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>'
+     +'<p class="xbig" style="max-width:24em">Meet in a public place, tell a friend where you\u2019re going, and trust your gut.</p>'
+     +'<div class="muted small">Opening the planner\u2026</div>'
+     +'</div>';
+  }
   if(!MSTATE.plan){
     const tierLine=m.tier==='mutual'
       ?'You are each curious about the other’s field.'
       :'There wasn’t a perfect match this week, but everyone has something to share. We think this person is worth a coffee.';
-    if(MSTATE.aboutOpen){
-      return '<button class="btn small" data-action="aboutClose">← Back</button>'
-       +profileCard(p,true)
-       +'<div class="card center"><button class="btn primary" data-action="planCoffee">Plan coffee →</button></div>';
-    }
-    out+='<div class="card center"><h2>'+esc(p.displayName)+'</h2>'
-      +'<p class="muted">Around '+esc(AREA[p.area].name)+', '+esc(AREA[p.area].city)+'</p>'
-      +'<div class="notice small center">'+tierLine+'</div>'
-      +'<div><button class="btn" data-action="aboutPartner">About '+esc(p.displayName)+'</button>'
-      +'<button class="btn primary" data-action="planCoffee">Plan coffee →</button></div>'
-      +'<div><button class="linkbtn" data-action="cantMake" data-m="'+m.id+'">Can’t make it this week</button>'
+    const initial=esc((p.displayName||'?').trim().charAt(0).toUpperCase());
+    out+='<div class="flip'+(MSTATE.aboutOpen?' flipped':'')+'" id="flipcard">'
+      +'<div class="flipinner">'
+      +'<div class="face front" data-action="flipMatch" role="button" tabindex="0" aria-label="Flip to see '+esc(p.displayName)+'’s profile">'
+        +'<div class="avatar big" aria-hidden="true">'+initial+'</div>'
+        +'<h2 style="margin:0">'+esc(p.displayName)+'</h2>'
+        +'<div class="muted">Around '+esc(AREA[p.area].name)+', '+esc(AREA[p.area].city)+'</div>'
+        +'<div class="muted small fliphint">Tap or flick the card to see their profile</div>'
+      +'</div>'
+      +'<div class="face back">'
+        +'<div class="backscroll">'
+        +'<h2 style="margin:0 0 2px">'+esc(p.displayName)+(p.pronouns?' <span class="muted small">('+esc(p.pronouns)+')</span>':'')+'</h2>'
+        +(p.institution?'<div class="muted small">'+esc(p.institution)+'</div>':'')
+        +qaListHtml(p)
+        +'</div>'
+        +'<button type="button" class="btn small flipback" data-action="flipMatch">↺ Flip back</button>'
+      +'</div>'
+      +'</div></div>'
+      +papersHtml(p,false)
+      +'<div class="center" style="margin:16px 0 4px"><button class="btn primary" data-action="planCoffee">Plan coffee →</button></div>'
+      +'<div class="center" style="margin-top:22px"><button class="linkbtn" data-action="cantMake" data-m="'+m.id+'">Can’t make it this week</button>'
       +'<button class="linkbtn" data-action="blockUser" data-m="'+m.id+'">Block</button>'
-      +'<button class="linkbtn" data-action="reportUser" data-m="'+m.id+'">Report</button></div>'
-      +'<p class="muted small">Meet in a public place, tell a friend where you’re going, and trust your gut.</p></div>';
+      +'<button class="linkbtn" data-action="reportUser" data-m="'+m.id+'">Report</button></div>';
     return out;
   }
   if(m.chosenSlot){
@@ -1258,31 +1647,26 @@ V.match=function(){
   }
   const theirs=m.slots.map((x,i)=>Object.assign({},x,{i})).filter(x=>x.by!==u.id);
   const mine=m.slots.map((x,i)=>Object.assign({},x,{i})).filter(x=>x.by===u.id);
-  out+='<div class="card"><h2>Plan the coffee</h2>'
-   +'<p class="muted small">Roughly midway: between '+esc(AREA[u.area].name)+' and '+esc(AREA[p.area].name)+' – pick a spot around there.</p>';
+  out+='<div class="card"><h2>Propose a time</h2>';
   if(theirs.length){
     out+='<h3>Proposed times by '+esc(p.displayName)+'</h3>'
      +theirs.map(x=>'<div class="slot">'+esc(x.day)+', '+esc(WNAME[x.window].toLowerCase())
        +(x.venue?' · '+esc(x.venue.toLowerCase()):'')+(x.duration?' · '+esc(x.duration.toLowerCase()):'')
        +'<button class="btn small primary" data-action="acceptSlot" data-m="'+m.id+'" data-i="'+x.i+'">Accept</button></div>').join('');
   }
-  if(mine.length){
-    out+='<h3>Your proposals</h3>'+mine.map(x=>'<div class="slot">'+esc(x.day)+', '+esc(WNAME[x.window].toLowerCase())
-      +(x.venue?' · '+esc(x.venue.toLowerCase()):'')+(x.duration?' · '+esc(x.duration.toLowerCase()):'')
-      +'<span class="muted small" style="margin-left:auto">waiting for '+esc(p.displayName)+'</span></div>').join('');
-  }
+  out+='<div id="mineslots">'+(mine.length?'<h3>Your proposals</h3>'+mine.map(x=>'<div class="slot">'+esc(x.day)+', '+esc(WNAME[x.window].toLowerCase())
+    +(x.venue?' \u00b7 '+esc(x.venue.toLowerCase()):'')+(x.duration?' \u00b7 '+esc(x.duration.toLowerCase()):'')
+    +'<span class="muted small" style="margin-left:auto">waiting for '+esc(p.displayName)+'</span></div>').join(''):'')+'</div>';
   const showPickers=MSTATE.proposeOpen||!theirs.length;
   if(!showPickers){
     out+='<button class="linkbtn" data-action="proposeOther">or propose another time</button>';
   }else if(mine.length<3){
-    if(!theirs.length&&!mine.length)out+='<p class="muted small">Suggest up to three times. Each proposal includes a venue and a duration.</p>';
-    out+='<div class="chips" style="gap:8px">'
+    out+='<div class="chips" id="proposerow" style="gap:8px">'
      +'<select id="slotDay" aria-label="Day" style="width:auto">'+['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(d=>'<option>'+d+'</option>').join('')+'</select>'
      +'<select id="slotWin" aria-label="Time of day" style="width:auto">'+WINDOWS.map(w=>'<option value="'+w.id+'">'+esc(w.label)+'</option>').join('')+'</select>'
      +'<select id="slotVenue" aria-label="Venue type" style="width:auto">'+VENUES.map(v=>'<option>'+esc(v)+'</option>').join('')+'</select>'
      +'<select id="slotDur" aria-label="Duration" style="width:auto">'+DURATIONS.map(v=>'<option>'+esc(v)+'</option>').join('')+'</select>'
-     +'<button class="btn small" data-action="proposeSlot" data-m="'+m.id+'">Propose</button></div>'
-     +'<p class="muted small">Venues are public places only.</p>';
+     +'<button class="btn small" data-action="proposeSlot" data-m="'+m.id+'">Propose</button></div>';
   }
   out+='<hr class="soft"><button class="linkbtn" data-action="cantMake" data-m="'+m.id+'">Can’t make it this week</button>'
    +'<button class="linkbtn" data-action="blockUser" data-m="'+m.id+'">Block</button>'
@@ -1297,9 +1681,9 @@ function unreadCount(m,u){
 }
 function chatCard(m,u,p,locked){
   m.seen=m.seen||{}; m.seen[u.id]=m.messages.length;
-  let out='<div class="card"><h2>Logistics chat</h2>';
-  if(m.messages.length)out+=m.messages.map(msg=>'<div class="msg '+(msg.from===u.id?'me':'them')+'"><span class="who">'+esc(S.users[msg.from]?S.users[msg.from].displayName:msg.from)+'</span>'+esc(msg.text)+'</div>').join('');
-  else out+='<p class="muted small">Say hi and sort out the where and when. This chat is just for planning.</p>';
+  let out='<div class="card"><h2>Chat</h2>';
+  out+='<div id="msgs">'+m.messages.map(msg=>'<div class="msg '+(msg.from===u.id?'me':'them')+'"><span class="who">'+esc(S.users[msg.from]?S.users[msg.from].displayName:msg.from)+'</span>'+esc(msg.text)+'</div>').join('')+'</div>';
+
   if(locked||m.week<S.week)out+='<p class="notice small">This chat is closed now the meetup is wrapped up.</p>';
   else out+='<div class="chatbox"><input type="text" id="chatIn" placeholder="Message about the plan…" aria-label="Chat message"><button class="btn small primary" data-action="sendMsg" data-m="'+m.id+'">Send</button></div>'
    +'<p class="muted small">Demo tip: switch persona in the control centre to reply as '+esc(p.displayName)+'.</p>';
@@ -1340,14 +1724,21 @@ function wentWellHtml(m,u,p){
   out+='</div>';
   if(theirs&&theirs.shared&&theirs.text)out+='<div class="card"><h3 style="margin-top:0">Notes '+esc(p.displayName)+' shared with you</h3><p>'+esc(theirs.text)+'</p></div>';
   if(!done&&MSTATE.surveyOpen)out+=surveyCard(m);
-  out+='<div class="card">'+contactHtml(m,u,p).replace('<hr class="soft">','')+'</div>';
+  out+='<div class="card">'+contactHtml(m,u,p).replace('<hr class="soft">','')+'</div>'
+   +'<div class="center" style="margin-top:14px"><button class="btn primary" data-action="editTopics">Modify topics for next week</button></div>';
   return out;
+}
+function ratingHtml(name,label){
+  const star='<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.5l-5.8 3 1.1-6.5L2.6 9.4l6.5-.9z"/></svg>';
+  return '<label class="f">'+esc(label)+'</label><div class="rate" data-rate="'+name+'">'
+   +[1,2,3,4,5].map(n=>'<button type="button" class="rstar" data-action="rateSet" data-name="'+name+'" data-v="'+n+'" aria-label="'+n+' out of 5">'+star+'</button>').join('')
+   +'<input type="hidden" name="'+name+'" value="0"></div>';
 }
 function surveyCard(m){
   return '<div class="card"><h2>One minute: how was it?</h2>'
    +'<form data-form="survey" data-m="'+m.id+'">'
-   +'<label class="f" for="svC">How comfortable did you feel? (1–5)</label><select id="svC" name="comfort">'+[1,2,3,4,5].map(n=>'<option'+(n===4?' selected':'')+'>'+n+'</option>').join('')+'</select>'
-   +'<label class="f" for="svL">Did you learn something you didn’t expect? (1–5)</label><select id="svL" name="learned">'+[1,2,3,4,5].map(n=>'<option'+(n===4?' selected':'')+'>'+n+'</option>').join('')+'</select>'
+   +ratingHtml('comfort','How comfortable did you feel?')
+   +ratingHtml('learned','Did you learn something you didn’t expect?')
    +'<label class="f" for="svT">One thing I took away (one sentence)</label><input type="text" id="svT" name="takeaway">'
    +'<label class="small"><input type="checkbox" name="pub"> Share this takeaway publicly on the Sparks wall (anonymised)</label><br>'
    +'<label class="small"><input type="checkbox" name="named"> …and you may attach my first name</label>'
@@ -1381,13 +1772,13 @@ V.profile=function(){
   const u=me(); if(!u)return V.welcome();
   return profileCard(u,true,true)
    +(MSTATE.editOpen?editFormHtml(u):'')
+   +papersHtml(u,true)
    +'<hr class="soft">'
    +'<div class="sectlabel">Profile sections</div>'
    +'<div class="proftools">'
-   +'<button class="listlink spot tool" data-action="nav" data-v="topics"><span><b>What I know about</b><span class="d">'+u.backgroundTopics.length+' topics · shown after a match</span></span><span class="chev" aria-hidden="true">›</span></button>'
-   +'<button class="listlink spot tool" data-action="nav" data-v="history"><span><b>History</b><span class="d">Past matches · never repeated</span></span><span class="chev" aria-hidden="true">›</span></button>'
-   +'</div>'
-   +'<div class="notice small">Above is what a match sees, and <b>only after</b> you’re matched. Your weekly picks, exact location and ORCID are never shown.</div>';
+   +'<button class="listlink spot tool" data-action="nav" data-v="topics"><span><b>What I know about</b></span><span class="chev" aria-hidden="true">›</span></button>'
+   +'<button class="listlink spot tool" data-action="nav" data-v="history"><span><b>History</b></span><span class="chev" aria-hidden="true">›</span></button>'
+   +'</div>';
 };
 function editFormHtml(u){
   return '<div class="card"><h2>Edit profile</h2>'
@@ -1402,6 +1793,11 @@ function editFormHtml(u){
    +'<label class="f" for="e-fun">One non-work thing about me</label><input type="text" id="e-fun" name="nonWork" value="'+esc(u.nonWork)+'">'
    +'<label class="f" for="e-area">Home area</label><select id="e-area" name="area">'+AREAS.map(a=>'<option value="'+a.id+'"'+(u.area===a.id?' selected':'')+'>'+esc(a.name)+' ('+esc(a.city)+')</option>').join('')+'</select>'
    +'<label class="f" for="e-km">Max travel</label><select id="e-km" name="maxKm">'+MAXKM.map(k=>'<option value="'+k.v+'"'+(u.maxKm===k.v?' selected':'')+'>'+esc(k.l)+'</option>').join('')+'</select>'
+   +'<h3>Optional reads</h3><p class="muted small" style="margin-top:0">Attach three to five papers others can optionally read. Title, plus a link if you have one.</p>'
+   +[0,1,2,3,4].map(i=>{const pp=(u.papers||[])[i]||{};
+      return '<div class="chatbox"><input type="text" name="pt'+i+'" placeholder="Paper title" value="'+esc(pp.t||'')+'" aria-label="Paper '+(i+1)+' title">'
+       +'<input type="text" name="pu'+i+'" placeholder="Link (optional)" value="'+esc(pp.u||'')+'" aria-label="Paper '+(i+1)+' link" style="max-width:38%">'
+       +'</div>';}).join('')
    +'<label class="f">Availability</label><div class="chips">'+WINDOWS.map(w=>'<button type="button" class="chip'+(u.availability.includes(w.id)?' on':'')+'" data-action="toggleAvail" data-w="'+w.id+'">'+esc(w.label)+'</button>').join('')+'</div>'
    +'<button class="btn primary" type="submit">Save</button></form></div>';
 }
@@ -1425,7 +1821,8 @@ V.more=function(){
    ['invite','Invite a friend','The matches get better with every person'],
    ['settings','Settings and privacy','What’s shown to whom'],
    ['about','About RCT','What this is and why']];
-  return items.map(i=>'<button class="listlink spot" data-action="nav" data-v="'+i[0]+'"><span><b>'+i[1]+'</b><span class="d">'+i[2]+'</span></span></button>').join('');
+  return '<div class="notice small">'+esc(HONESTY)+'</div>'
+   +items.map(i=>'<button class="listlink spot" data-action="nav" data-v="'+i[0]+'"><span><b>'+i[1]+'</b><span class="d">'+i[2]+'</span></span></button>').join('');
 };
 V.about=function(){
   return '<button class="btn small" data-action="nav" data-v="more">← More</button>'+V.welcome();
@@ -1548,14 +1945,44 @@ function navTab(){
   return S.view;
 }
 function renderNav(){
-  const html=S.me?NAVS.map(x=>'<button data-action="nav" data-v="'+x[0]+'" class="'+(navTab()===x[0]?'on':'')+'" aria-label="'+x[1]+'">'+x[1]+'</button>').join(''):'';
-  document.getElementById('nav').innerHTML=html;
-  const tn=document.getElementById('topnav'); if(tn)tn.innerHTML=html;
+  document.getElementById('nav').innerHTML='';
+  const tn=document.getElementById('topnav'); if(tn)tn.innerHTML='';
+}
+function renderMenu(){
+  const c=document.getElementById('smenu'); if(!c)return;
+  const btn=document.getElementById('menuBtn');
+  if(btn){
+    btn.style.display=S.me?'':'none';
+    btn.classList.toggle('x',!!MENU.open);
+    btn.setAttribute('aria-expanded',MENU.open?'true':'false');
+  }
+  if(MENU.open&&S.me){
+    if(!c.querySelector('.smenu')){
+      c.innerHTML='<div class="smenu"><div class="sback" data-action="menuToggle"></div>'
+       +'<div class="spanel"><div class="slayer"></div>'
+       +'<nav class="sitems" aria-label="Main navigation">'
+       +NAVS.map((x,i)=>'<button class="sitem'+(navTab()===x[0]?' on':'')+'" style="transition-delay:'+(0.16+i*0.09).toFixed(2)+'s" data-action="menuNav" data-v="'+x[0]+'"><span class="snum">0'+(i+1)+'</span>'+x[1]+'</button>').join('')
+       +'</nav>'
+       +'<div class="sfoot muted small">Randomised Coffee Trial · week '+S.week+'</div>'
+       +'</div></div>';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        const pn=c.querySelector('.smenu'); if(pn)pn.classList.add('open');
+      }));
+    }else{
+      c.querySelectorAll('.sitem').forEach(b=>b.classList.toggle('on',navTab()===b.dataset.v));
+    }
+  }else{
+    const pn=c.querySelector('.smenu');
+    if(pn&&pn.classList.contains('open')){
+      pn.classList.remove('open');
+      setTimeout(()=>{ if(!MENU.open)c.innerHTML=''; },560);
+    }else c.innerHTML='';
+  }
 }
 function renderDemo(){
   const d=document.getElementById('demoDrawer');
   const fabIcon='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h8M18.5 7H20M4 17h3.5M14 17h6"/><circle cx="15" cy="7" r="2.3"/><circle cx="10.5" cy="17" r="2.3"/></svg>';
-  const fab='<button class="fab" data-action="ccToggle" aria-label="Demo control centre" title="Demo control centre">'+fabIcon+'</button>';
+  const fab='<button class="fab" data-action="ccToggle" aria-label="Demo control centre" title="Demo control centre">'+fabIcon+'<span>Demo controls</span></button>';
   if(!S.ccOpen){ d.innerHTML=fab; return; }
   const u=me();
   const run=weekRun(S.week);
@@ -1588,18 +2015,24 @@ function renderDemo(){
 }
 function render(){
   applyLayout();
+  const u0=S.me?S.users[S.me]:null;
+  document.body.classList.toggle('lock',!!MSTATE.safety||(!!u0&&!S.pickEdit&&S.view==='home'&&!weekRun(S.week)&&u0.pausedUntilWeek<=S.week&&u0.lockedWeek===S.week));
+  document.documentElement.classList.toggle('welcome',!S.me&&S.view!=='onboard');
   document.documentElement.dataset.theme=S.theme==='auto'?'':S.theme;
   document.getElementById('weekChip').textContent='Week '+S.week;
   const v=(S.me||S.view==='onboard')?(V[S.view]||V.home):V.welcome;
   const app=document.getElementById('app');
   app.classList.toggle('noanim',SKIPANIM); SKIPANIM=false;
   app.innerHTML=v();
-  renderNav(); renderDemo();
+  renderNav(); renderDemo(); renderMenu();
+  rollOdos();
+  layoutCarousel();
+  xexpand();
   animateCounts();
   save();
 }
 /* ============ actions ============ */
-function goto(v){ S.view=v; S.sel=(v==='match')?S.sel:null; PICK.q=''; PICK.kind=null; resetMstate(); S.ccOpen=false; render(); scrollTopAll(); }
+function goto(v){ S.view=v; S.sel=(v==='match')?S.sel:null; PICK.q=''; PICK.kind=null; resetMstate(); S.ccOpen=false; S.pickEdit=false; render(); scrollTopAll(); }
 const ACTIONS={
   nav:d=>goto(d.v),
   startOnboard:()=>{ S.view='onboard'; S.onb={step:1,draft:{availability:[],backgroundTopics:[],interestTopics:[]}}; render(); },
@@ -1615,26 +2048,53 @@ const ACTIONS={
        sign-in (3-legged OAuth) and we never see the password at all */
     const e=document.getElementById('orc-em'),pw=document.getElementById('orc-pw');
     if(!e||!e.value.trim()||!pw||!pw.value.trim()){ toast('Enter the sample email and password (simulated)'); return; }
-    S.onb.draft.orcidVerified=true; S.onb.login=false; render();
+    S.onb.draft.orcidVerified=true; S.onb.login=false;
     toast('Signed in with ORCID (simulated). Your iD stays private.');
+    ACTIONS.onbFinish();
   },
   onbNext:()=>{ S.onb.step++; render(); },
   onbBack:()=>{ S.onb.step=Math.max(1,S.onb.step-1); render(); },
   onbStep2Next:()=>{
     const d=S.onb.draft, g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
-    d.displayName=g('f-name'); d.pronouns=g('f-pr'); d.institution=g('f-inst');
-    d.background=g('f-bg'); d.stuckOn=g('f-stuck'); d.wantExplained=g('f-want'); d.canExplain=g('f-can'); d.nonWork=g('f-fun');
+    d.displayName=g('f-name')||d.displayName;
     if(!d.displayName){ toast('A first name or display name is the one thing we need'); return; }
-    S.onb.step=3; render();
+    d.pronouns=g('f-pr'); d.institution=g('f-inst');
+    S.onb.step=2; render(); scrollTopAll();
   },
-  onbAvail:d=>{ const a=S.onb.draft.availability; const i=a.indexOf(d.w); i>=0?a.splice(i,1):a.push(d.w);
-    const area=document.getElementById('f-area'),km=document.getElementById('f-km');
-    if(area)S.onb.draft.area=area.value; if(km)S.onb.draft.maxKm=+km.value; render(); },
+  onbAboutNext:()=>{
+    const d=S.onb.draft, g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+    d.background=g('f-bg'); d.stuckOn=g('f-stuck'); d.wantExplained=g('f-want'); d.canExplain=g('f-can'); d.nonWork=g('f-fun');
+    S.onb.step=3; render(); scrollTopAll();
+  },
   onbStep3Next:()=>{
     const d=S.onb.draft;
-    d.area=document.getElementById('f-area').value; d.maxKm=+document.getElementById('f-km').value;
-    if(!d.availability.length){ toast('Pick at least one time you’re usually free'); return; }
-    S.onb.step=4; render();
+    const km=document.getElementById('f-km'); if(km)d.maxKm=+km.value;
+    if(!d.area){ toast('Search and pick your home area first'); return; }
+    S.onb.step=4; render(); scrollTopAll();
+  },
+  onbTopicsNext:()=>{
+    const d=S.onb.draft;
+    if(!(d.backgroundTopics||[]).length){ toast('Add at least one topic you know about'); return; }
+    if(!(d.interestTopics||[]).length){ toast('Pick at least one thing you\u2019d love to learn about'); return; }
+    S.onb.step=5; render(); scrollTopAll();
+  },
+  addCustom:d=>{
+    const label=PICK.q.trim(); if(label.length<2)return;
+    const id='custom-'+label.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40);
+    if(!TOPIC[id]){
+      TOPIC[id]={id,label,syn:[],sub:'sub-'+id,subLabel:'Custom topics',div:'div-'+id,divLabel:'Custom'};
+      S.customTopics=S.customTopics||[]; S.customTopics.push({id,label});
+    }
+    const arr=topicArr(d.kind); if(!arr.includes(id))arr.push(id);
+    PICK.q=''; SKIPANIM=true; render();
+    toast('Added \u201C'+label+'\u201D');
+  },
+  areaPick:d=>{
+    S.onb.draft.area=d.a;
+    const inp=document.getElementById('f-area-q');
+    if(inp)inp.value=AREA[d.a].name+', '+AREA[d.a].city;
+    const res=document.getElementById('areaRes');
+    if(res){ res.style.display='none'; res.innerHTML=''; }
   },
   onbFinish:()=>{
     const d=S.onb.draft;
@@ -1643,22 +2103,57 @@ const ACTIONS={
     S.users.me={id:'me',displayName:d.displayName,pronouns:d.pronouns||'',institution:d.institution||'',
       verified:true,background:d.background||'',stuckOn:d.stuckOn||'',wantExplained:d.wantExplained||'',
       canExplain:d.canExplain||'',nonWork:d.nonWork||'',backgroundTopics:d.backgroundTopics,
-      interestTopics:d.interestTopics,area:d.area,maxKm:d.maxKm,availability:d.availability,
+      interestTopics:d.interestTopics,area:d.area,maxKm:d.maxKm,availability:['wm','wl','we','wk'],
       pausedUntilWeek:0,pauseReason:'',unmatchedLastWeek:false,blocked:[],matchedBefore:[]};
     S.me='me'; goto('home'); toast('Welcome aboard.');
   },
   pickTopic:d=>{ const arr=topicArr(d.kind); if(!arr.includes(d.topic))arr.push(d.topic); PICK.q=''; render(); },
   unpickTopic:d=>{ const arr=topicArr(d.kind); const i=arr.indexOf(d.topic); if(i>=0)arr.splice(i,1); render(); },
   toggleNearby:d=>{ const arr=topicArr('int'); const i=arr.indexOf(d.topic); i>=0?arr.splice(i,1):arr.push(d.topic); render(); },
-  refreshNearby:()=>{ NEARBY_SHUFFLE++; render(); toast('Refreshed from profiles near you'); },
+  refreshNearby:()=>{ NEARBY_SHUFFLE++; CAR.angle=0; CAR.vel=0; CAR.mode='idle'; render(); toast('Refreshed from profiles near you'); },
+  carCard:d=>{
+    if(CAR.dragged){ CAR.dragged=false; return; }
+    const i=+d.idx;
+    if(carFrontIndex()===i){
+      /* in-place toggle: no full re-render */
+      const arr=topicArr('int'); const k=arr.indexOf(d.topic);
+      k>=0?arr.splice(k,1):arr.push(d.topic);
+      refreshPicksUI();
+    }
+    else carGo(i);
+  },
+  unpickHome:d=>{
+    const arr=topicArr('int'); const k=arr.indexOf(d.topic);
+    if(k>=0)arr.splice(k,1);
+    refreshPicksUI();
+  },
+  editTopics:()=>{ S.pickEdit=true; S.view='home'; S.sel=null; resetMstate(); render(); scrollTopAll(); },
+  editTopicsDone:()=>{ S.pickEdit=false; render(); scrollTopAll(); },
+  lockPicks:()=>{
+    const u=me(); if(!u)return;
+    if(!u.interestTopics.length){ toast('Pick at least one topic first'); return; }
+    u.lockedWeek=S.week; render(); scrollTopAll();
+  },
+  unlockPicks:()=>{ const u=me(); if(!u)return; u.lockedWeek=null; render(); scrollTopAll(); },
   toggleAvail:d=>{ const a=me().availability; const i=a.indexOf(d.w); if(i>=0){ if(a.length===1){toast('Keep at least one window');return;} a.splice(i,1);} else a.push(d.w); render(); },
   openMatch:d=>{ S.sel=d.m; S.view='match'; resetMstate(); render(); scrollTopAll(); },
   proposeSlot:d=>{
     const m=S.matches.find(x=>x.id===d.m);
     const day=document.getElementById('slotDay').value, win=document.getElementById('slotWin').value;
     const venEl=document.getElementById('slotVenue'), durEl=document.getElementById('slotDur');
-    m.slots.push({day,window:win,venue:venEl?venEl.value:null,duration:durEl?durEl.value:null,by:S.me});
-    render();
+    const ven=venEl?venEl.value:null, dur=durEl?durEl.value:null;
+    m.slots.push({day,window:win,venue:ven,duration:dur,by:S.me});
+    save();
+    const box=document.getElementById('mineslots');
+    if(!box){ render(); return; }
+    if(!box.querySelector('h3'))box.insertAdjacentHTML('afterbegin','<h3>Your proposals</h3>');
+    const partner=partnerOf(m,S.me);
+    box.insertAdjacentHTML('beforeend','<div class="slot">'+esc(day)+', '+esc(WNAME[win].toLowerCase())
+      +(ven?' \u00b7 '+esc(ven.toLowerCase()):'')+(dur?' \u00b7 '+esc(dur.toLowerCase()):'')
+      +'<span class="muted small" style="margin-left:auto">waiting for '+esc(partner.displayName)+'</span></div>');
+    if(m.slots.filter(x=>x.by===S.me).length>=3){
+      const pr=document.getElementById('proposerow'); if(pr)pr.style.display='none';
+    }
   },
   acceptSlot:d=>{
     const m=S.matches.find(x=>x.id===d.m);
@@ -1668,10 +2163,46 @@ const ACTIONS={
     m.meetAt=nextDayDate(m.chosenSlot.day,WHOUR[m.chosenSlot.window]!==undefined?WHOUR[m.chosenSlot.window]:12);
     render(); toast('Meet up organised!');
   },
-  planCoffee:()=>{ MSTATE.plan=true; render(); scrollTopAll(); },
+  planCoffee:()=>{
+    MSTATE.safety=true; render(); scrollTopAll();
+    setTimeout(()=>{ if(MSTATE.safety){ MSTATE.safety=false; MSTATE.plan=true; render(); scrollTopAll(); } },3500);
+  },
   toggleEdit:()=>{ MSTATE.editOpen=!MSTATE.editOpen; render(); },
-  aboutPartner:()=>{ MSTATE.aboutOpen=true; render(); scrollTopAll(); },
-  aboutClose:()=>{ MSTATE.aboutOpen=false; render(); scrollTopAll(); },
+  flipMatch:()=>{
+    if(FLIP.dragged){ FLIP.dragged=false; return; }
+    MSTATE.aboutOpen=!MSTATE.aboutOpen;
+    const el=document.getElementById('flipcard');
+    if(el){
+      const inner=el.querySelector('.flipinner');
+      if(inner){ inner.style.transition=''; inner.style.transform=''; }
+      el.classList.toggle('flipped',MSTATE.aboutOpen);
+    } else render();
+  },
+  folderToggle:(d,el)=>{
+    const w=el.closest('.folderwrap'); if(!w)return;
+    const open=w.classList.toggle('open');
+    el.setAttribute('aria-expanded',open?'true':'false');
+    if(!open)w.querySelectorAll('.rbpaper.zoom').forEach(x=>x.classList.remove('zoom'));
+  },
+  paperTap:(d,el)=>{
+    const w=el.closest('.folderwrap'); if(!w)return;
+    if(!w.classList.contains('open')){
+      w.classList.add('open');
+      const rt=w.querySelector('.rbfolder'); if(rt)rt.setAttribute('aria-expanded','true');
+      return;
+    }
+    const was=el.classList.contains('zoom');
+    w.querySelectorAll('.rbpaper.zoom').forEach(x=>x.classList.remove('zoom'));
+    if(!was)el.classList.add('zoom');
+  },
+  paperLink:()=>{},
+  rateSet:d=>{
+    const wrap=document.querySelector('.rate[data-rate="'+d.name+'"]'); if(!wrap)return;
+    wrap.querySelector('input[type=hidden]').value=d.v;
+    wrap.querySelectorAll('.rstar').forEach(st=>{ st.classList.toggle('on',+st.dataset.v<=+d.v); st.classList.remove('pop'); });
+    const btn=wrap.querySelector('.rstar[data-v="'+d.v+'"]');
+    if(btn){ void btn.offsetWidth; btn.classList.add('pop'); }
+  },
   proposeOther:()=>{ MSTATE.proposeOpen=true; render(); },
   openChat:()=>{ MSTATE.chatOpen=!MSTATE.chatOpen; render(); },
   openNotes:()=>{ MSTATE.notesOpen=true; render(); },
@@ -1693,7 +2224,12 @@ const ACTIONS={
   sendMsg:d=>{
     const i=document.getElementById('chatIn'); const t=i?i.value.trim():'';
     if(!t)return;
-    S.matches.find(x=>x.id===d.m).messages.push({from:S.me,text:t}); render();
+    const m=S.matches.find(x=>x.id===d.m);
+    m.messages.push({from:S.me,text:t});
+    m.seen=m.seen||{}; m.seen[S.me]=m.messages.length;
+    const box=document.getElementById('msgs');
+    if(box)box.insertAdjacentHTML('beforeend','<div class="msg me"><span class="who">'+esc(S.users[S.me]?S.users[S.me].displayName:S.me)+'</span>'+esc(t)+'</div>');
+    i.value=''; i.focus(); save();
   },
   cantMake:d=>{
     if(!confirm('End this match for the week? No penalty, and it’s logged kindly.'))return;
@@ -1717,6 +2253,8 @@ const ACTIONS={
   advWeek:advanceWeek,
   reset:resetDemo,
   ccToggle:()=>{ S.ccOpen=!S.ccOpen; render(); },
+  menuToggle:()=>{ MENU.open=!MENU.open; renderMenu(); },
+  menuNav:d=>{ MENU.open=false; goto(d.v); },
   layoutSet:d=>{ S.layout=d.l; render(); },
   resumeNow:()=>{ const u=me(); u.pausedUntilWeek=0; u.pauseReason=''; render(); toast('Welcome back.'); },
   copyInvite:()=>{
@@ -1741,6 +2279,12 @@ const FORMS={
   editProfile:(f)=>{
     const u=me(); const fd=new FormData(f);
     ['displayName','pronouns','institution','background','stuckOn','wantExplained','canExplain','nonWork','area'].forEach(k=>u[k]=String(fd.get(k)||'').trim());
+    u.papers=[];
+    for(let i=0;i<5;i++){
+      const t=String(fd.get('pt'+i)||'').trim();
+      const link=String(fd.get('pu'+i)||'').trim();
+      if(t)u.papers.push({t,u:link});
+    }
     u.maxKm=+fd.get('maxKm'); MSTATE.editOpen=false; render(); toast('Profile saved');
   },
   logMeetup:(f,d)=>{
@@ -1753,6 +2297,7 @@ const FORMS={
   },
   survey:(f,d)=>{
     const fd=new FormData(f);
+    if(!+fd.get('comfort')||!+fd.get('learned')){ toast('Tap a star rating for both questions first'); return; }
     S.surveys.push({matchId:d.m,userId:S.me,comfort:+fd.get('comfort'),learnedUnexpected:+fd.get('learned'),
       takeaway:String(fd.get('takeaway')||'').trim(),wouldRepeat:!!fd.get('repeat'),recommend:!!fd.get('recommend'),
       safetyConcern:String(fd.get('safety')||'').trim(),privateFeedback:String(fd.get('fb')||'').trim(),
@@ -1798,6 +2343,18 @@ document.addEventListener('submit',e=>{
   if(fn)fn(f,f.dataset);
 });
 document.addEventListener('input',e=>{
+  const aq=e.target.closest('[data-input="areaq"]');
+  if(aq){
+    const q=aq.value.trim().toLowerCase();
+    const res=document.getElementById('areaRes'); if(!res)return;
+    if(!q){ res.style.display='none'; res.innerHTML=''; return; }
+    const hits=AREAS.filter(a=>(a.name+' '+a.city).toLowerCase().includes(q)).slice(0,8);
+    res.innerHTML=hits.length
+      ?hits.map(a=>'<button type="button" data-action="areaPick" data-a="'+a.id+'">'+esc(a.name)+' ('+esc(a.city)+')</button>').join('')
+      :'<div class="grp">No matching area</div>';
+    res.style.display='';
+    return;
+  }
   const el=e.target.closest('[data-input="picker"]');
   if(!el)return;
   PICK.q=el.value; PICK.kind=el.dataset.kind;
@@ -1824,13 +2381,135 @@ function orcidValid(str){
   return (res===10?'X':String(res))===s[15];
 }
 /* ============ init ============ */
-window.addEventListener('resize',()=>{ applyLayout(); });
+window.addEventListener('resize',()=>{ applyLayout(); layoutCarousel(); xexpand(); });
+window.addEventListener('scroll',()=>{ xexpand(); },{passive:true});
+document.getElementById('app').addEventListener('scroll',()=>{ xexpand(); },{passive:true});
+document.addEventListener('click',e=>{
+  const stage=e.target.closest&&e.target.closest('.carousel');
+  if(!stage)return;
+  if(e.target.closest&&e.target.closest('[data-action]'))return;
+  if(CAR.dragged){ CAR.dragged=false; return; }
+  /* 3D hit-testing can miss the card; resolve geometrically */
+  let best=null,bestA=1e9;
+  stage.querySelectorAll('.ccard').forEach(c=>{
+    const r=c.getBoundingClientRect();
+    if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){
+      const i2=+c.dataset.idx;
+      let a=((i2*CAR.step+CAR.angle)%360+360)%360; if(a>180)a-=360;
+      if(Math.abs(a)<bestA){ bestA=Math.abs(a); best=c; }
+    }
+  });
+  if(best)ACTIONS.carCard({idx:best.dataset.idx,topic:best.dataset.topic});
+});
+document.addEventListener('pointerdown',e=>{
+  const ff=e.target.closest&&e.target.closest('#flipcard .face.front');
+  if(ff){
+    FLIP.drag={x:e.clientX}; FLIP.dx=0; FLIP.dragged=false;
+    const inner=document.querySelector('#flipcard .flipinner');
+    if(inner)inner.style.transition='none';
+  }
+  const el=e.target.closest&&e.target.closest('.carousel');
+  if(!el)return;
+  CAR.drag={x:e.clientX,y:e.clientY,angle:CAR.angle,moved:false,samples:[[performance.now(),CAR.angle]]};
+  CAR.dragged=false; CAR.vel=0; CAR.mode='idle';
+  el.classList.add('dragging');
+  /* no pointer capture: it would retarget the pick click away from the card */
+});
 document.addEventListener('pointermove',e=>{
+  if(CAR.drag){
+    const dx=e.clientX-CAR.drag.x, dy=e.clientY-CAR.drag.y;
+    if(!CAR.drag.moved){
+      /* mostly cross-axis gesture cancels the drag so the page can scroll */
+      if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)*1.5){
+        CAR.drag=null;
+        const st0=document.getElementById('carousel'); if(st0)st0.classList.remove('dragging');
+      }else if(Math.abs(dx)>5){ CAR.drag.moved=true; CAR.dragged=true; CAR.mode='drag'; }
+    }
+    if(CAR.drag&&CAR.drag.moved){
+      const degPerPx=180/(Math.PI*CAR.r);
+      CAR.angle=CAR.drag.angle+dx*degPerPx;
+      const now=performance.now();
+      CAR.drag.samples.push([now,CAR.angle]);
+      while(CAR.drag.samples.length>2&&now-CAR.drag.samples[0][0]>110)CAR.drag.samples.shift();
+      applyAngle();
+    }
+  }
+  const stg=e.target.closest&&e.target.closest('.carousel');
+  CAR.hover=!!stg;
+  if(FLIP.drag){
+    FLIP.dx=e.clientX-FLIP.drag.x;
+    if(Math.abs(FLIP.dx)>8)FLIP.dragged=true;
+    const inner=document.querySelector('#flipcard .flipinner');
+    if(inner){
+      const base=MSTATE.aboutOpen?180:0;
+      inner.style.transform='rotateY('+(base+FLIP.dx*0.35).toFixed(1)+'deg)';
+    }
+  }
+  const rb=e.target.closest&&e.target.closest('.rbfolder');
+  if(rb){
+    const rr=rb.getBoundingClientRect();
+    const px2=(e.clientX-rr.left)/rr.width-0.5, py2=(e.clientY-rr.top)/rr.height-0.5;
+    rb.style.setProperty('--rty',(px2*10).toFixed(2)+'deg');
+    rb.style.setProperty('--rtx',(-py2*8).toFixed(2)+'deg');
+  }
+  const rt=e.target.closest&&e.target.closest('.rate');
+  if(rt){
+    RATE_EL=rt;
+    rt.querySelectorAll('.rstar').forEach(st=>{
+      const r=st.getBoundingClientRect();
+      const d=Math.abs(e.clientX-(r.left+r.width/2));
+      const lift=Math.max(0,12-d/12);
+      st.style.transform='translateY('+(-lift).toFixed(1)+'px)';
+    });
+  } else if(RATE_EL){
+    RATE_EL.querySelectorAll('.rstar').forEach(st=>st.style.transform='');
+    RATE_EL=null;
+  }
   const el=e.target.closest&&e.target.closest('.spot');
   if(!el)return;
   const r=el.getBoundingClientRect();
   el.style.setProperty('--mx',(e.clientX-r.left)+'px');
   el.style.setProperty('--my',(e.clientY-r.top)+'px');
+});
+document.addEventListener('pointerup',()=>{
+  if(FLIP.drag){
+    const inner=document.querySelector('#flipcard .flipinner');
+    if(inner){ inner.style.transition=''; inner.style.transform=''; }
+    if(Math.abs(FLIP.dx)>70){
+      MSTATE.aboutOpen=!MSTATE.aboutOpen;
+      const el=document.getElementById('flipcard');
+      if(el)el.classList.toggle('flipped',MSTATE.aboutOpen);
+      FLIP.dragged=true;
+    }
+    FLIP.drag=null; FLIP.dx=0;
+  }
+  if(!CAR.drag)return;
+  const st1=document.getElementById('carousel');
+  if(st1)st1.classList.remove('dragging');
+  let v=0;
+  const smp=CAR.drag.samples;
+  if(CAR.drag.moved&&smp.length>1){
+    const t0=smp[0][0], a0=smp[0][1], t1=smp[smp.length-1][0], a1=smp[smp.length-1][1];
+    if(t1>t0)v=Math.max(-1400,Math.min(1400,(a1-a0)/((t1-t0)/1000)));
+  }
+  const moved=CAR.drag.moved;
+  CAR.drag=null;
+  if(moved){
+    /* momentum 0.6 -> tau 1.08; snap to nearest step on release */
+    const tau=0.18+0.6*1.5;
+    CAR.target=Math.round((CAR.angle+v*tau*0.55)/CAR.step)*CAR.step;
+    CAR.vel=v; CAR.mode='spring'; CAR.hold=Date.now()+2800;
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&MENU.open){ MENU.open=false; renderMenu(); return; }
+  if(!document.getElementById('carousel'))return;
+  if(e.target.closest&&e.target.closest('input,textarea,select'))return;
+  const snap=Math.round(CAR.angle/CAR.step)*CAR.step;
+  if(e.key==='ArrowLeft'){ CAR.target=snap+CAR.step; CAR.mode='spring'; CAR.hold=Date.now()+2800; }
+  else if(e.key==='ArrowRight'){ CAR.target=snap-CAR.step; CAR.mode='spring'; CAR.hold=Date.now()+2800; }
+  else if(e.key==='Home')carGo(0);
+  else if(e.key==='End')carGo(CAR.n-1);
 });
 load();
 render();
