@@ -1,0 +1,1840 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Randomised Coffee Trial</title>
+<style>
+:root{
+  --bg:#ffffff; --card:#f3eee4; --ink:#2e2a22; --muted:#7d7466; --line:#e3dac9;
+  --soft:#f8f4ec; --accent:#9c8a66; --accent-ink:#ffffff; --accent-soft:#ece5d4;
+  --good:#5d6e4e; --good-soft:#eceee4; --warn:#8a6440; --warn-soft:#f0e7da;
+  --focus:#1f6feb; --shadow:0 1px 2px rgba(60,50,30,.05),0 4px 14px rgba(60,50,30,.05);
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1b1711; --card:#292419; --ink:#ebe4d6; --muted:#968c78; --line:#3b352a;
+    --soft:#231e16; --accent:#b4a07a; --accent-ink:#221c12; --accent-soft:#3c352a;
+    --good:#a3b18f; --good-soft:#2e3328; --warn:#c9a37b; --warn-soft:#3a3122;
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1b1711; --card:#292419; --ink:#ebe4d6; --muted:#968c78; --line:#3b352a;
+  --soft:#231e16; --accent:#b4a07a; --accent-ink:#221c12; --accent-soft:#3c352a;
+  --good:#a3b18f; --good-soft:#2e3328; --warn:#c9a37b; --warn-soft:#3a3122;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:15px; line-height:1.5;
+}
+#protoBanner{
+  background:var(--soft); color:var(--muted); text-align:center;
+  font-size:11px; padding:4px 16px; border-bottom:1px solid var(--line);
+}
+/* ---- shell / layouts ---- */
+#shell{display:flex; flex-direction:column; min-height:calc(100vh - 26px)}
+main{flex:1 1 auto; width:100%; max-width:720px; margin:0 auto; padding:6px 16px 96px}
+header.app{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 16px; width:100%; max-width:720px; margin:0 auto;
+}
+.logo{display:flex; color:var(--accent)}
+.brand h1{font-size:16px; margin:0; letter-spacing:.2px; font-weight:700}
+.brand .sub{font-size:11px; color:var(--muted); margin-top:-1px}
+.weekchip{margin-left:auto; background:var(--card); border:1px solid var(--line);
+  border-radius:999px; padding:3px 12px; font-size:12px; white-space:nowrap; color:var(--muted)}
+.statusbar{display:none}
+nav.bottom{
+  position:sticky; bottom:0; z-index:30; width:100%; max-width:720px; margin:0 auto;
+  background:color-mix(in srgb,var(--bg) 82%,transparent);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+  display:flex; justify-content:space-around; padding:4px 4px calc(4px + env(safe-area-inset-bottom));
+}
+nav.bottom:empty{display:none}
+nav.bottom button{
+  background:none; border:none; font-family:inherit; color:var(--muted);
+  font-size:13px; cursor:pointer; padding:9px 14px; border-radius:8px; border-top:2px solid transparent;
+  transition:color .15s;
+}
+nav.bottom button.on{color:var(--ink); font-weight:700; border-top-color:var(--accent)}
+#topnav{display:none; gap:2px; margin-left:16px}
+#topnav button{border:none; background:none; font-family:inherit; font-size:13px; color:var(--muted);
+  padding:7px 13px; border-radius:999px; cursor:pointer; transition:background .15s,color .15s}
+#topnav button:hover{background:var(--soft); color:var(--ink)}
+#topnav button.on{background:var(--card); color:var(--ink); font-weight:700}
+/* desktop layout */
+html[data-layout="desktop"] nav.bottom{display:none}
+html[data-layout="desktop"] #topnav{display:flex}
+html[data-layout="desktop"] header.app{max-width:1000px; padding:12px 28px}
+html[data-layout="desktop"] main{max-width:1000px; padding:10px 28px 90px}
+html[data-layout="desktop"] .cols{display:grid; grid-template-columns:320px 1fr; gap:22px; align-items:start}
+html[data-layout="desktop"] .qawrap{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+html[data-layout="desktop"] .qawrap .qa{margin:0}
+/* phone frame when mobile layout is viewed on a wide screen */
+html.wide[data-layout="mobile"] body{background:radial-gradient(1100px 520px at 50% -40px,var(--soft),var(--bg))}
+html.wide[data-layout="mobile"] #framewrap{display:flex; justify-content:center; padding:26px 12px 90px}
+html.wide[data-layout="mobile"] #shell{
+  width:394px; height:min(830px,calc(100vh - 150px)); min-height:480px;
+  background:var(--bg); border:10px solid #16130d; border-radius:48px; overflow:hidden;
+  box-shadow:0 34px 90px rgba(35,24,6,.38);
+}
+html.wide[data-layout="mobile"] main{overflow-y:auto; min-height:0; padding-bottom:28px}
+html.wide[data-layout="mobile"] nav.bottom{position:static}
+html.wide[data-layout="mobile"] .statusbar{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:12px 26px 0; font-size:13px; font-weight:700; letter-spacing:.02em;
+}
+.sbicons{display:flex; gap:5px; align-items:center}
+.sbicons i{display:block; background:var(--ink)}
+.sbicons i:nth-child(1){width:15px; height:9px; border-radius:2px; opacity:.85;
+  clip-path:polygon(0 100%,100% 100%,100% 0,75% 25%,0 75%)}
+.sbicons i:nth-child(2){width:20px; height:10px; border-radius:3px; opacity:.9}
+/* ---- typography / layout bits ---- */
+.pagetitle{font-size:18px; margin:16px 2px 6px; font-weight:800; letter-spacing:-.01em}
+.pagetitle.center{text-align:center}
+.muted{color:var(--muted); font-size:13px}
+.small{font-size:12px}
+.center{text-align:center}
+.footer{color:var(--muted); font-size:11px; text-align:center; margin:30px 0 10px; padding:0 10px}
+hr.soft{border:none; border-top:1px solid var(--line); margin:12px 0}
+details{margin:10px 0}
+details summary{cursor:pointer; font-weight:600; font-size:13px}
+/* ---- panels (chunked sections) ---- */
+.card{
+  background:var(--card); border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
+  border-radius:16px; padding:16px; margin:12px 0; box-shadow:var(--shadow);
+}
+.card h2{margin:0 0 6px; font-size:16px; font-weight:800; letter-spacing:-.01em}
+.card h3{margin:14px 0 6px; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted)}
+.card p{margin:6px 0}
+.notice{background:var(--soft); border:none; border-radius:var(--r); padding:9px 12px; font-size:13px; margin:8px 0}
+.notice.good{background:var(--good-soft)}
+.notice.warn{background:var(--warn-soft)}
+/* ---- hero (welcome) ---- */
+.hero{background:linear-gradient(120deg,var(--accent-soft),var(--card) 45%,var(--accent-soft) 90%);
+  background-size:220% 220%; border:none}
+.hero .mark{width:46px; height:46px; color:var(--accent)}
+/* ---- buttons / inputs ---- */
+.btn{
+  display:inline-block; border:1px solid var(--accent); background:var(--card); color:var(--accent);
+  border-radius:999px; padding:7px 16px; font-size:14px; cursor:pointer; font-weight:600;
+  font-family:inherit; margin:4px 6px 4px 0;
+  transition:transform .12s ease, box-shadow .2s ease, background .2s ease;
+}
+.btn:hover{background:var(--accent-soft); box-shadow:0 3px 12px rgba(100,80,40,.14)}
+.btn:active{transform:scale(.96)}
+.btn.primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(.96)}
+.btn.small{padding:4px 11px; font-size:12px}
+.btn.danger{color:var(--warn); border-color:var(--warn)}
+.btn.danger:hover{background:var(--warn-soft)}
+.btn[disabled]{opacity:.5; cursor:not-allowed}
+.linkbtn{background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer;
+  font-family:inherit; text-decoration:underline; padding:4px 2px; margin:2px 8px 2px 0}
+.btn:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+.linkbtn:focus-visible, .chip:focus-visible, .ttile:focus-visible, .cctile:focus-visible, .fab:focus-visible, .seg button:focus-visible{
+  outline:3px solid var(--focus); outline-offset:2px;
+}
+label.f{display:block; margin:12px 0 3px; font-weight:600; font-size:13px}
+label.f .opt{font-weight:400; color:var(--muted)}
+input[type=text],input[type=search],input[type=password],select,textarea{
+  width:100%; padding:8px 11px; border:1px solid var(--line); border-radius:8px;
+  background:var(--bg); color:var(--ink); font-family:inherit; font-size:14px;
+}
+textarea{min-height:64px; resize:vertical}
+/* ---- chips / tags / tiers ---- */
+.chips{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0}
+.chip{background:var(--bg); border:1px solid var(--line); border-radius:999px;
+  padding:4px 12px; font-size:12px; cursor:pointer; font-family:inherit; color:var(--ink);
+  transition:border-color .15s, background .15s}
+.chip:hover{border-color:var(--accent); background:var(--accent-soft)}
+.chip.on{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+.chip.static{cursor:default}
+.tag{display:inline-block; background:var(--accent-soft); color:var(--ink);
+  border-radius:6px; padding:2px 8px; font-size:11px; margin:2px 3px 2px 0}
+.tier{display:inline-block; border-radius:6px; padding:2px 10px; font-size:12px; font-weight:600}
+.tier.mutual{background:var(--good-soft); color:var(--good)}
+.tier.wild{background:var(--warn-soft); color:var(--warn)}
+.badge{display:inline-block; background:var(--warn); color:#fff; border-radius:999px; font-size:11px; padding:1px 7px; margin-left:6px; vertical-align:1px}
+/* ---- profile ---- */
+.pcard{background:var(--card); border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
+  border-radius:16px; overflow:hidden; margin:12px 0; box-shadow:var(--shadow)}
+.pcover{height:88px; background:linear-gradient(135deg,var(--accent-soft) 0%,var(--accent) 100%);
+  background-size:180% 180%}
+.avatar{width:72px; height:72px; border-radius:50%; background:var(--accent); color:var(--accent-ink);
+  display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:700;
+  border:3px solid var(--card); margin:-40px 0 0 16px; position:relative}
+.phead{padding:4px 16px 14px}
+.phead h2{margin:6px 0 0; font-size:18px}
+.qawrap{margin:4px 0}
+.qa{margin:10px 0; background:var(--card); border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
+  border-radius:var(--r); padding:10px 14px; box-shadow:var(--shadow)}
+.qa .q{font-size:11px; color:var(--muted); margin-bottom:2px; text-transform:uppercase; letter-spacing:.04em}
+.qa .a{font-size:14px}
+/* panels nested inside .card lose double chrome */
+.card .qa{box-shadow:none; background:var(--soft)}
+/* ---- countdown ---- */
+.countdown{display:flex; gap:12px; justify-content:center; margin:12px 0}
+.countdown .tcell{text-align:center; min-width:78px; background:var(--bg); border:1px solid var(--line);
+  border-radius:14px; padding:12px 8px; box-shadow:var(--shadow)}
+.countdown .n{font-size:26px; font-weight:800; font-variant-numeric:tabular-nums}
+.countdown .l{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
+/* ---- topic tiles ---- */
+.topicwrap{text-align:center}
+.topicwrap .grphead{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-top:14px}
+.topicgrid{display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:10px 0}
+.ttile{background:var(--bg); border:1px solid var(--line); border-radius:14px;
+  width:160px; min-height:64px; display:flex; align-items:center; justify-content:center; text-align:center;
+  padding:10px; font-size:13px; font-family:inherit; color:var(--ink); cursor:pointer;
+  transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease}
+.ttile:hover{transform:translateY(-2px); box-shadow:0 8px 20px rgba(90,70,35,.14); border-color:var(--accent)}
+.ttile.on{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+/* ---- spotlight (React-Bits-style) ---- */
+.spot{position:relative; overflow:hidden}
+.spot::after{content:''; position:absolute; inset:0; opacity:0; transition:opacity .25s; pointer-events:none;
+  background:radial-gradient(150px circle at var(--mx,50%) var(--my,50%), color-mix(in srgb,var(--accent) 20%,transparent), transparent 70%)}
+.spot:hover::after{opacity:1}
+/* ---- list rows ---- */
+.listlink{display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+  background:var(--card); border:1px solid color-mix(in srgb,var(--line) 70%,transparent); border-radius:14px;
+  padding:13px 14px; margin:8px 0; font-family:inherit; font-size:14px; color:var(--ink); cursor:pointer;
+  box-shadow:var(--shadow); transition:transform .15s ease, box-shadow .2s ease}
+.listlink:hover{transform:translateY(-1px); box-shadow:0 8px 20px rgba(90,70,35,.13)}
+.listlink .d{color:var(--muted); font-size:12px; display:block; font-weight:400}
+.listlink b{font-weight:700}
+/* ---- profile section tools ---- */
+.sectlabel{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin:12px 2px 2px; font-weight:700}
+.proftools{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:6px 0 12px}
+.proftools .listlink{margin:0; background:var(--bg); border:1px solid color-mix(in srgb,var(--accent) 55%,transparent)}
+.proftools .listlink b{color:var(--accent)}
+.proftools .chev{margin-left:auto; color:var(--accent); font-size:20px; line-height:1}
+@media (max-width:380px){ .proftools{grid-template-columns:1fr} }
+/* ---- chat / slots ---- */
+.msg{max-width:85%; padding:7px 11px; border-radius:14px; margin:4px 0; font-size:13px}
+.msg.me{background:var(--accent); color:var(--accent-ink); margin-left:auto; border-bottom-right-radius:4px}
+.msg.them{background:var(--bg); border:1px solid var(--line); border-bottom-left-radius:4px}
+.msg .who{font-size:10px; opacity:.75; display:block}
+.chatbox{display:flex; gap:6px; margin-top:8px}
+.chatbox input{flex:1}
+.slot{display:flex; align-items:center; gap:8px; background:var(--bg); border:1px solid var(--line);
+  border-radius:var(--r); padding:8px 11px; margin:6px 0; font-size:13px; box-shadow:var(--shadow)}
+.slot .btn{margin:0 0 0 auto}
+.slot.chosen{background:var(--good-soft); font-weight:600}
+/* ---- stats / sparks ---- */
+.statrow{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin:12px 0}
+.stat{background:var(--card); border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
+  border-radius:14px; padding:12px; text-align:center; box-shadow:var(--shadow)}
+.stat .n{font-size:22px; font-weight:800}
+.stat .l{font-size:11px; color:var(--muted)}
+.spark{border-left:3px solid var(--accent); padding:4px 12px; margin:12px 0}
+.spark .meta{font-size:11px; color:var(--muted)}
+.spark .t{font-size:14px; font-style:italic}
+/* ---- misc ---- */
+.steps{display:flex; gap:6px; margin:6px 0 14px}
+.steps span{flex:1; height:4px; border-radius:2px; background:var(--line)}
+.steps span.on{background:var(--accent)}
+.howgrid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
+.howgrid div{background:color-mix(in srgb,var(--bg) 65%,transparent); border-radius:12px; padding:10px 12px; font-size:13px}
+.howgrid b{display:block; margin-bottom:2px}
+.orcidbox{border:1px solid var(--line); border-radius:var(--r); padding:14px; margin:10px 0; background:var(--soft)}
+.orcidbox .obh{font-weight:700; font-size:13px; margin-bottom:6px}
+.searchres{border:1px solid var(--line); border-radius:var(--r); margin-top:6px; overflow:hidden; background:var(--bg)}
+.searchres .grp{background:var(--soft); padding:4px 12px; font-size:11px; color:var(--muted); font-weight:600}
+.searchres button{display:block; width:100%; text-align:left; background:var(--bg); color:var(--ink);
+  border:none; border-top:1px solid var(--line); padding:8px 12px; font-size:13px; font-family:inherit; cursor:pointer}
+.searchres button:hover{background:var(--accent-soft)}
+.diag{font-size:12px}
+.diag table{width:100%; border-collapse:collapse; margin:8px 0}
+.diag td,.diag th{border-bottom:1px solid var(--line); padding:5px 6px; text-align:left; vertical-align:top}
+.toastwrap{position:fixed; bottom:96px; left:0; right:0; display:flex; justify-content:center; z-index:70; pointer-events:none}
+.toast{background:var(--ink); color:var(--bg); border-radius:10px; padding:8px 16px; font-size:13px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25); animation:ccIn .22s ease both}
+/* ---- control centre ---- */
+.fab{position:fixed; right:18px; bottom:18px; z-index:60; width:52px; height:52px; border-radius:50%;
+  border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
+  background:color-mix(in srgb,var(--card) 78%,transparent);
+  backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
+  box-shadow:0 8px 28px rgba(45,32,10,.22); cursor:pointer; color:var(--ink);
+  display:flex; align-items:center; justify-content:center; transition:transform .15s ease, box-shadow .2s ease}
+.fab:hover{transform:translateY(-2px); box-shadow:0 12px 34px rgba(45,32,10,.28)}
+.fab:active{transform:scale(.92)}
+html[data-layout="mobile"]:not(.wide) .fab{bottom:72px}
+.ccpanel{position:fixed; right:18px; bottom:82px; z-index:59; width:350px; max-width:calc(100vw - 24px);
+  max-height:calc(100vh - 120px); overflow-y:auto;
+  background:color-mix(in srgb,var(--card) 74%,transparent);
+  backdrop-filter:blur(26px) saturate(1.4); -webkit-backdrop-filter:blur(26px) saturate(1.4);
+  border:1px solid color-mix(in srgb,var(--line) 70%,transparent); border-radius:22px;
+  box-shadow:0 24px 70px rgba(35,24,6,.3); padding:14px; animation:ccIn .25s cubic-bezier(.2,.7,.3,1) both}
+html[data-layout="mobile"]:not(.wide) .ccpanel{left:12px; right:12px; width:auto; bottom:134px}
+@keyframes ccIn{from{opacity:0; transform:translateY(12px) scale(.97)} to{opacity:1; transform:none}}
+.cchead{display:flex; align-items:baseline; gap:8px; margin-bottom:10px}
+.cchead b{font-size:14px}
+.ccclose{margin-left:auto; border:none; background:var(--soft); color:var(--muted); width:26px; height:26px;
+  border-radius:50%; cursor:pointer; font-size:15px; line-height:1; font-family:inherit}
+.ccstats{display:flex; gap:8px; margin-bottom:10px}
+.ccstats>div{flex:1; background:color-mix(in srgb,var(--bg) 70%,transparent); border-radius:12px; padding:8px 10px}
+.ccstats b{display:block; font-size:13px}
+.ccstats span{display:block; font-size:11px; color:var(--muted)}
+.ccgrid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0}
+.cctile{background:color-mix(in srgb,var(--bg) 70%,transparent);
+  border:1px solid color-mix(in srgb,var(--line) 60%,transparent); border-radius:14px; padding:10px 12px;
+  text-align:left; font-family:inherit; color:var(--ink)}
+.cctile.wide{margin:8px 0}
+.cctile.act{cursor:pointer; transition:transform .13s ease, box-shadow .2s ease}
+.cctile.act:hover{transform:translateY(-1px); box-shadow:0 6px 18px rgba(45,32,10,.16)}
+.cctile.act:active{transform:scale(.96)}
+.cctile .ck{display:block; font-weight:700; font-size:13px}
+.cctile .cv{display:block; font-size:11px; color:var(--muted); margin-top:1px}
+.cctile.prime{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.cctile.prime .cv{color:color-mix(in srgb,var(--accent-ink) 72%,transparent)}
+.cctile.dim{opacity:.45}
+.cctile.dangert .ck{color:var(--warn)}
+.cclabel{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:3px}
+.seg{display:flex; background:color-mix(in srgb,var(--bg) 70%,transparent); border-radius:10px; padding:3px; gap:3px; margin:2px 0 8px}
+.seg button{flex:1; border:none; background:none; border-radius:8px; padding:5px 0; font-size:12px;
+  font-family:inherit; color:var(--muted); cursor:pointer; transition:background .15s,color .15s}
+.seg button.on{background:var(--card); color:var(--ink); font-weight:700; box-shadow:0 1px 4px rgba(0,0,0,.14)}
+/* ---- motion ---- */
+@media (prefers-reduced-motion: no-preference){
+  #app>*{animation:fadeUp .4s cubic-bezier(.2,.7,.3,1) both}
+  #app>*:nth-child(2){animation-delay:.05s}
+  #app>*:nth-child(3){animation-delay:.1s}
+  #app>*:nth-child(4){animation-delay:.15s}
+  #app>*:nth-child(5){animation-delay:.2s}
+  #app>*:nth-child(6){animation-delay:.25s}
+  #app>*:nth-child(n+7){animation-delay:.3s}
+  .hero{animation:heroShift 12s ease-in-out infinite alternate}
+  .pcover{animation:heroShift 16s ease-in-out infinite alternate}
+}
+#app.noanim>*{animation:none !important}
+@keyframes fadeUp{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
+@keyframes heroShift{from{background-position:0% 0%} to{background-position:100% 100%}}
+</style>
+</head>
+<body>
+<div id="protoBanner">Prototype – simulated data, nothing is sent or stored on a server. Everyone here is fictional.</div>
+<div id="framewrap"><div id="shell">
+<div class="statusbar" aria-hidden="true"><span>9:41</span><span class="sbicons"><i></i><i></i></span></div>
+<header class="app">
+  <div class="logo" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 9.5h12v5.5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M16 10.5h2.3a2.4 2.4 0 0 1 0 4.8H16"/><path d="M7.5 6c0-1 .5-1.2.5-2.2M11 6c0-1 .5-1.2.5-2.2M14.5 6c0-1 .5-1.2.5-2.2"/></svg></div>
+  <div class="brand">
+    <h1>Randomised Coffee Trial</h1>
+    <div class="sub">one coffee a week with a curious stranger</div>
+  </div>
+  <nav id="topnav" aria-label="Main navigation"></nav>
+  <div class="weekchip" id="weekChip">Week 1</div>
+</header>
+<main id="app" aria-live="polite"></main>
+<nav class="bottom" id="nav" aria-label="Main navigation"></nav>
+</div></div>
+<div id="demoDrawer"></div>
+<div class="toastwrap" id="toastwrap"></div>
+<noscript><main><div class="card">This prototype needs JavaScript turned on.</div></main></noscript>
+<script>
+'use strict';
+/* ============ utilities ============ */
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function haversine(a,b){
+  const R=6371, rad=x=>x*Math.PI/180;
+  const dLat=rad(b.lat-a.lat), dLon=rad(b.lon-a.lon);
+  const h=Math.sin(dLat/2)**2+Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+function lev(a,b){
+  if(Math.abs(a.length-b.length)>2)return 9;
+  const m=[...Array(a.length+1)].map((_,i)=>[i,...Array(b.length)]);
+  for(let j=0;j<=b.length;j++)m[0][j]=j;
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)
+    m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return m[a.length][b.length];
+}
+let toastT=null;
+function toast(msg){
+  const w=document.getElementById('toastwrap');
+  w.innerHTML='<div class="toast">'+esc(msg)+'</div>';
+  clearTimeout(toastT); toastT=setTimeout(()=>w.innerHTML='',2600);
+}
+/* storage: localStorage wrapped with in-memory fallback */
+const store=(()=>{
+  let mem=null;
+  return {
+    get(){ try{ return JSON.parse(localStorage.getItem('rct-demo-v1')); }catch(e){ return mem; } },
+    set(v){ mem=v; try{ localStorage.setItem('rct-demo-v1',JSON.stringify(v)); }catch(e){/* memory fallback */} },
+    clear(){ mem=null; try{ localStorage.removeItem('rct-demo-v1'); }catch(e){} }
+  };
+})();
+/* ============ fixed demo data ============ */
+const WINDOWS=[
+  {id:'wm',label:'Weekday morning'},{id:'wl',label:'Weekday lunch'},
+  {id:'we',label:'Weekday evening'},{id:'wk',label:'Weekend'}];
+const WNAME=Object.fromEntries(WINDOWS.map(w=>[w.id,w.label]));
+const VENUES=['Café','Campus café','Library café','Park'];
+const DURATIONS=['30 minutes','1 hour','As long as it takes'];
+const MAXKM=[{v:5,l:'Up to 5 km'},{v:10,l:'Up to 10 km'},{v:20,l:'Up to 20 km'},{v:40,l:'Up to 40 km'},{v:60,l:'Anywhere in my city'}];
+const AREAS=[
+  {id:'camperdown',name:'Camperdown',city:'Sydney',lat:-33.889,lon:151.178},
+  {id:'newtown',name:'Newtown',city:'Sydney',lat:-33.897,lon:151.179},
+  {id:'kensington',name:'Kensington',city:'Sydney',lat:-33.920,lon:151.225},
+  {id:'randwick',name:'Randwick',city:'Sydney',lat:-33.914,lon:151.242},
+  {id:'parramatta',name:'Parramatta',city:'Sydney',lat:-33.815,lon:151.001},
+  {id:'chatswood',name:'Chatswood',city:'Sydney',lat:-33.797,lon:151.183},
+  {id:'ultimo',name:'Ultimo',city:'Sydney',lat:-33.877,lon:151.197},
+  {id:'carlton',name:'Carlton',city:'Melbourne',lat:-37.800,lon:144.967},
+  {id:'parkville',name:'Parkville',city:'Melbourne',lat:-37.785,lon:144.951},
+  {id:'fitzroy',name:'Fitzroy',city:'Melbourne',lat:-37.798,lon:144.978},
+  {id:'footscray',name:'Footscray',city:'Melbourne',lat:-37.800,lon:144.900},
+  {id:'clayton',name:'Clayton',city:'Melbourne',lat:-37.915,lon:145.129},
+  {id:'stlucia',name:'St Lucia',city:'Brisbane',lat:-27.499,lon:153.014},
+  {id:'kelvingrove',name:'Kelvin Grove',city:'Brisbane',lat:-27.448,lon:153.014},
+  {id:'southbrisbane',name:'South Brisbane',city:'Brisbane',lat:-27.480,lon:153.017},
+  {id:'herston',name:'Herston',city:'Brisbane',lat:-27.447,lon:153.027},
+  {id:'wollongong',name:'Wollongong',city:'Wollongong',lat:-34.424,lon:150.893},
+  {id:'newcastle',name:'Newcastle',city:'Newcastle',lat:-32.927,lon:151.776},
+  {id:'geelong',name:'Geelong',city:'Geelong',lat:-38.149,lon:144.361},
+  {id:'townsville',name:'Townsville',city:'Townsville',lat:-19.259,lon:146.818},
+  {id:'broome',name:'Broome',city:'Broome',lat:-17.956,lon:122.236},
+  {id:'armidale',name:'Armidale',city:'Armidale',lat:-30.513,lon:151.665}];
+const AREA=Object.fromEntries(AREAS.map(a=>[a.id,a]));
+/* ============ topic taxonomy: Division > Subcategory > Topic ============ */
+const TAX=[
+{id:'health',label:'Health and medicine',subs:[
+ {id:'pain',label:'Pain research',topics:[
+  {id:'chronic-pain',label:'Chronic pain',syn:['persistent pain','pain science']},
+  {id:'low-back-pain',label:'Low back pain',syn:['back pain','lbp']},
+  {id:'neuropathic-pain',label:'Neuropathic pain',syn:['nerve pain']},
+  {id:'pain-education',label:'Pain education',syn:['explaining pain']}]},
+ {id:'pubhealth',label:'Public health',topics:[
+  {id:'epidemiology',label:'Epidemiology',syn:['disease patterns','epi']},
+  {id:'health-policy',label:'Health policy',syn:['health systems']},
+  {id:'health-promotion',label:'Health promotion',syn:['prevention','behaviour change']}]},
+ {id:'clincare',label:'Nursing and clinical care',topics:[
+  {id:'nursing',label:'Nursing',syn:[]},
+  {id:'palliative-care',label:'Palliative care',syn:['end of life care']},
+  {id:'rehabilitation',label:'Rehabilitation',syn:['rehab']}]},
+ {id:'movement',label:'Movement and exercise',topics:[
+  {id:'exercise-science',label:'Exercise science',syn:['sport science']},
+  {id:'physiotherapy',label:'Physiotherapy',syn:['physio','physical therapy']},
+  {id:'sports-injury',label:'Sports injury',syn:[]}]}]},
+{id:'psych',label:'Psychology and cognition',subs:[
+ {id:'cogpsych',label:'Cognitive psychology',topics:[
+  {id:'cognitive-psych',label:'Cognitive psychology',syn:['cognition']},
+  {id:'memory',label:'Memory',syn:[]},
+  {id:'attention',label:'Attention',syn:[]},
+  {id:'decision-making',label:'Decision making',syn:['judgement']}]},
+ {id:'socpsych',label:'Social psychology',topics:[
+  {id:'social-psych',label:'Social psychology',syn:[]},
+  {id:'group-behaviour',label:'Group behaviour',syn:['group dynamics']},
+  {id:'identity',label:'Identity',syn:[]}]},
+ {id:'clinpsych',label:'Clinical psychology',topics:[
+  {id:'clinical-psych',label:'Clinical psychology',syn:[]},
+  {id:'mental-health',label:'Mental health',syn:['wellbeing']}]}]},
+{id:'built',label:'Built environment and design',subs:[
+ {id:'arch',label:'Architecture',topics:[
+  {id:'architecture',label:'Architecture',syn:[]},
+  {id:'healthcare-environments',label:'Healthcare environments',syn:['hospital design','healing spaces']},
+  {id:'sustainable-building',label:'Sustainable building',syn:['green building']}]},
+ {id:'design',label:'Design methods',topics:[
+  {id:'co-design',label:'Co-design',syn:['codesign','co design']},
+  {id:'participatory-design',label:'Participatory design',syn:[]},
+  {id:'human-centred-design',label:'Human-centred design',syn:['hcd','design thinking']}]},
+ {id:'urban',label:'Urban planning',topics:[
+  {id:'urban-planning',label:'Urban planning',syn:['city planning']},
+  {id:'transport-planning',label:'Transport planning',syn:['transport']},
+  {id:'housing',label:'Housing',syn:[]}]}]},
+{id:'bioenv',label:'Biology and environment',subs:[
+ {id:'ecology',label:'Ecology',topics:[
+  {id:'ecology-t',label:'Ecology',syn:['ecosystems']},
+  {id:'conservation',label:'Conservation',syn:[]},
+  {id:'biodiversity',label:'Biodiversity',syn:[]}]},
+ {id:'marine',label:'Marine biology',topics:[
+  {id:'marine-biology',label:'Marine biology',syn:['ocean science']},
+  {id:'coral-reefs',label:'Coral reefs',syn:['reef science']},
+  {id:'fisheries',label:'Fisheries',syn:['fish stocks']}]},
+ {id:'agri',label:'Agriculture',topics:[
+  {id:'agriculture',label:'Agriculture',syn:['farming']},
+  {id:'soil-science',label:'Soil science',syn:['soils']},
+  {id:'agtech',label:'Agricultural technology',syn:['agtech']}]},
+ {id:'organisms',label:'Plant and animal science',topics:[
+  {id:'botany',label:'Botany',syn:['plants']},
+  {id:'zoology',label:'Zoology',syn:['animals']}]}]},
+{id:'computing',label:'Computing and data',subs:[
+ {id:'ml',label:'Machine learning',topics:[
+  {id:'machine-learning',label:'Machine learning',syn:['ml','ai','artificial intelligence']},
+  {id:'deep-learning',label:'Deep learning',syn:['neural networks']},
+  {id:'nlp',label:'Natural language processing',syn:['nlp','language models','llm']}]},
+ {id:'netsci',label:'Network science',topics:[
+  {id:'network-science',label:'Network science',syn:['networks']},
+  {id:'complex-systems',label:'Complex systems',syn:['complexity']},
+  {id:'graph-theory',label:'Graph theory',syn:['graphs']}]},
+ {id:'softhci',label:'Software and HCI',topics:[
+  {id:'hci',label:'Human-computer interaction',syn:['hci','ux research']},
+  {id:'software-engineering',label:'Software engineering',syn:['programming']},
+  {id:'cybersecurity',label:'Cybersecurity',syn:['security','infosec']}]},
+ {id:'datasci',label:'Data science',topics:[
+  {id:'data-visualisation',label:'Data visualisation',syn:['dataviz','visualization']},
+  {id:'statistics',label:'Statistics',syn:['stats','biostatistics']}]}]},
+{id:'physsci',label:'Physical sciences',subs:[
+ {id:'astro',label:'Astronomy',topics:[
+  {id:'astronomy',label:'Astronomy',syn:['space']},
+  {id:'astrophysics',label:'Astrophysics',syn:[]},
+  {id:'radio-astronomy',label:'Radio astronomy',syn:[]}]},
+ {id:'materials',label:'Materials science',topics:[
+  {id:'materials-science',label:'Materials science',syn:['materials']},
+  {id:'nanomaterials',label:'Nanomaterials',syn:['nanotech']},
+  {id:'polymers',label:'Polymers',syn:['plastics']}]},
+ {id:'physchem',label:'Physics and chemistry',topics:[
+  {id:'quantum-physics',label:'Quantum physics',syn:['quantum']},
+  {id:'chemistry',label:'Chemistry',syn:[]}]}]},
+{id:'humanities',label:'Humanities',subs:[
+ {id:'history',label:'History',topics:[
+  {id:'history-t',label:'History',syn:[]},
+  {id:'australian-history',label:'Australian history',syn:[]},
+  {id:'history-of-science',label:'History of science',syn:[]}]},
+ {id:'philosophy',label:'Philosophy',topics:[
+  {id:'philosophy-of-science',label:'Philosophy of science',syn:[]},
+  {id:'ethics',label:'Ethics',syn:['bioethics']},
+  {id:'epistemology',label:'Epistemology',syn:['knowledge']}]},
+ {id:'linguistics',label:'Linguistics',topics:[
+  {id:'linguistics-t',label:'Linguistics',syn:['language science']},
+  {id:'sociolinguistics',label:'Sociolinguistics',syn:[]},
+  {id:'language-acquisition',label:'Language acquisition',syn:['language learning']}]},
+ {id:'music',label:'Music',topics:[
+  {id:'musicology',label:'Musicology',syn:['music research']},
+  {id:'music-cognition',label:'Music cognition',syn:['music and the brain']},
+  {id:'music-therapy',label:'Music therapy',syn:[]},
+  {id:'composition',label:'Composition',syn:['songwriting']}]}]},
+{id:'society',label:'Society, law and economy',subs:[
+ {id:'law',label:'Law',topics:[
+  {id:'law-t',label:'Law',syn:['legal research']},
+  {id:'health-law',label:'Health law',syn:[]},
+  {id:'environmental-law',label:'Environmental law',syn:[]}]},
+ {id:'economics',label:'Economics',topics:[
+  {id:'economics-t',label:'Economics',syn:[]},
+  {id:'behavioural-economics',label:'Behavioural economics',syn:['behavioral economics','nudge']},
+  {id:'health-economics',label:'Health economics',syn:[]}]},
+ {id:'education',label:'Education',topics:[
+  {id:'education-t',label:'Education',syn:['teaching','pedagogy']},
+  {id:'science-education',label:'Science education',syn:[]},
+  {id:'higher-education',label:'Higher education',syn:['universities']}]},
+ {id:'indigenous',label:'Indigenous knowledge systems',topics:[
+  {id:'indigenous-knowledge',label:'Indigenous knowledge systems',syn:['indigenous science']},
+  {id:'indigenous-health',label:'Indigenous health',syn:[]},
+  {id:'caring-for-country',label:'Caring for Country',syn:['country','land management']}]}]}
+];
+/* flat lookup */
+const TOPIC={};
+TAX.forEach(d=>d.subs.forEach(s=>s.topics.forEach(t=>{
+  TOPIC[t.id]={id:t.id,label:t.label,syn:t.syn,sub:s.id,subLabel:s.label,div:d.id,divLabel:d.label};
+})));
+/* hand-curated relatedness overrides (stand-in for embeddings; see similarity()) */
+const RELATED={};
+function rel(a,b,v){ RELATED[[a,b].sort().join('|')]=v; }
+rel('chronic-pain','low-back-pain',0.9);
+rel('chronic-pain','neuropathic-pain',0.85);
+rel('co-design','participatory-design',0.95);
+rel('machine-learning','network-science',0.5);
+rel('music-therapy','music-cognition',0.85);
+rel('healthcare-environments','co-design',0.7);
+rel('statistics','machine-learning',0.6);
+rel('complex-systems','ecology-t',0.5);
+rel('health-economics','health-policy',0.7);
+rel('indigenous-health','health-promotion',0.6);
+rel('pain-education','education-t',0.6);
+rel('rehabilitation','physiotherapy',0.85);
+rel('chronic-pain','rehabilitation',0.6);
+/* similarity: single swappable function (replace with embeddings in the real version) */
+function similarity(a,b){
+  if(a===b)return 1;
+  const k=[a,b].sort().join('|');
+  if(RELATED[k]!=null)return RELATED[k];
+  const A=TOPIC[a],B=TOPIC[b];
+  if(!A||!B)return 0;
+  if(A.sub===B.sub)return 0.8;
+  if(A.div===B.div)return 0.5;
+  return 0.1;
+}
+/* interestScore(A -> B): how well B's background satisfies A's interests.
+   Choice documented: we use the BEST-satisfied interest (max), not the average,
+   so one strong shared curiosity is enough to count as "wants to learn their field". */
+function interestScore(A,B){
+  let best=0;
+  for(const i of A.interestTopics){
+    for(const g of B.backgroundTopics){ const s=similarity(i,g); if(s>best)best=s; }
+  }
+  return best;
+}
+/* ============ seed users (all fictional) ============ */
+function U(id,name,area,maxKm,avail,bg,ints,p){
+  return {id,displayName:name,pronouns:p.pr||'',institution:p.inst||'',verified:true,
+    background:p.about,stuckOn:p.stuck,wantExplained:p.want,canExplain:p.can,nonWork:p.fun,
+    backgroundTopics:bg,interestTopics:ints,area,maxKm,availability:avail,
+    pausedUntilWeek:p.paused||0,pauseReason:p.pauseReason||'',
+    unmatchedLastWeek:!!p.carry,blocked:p.blocked||[],matchedBefore:p.met||[]};
+}
+function seedUsers(){ const L=[
+/* --- Sydney (14) --- */
+U('sam','Sam','camperdown',10,['wl','we'],['chronic-pain','pain-education'],['co-design','healthcare-environments'],
+ {pr:'they/them',inst:'Camperdown health precinct',about:'I study how people make sense of persistent pain, and how explanations change what they do next.',
+  stuck:'Why do some pain explanations stick for people while others wash straight off?',
+  want:'How architects decide what a building should make you feel.',
+  can:'Why pain is more about protection than damage.',fun:'I bake sourdough with varying success.'}),
+U('priya','Priya','newtown',10,['wl','wk'],['co-design','healthcare-environments'],['chronic-pain'],
+ {pr:'she/her',inst:'Inner-west design studio lab',about:'I co-design hospital and clinic spaces with the people who actually use them.',
+  stuck:'How to measure whether a waiting room reduces fear rather than just looking nice.',
+  want:'What pain actually is, from someone who studies it.',
+  can:'How to run a co-design workshop that people enjoy.',fun:'I sketch strangers on the train (kindly).'}),
+U('zoe','Zoe','kensington',10,['wl','we'],['machine-learning','nlp'],['history-t'],
+ {pr:'she/her',about:'I build language models for low-resource languages and worry about what they miss.',
+  stuck:'How to evaluate a model for a language I do not speak.',
+  want:'How historians decide which sources to trust.',
+  can:'What large language models actually do, minus the hype.',fun:'Competitive trivia, mostly losing.'}),
+U('liam','Liam','randwick',10,['wl','we'],['ecology-t','conservation'],['machine-learning'],
+ {pr:'he/him',about:'I track how urban bushland recovers after fire, one quadrat at a time.',
+  stuck:'How to count what I cannot see: most of the species that matter are underground.',
+  want:'Whether machine learning could sort my 40,000 camera-trap photos.',
+  can:'Why weeds win, and what that says about cities.',fun:'I know an embarrassing amount about native bees.'}),
+U('kim','Kim','ultimo',10,['wm'],['linguistics-t'],['music-cognition'],
+ {pr:'she/her',about:'I study how new slang spreads through friendship groups.',
+  stuck:'Whether words spread like songs or like diseases.',
+  want:'Why a melody can feel like a sentence.',
+  can:'Why no one actually speaks "correct" English.',fun:'Morning swimmer, all seasons.'}),
+U('leo','Leo','chatswood',10,['we','wk'],['musicology','music-cognition'],['sociolinguistics'],
+ {pr:'he/him',about:'I research why certain chord changes give people chills.',
+  stuck:'Why musical chills are so reliable within a person and so different between people.',
+  want:'How linguists study the way communities invent language.',
+  can:'What your playlist says about your memory.',fun:'I play bass in a very average covers band.'}),
+U('ben','Ben','parramatta',10,['wl','we'],['economics-t'],['urban-planning'],
+ {pr:'he/him',about:'I model how small price changes ripple through household budgets.',
+  stuck:'Why people treat $10 saved on groceries differently from $10 saved on petrol.',
+  want:'How planners decide where the train stations go.',
+  can:'Why "the economy" is mostly stories with numbers attached.',fun:'Weekend cricket tragic.',blocked:['ivy']}),
+U('ivy','Ivy','parramatta',10,['wl','we'],['urban-planning','housing'],['behavioural-economics'],
+ {pr:'she/her',about:'I research why good housing policy dies between the report and the suburb.',
+  stuck:'How to keep communities engaged after the third consultation evening.',
+  want:'What behavioural economics says about how people choose where to live.',
+  can:'How a suburb gets its shape.',fun:'I collect old street directories.'}),
+U('pete','Pete','randwick',10,['wl','wk'],['marine-biology','fisheries'],['data-visualisation'],
+ {pr:'he/him',about:'I tag fish and follow where they go, which is rarely where we expect.',
+  stuck:'Whether fish learn from each other or just from the current.',
+  want:'How to make a chart people actually read.',
+  can:'What a healthy estuary smells like.',fun:'Terrible but enthusiastic surfer.',
+  paused:3,pauseReason:'Fieldwork: tagging season up the coast.'}),
+U('nadia','Nadia','camperdown',10,['wl','we'],['epidemiology','health-policy'],['data-visualisation'],
+ {pr:'she/her',about:'I trace how outbreaks move through cities, and how policy moves after them.',
+  stuck:'How to communicate risk without either panic or shrugs.',
+  want:'How designers choose what a chart should NOT show.',
+  can:'Why the denominator is the most political number in health.',fun:'I grow chillies competitively.',met:['dev']}),
+U('tom','Tom','chatswood',15,['wl','we'],['data-visualisation','statistics'],['astronomy'],
+ {pr:'he/him',about:'I help research teams turn messy data into honest pictures.',
+  stuck:'How to show uncertainty without people reading it as error.',
+  want:'What radio telescopes actually "see".',
+  can:'Why most dashboards lie a little, and how to spot it.',fun:'Amateur stargazer with a dusty telescope.'}),
+U('aiko','Aiko','kensington',10,['wl','we'],['astronomy','astrophysics'],['philosophy-of-science'],
+ {pr:'she/her',about:'I study the leftovers of dead stars and what they seed next.',
+  stuck:'Whether we will ever observe the first generation of stars directly.',
+  want:'What philosophers mean when they say observation is theory-laden.',
+  can:'Why the night sky is a time machine.',fun:'I make ceramics shaped like planets.'}),
+U('rosa','Rosa','newtown',10,['wl','we'],['philosophy-of-science','ethics'],['astrophysics'],
+ {pr:'she/her',about:'I work on how scientists decide what counts as evidence.',
+  stuck:'Why replication fixes some fields and barely dents others.',
+  want:'How astronomers claim to know things they can never touch.',
+  can:'How to disagree productively about facts.',fun:'Pub choir on Thursdays.'}),
+U('dev','Dev','ultimo',10,['wm','we'],['cybersecurity'],['law-t'],
+ {pr:'he/him',about:'I break systems politely so other people cannot break them rudely.',
+  stuck:'How to make security advice humans actually follow.',
+  want:'How the law decides who is responsible when software fails.',
+  can:'How phishing really works, from the inside.',fun:'Speedcubing, badly timed.',met:['nadia']}),
+/* --- Melbourne (10) --- */
+U('noah','Noah','parkville',10,['wl','we'],['low-back-pain','physiotherapy'],['music-therapy'],
+ {pr:'he/him',about:'I research why back pain recovery is so different from person to person.',
+  stuck:'Why reassurance works in the clinic but not in the letter we send afterwards.',
+  want:'How music therapists choose what to play and when.',
+  can:'Why bed rest lost and movement won.',fun:'Restoring an old bicycle, slowly.'}),
+U('tara','Tara','carlton',10,['wl','we'],['music-therapy','composition'],['chronic-pain'],
+ {pr:'she/her',about:'I write and test music programs for people in hospital.',
+  stuck:'Which part of music does the work: the sound, the memory, or the person playing it?',
+  want:'What actually happens in the nervous system in persistent pain.',
+  can:'How a song can lower a heart rate.',fun:'I own too many synthesisers.'}),
+U('hana','Hana','carlton',10,['wl','we'],['network-science','complex-systems'],['deep-learning'],
+ {pr:'she/her',about:'I map collaboration networks to see where ideas jump between fields.',
+  stuck:'Why some fields trade ideas constantly and others never do.',
+  want:'What deep nets learn that network models miss.',
+  can:'Why your friendship group is mathematically predictable.',fun:'Jigsaw puzzles, 2000 pieces minimum.',met:['raj']}),
+U('raj','Raj','parkville',10,['wl','we'],['machine-learning','deep-learning'],['network-science'],
+ {pr:'he/him',about:'I train models to find structure in biological data.',
+  stuck:'When a model is right for the wrong reasons, and how to tell.',
+  want:'How network scientists decide which connections matter.',
+  can:'What a neural network is, with pen and paper.',fun:'Chess on park tables.',met:['hana']}),
+U('mei','Mei','fitzroy',10,['wl','wk'],['history-t','history-of-science'],['indigenous-knowledge'],
+ {pr:'she/her',about:'I study how scientific instruments travelled and changed hands in the 1800s.',
+  stuck:'Whose fingerprints are missing from the archives I rely on.',
+  want:'How Indigenous knowledge systems hold and test knowledge over generations.',
+  can:'How to read an old object like a document.',fun:'Op-shop furniture rescuer.'}),
+U('jack','Jack','footscray',10,['wl','wk'],['indigenous-knowledge','caring-for-country'],['history-t'],
+ {pr:'he/him',about:'I work on Country with rangers, linking fire practice and seasonal knowledge.',
+  stuck:'How universities can hold Indigenous knowledge without flattening it.',
+  want:'How historians handle sources that were written by the wrong side.',
+  can:'How cool burns read the land.',fun:'Footy coach for under-10s.'}),
+U('elena','Elena','clayton',20,['wl','we'],['materials-science','polymers'],['sustainable-building'],
+ {pr:'she/her',about:'I design polymers that are strong enough to use and kind enough to recycle.',
+  stuck:'Why lab-perfect materials misbehave at factory scale.',
+  want:'What builders wish materials scientists understood.',
+  can:'Why some plastics are heroes and some are landfill.',fun:'Bouldering, mostly falling.'}),
+U('omid','Omid','clayton',20,['wl','we'],['architecture','sustainable-building'],['nanomaterials'],
+ {pr:'he/him',about:'I design buildings that stay cool without air conditioning.',
+  stuck:'How to retrofit the suburbs we already have, not just dream new ones.',
+  want:'Whether nanomaterials will ever reach an ordinary building site.',
+  can:'Why orientation beats insulation.',fun:'I photograph brutalist car parks.'}),
+U('sofia','Sofia','fitzroy',10,['wl','we'],['education-t','science-education'],['ecology-t'],
+ {pr:'she/her',about:'I study how kids reason about systems: food webs, weather, friendships.',
+  stuck:'Why "explain it back to me" works better than any worksheet.',
+  want:'How ecologists think about balance, if they even use that word.',
+  can:'How to teach anything to anyone in ten minutes.',fun:'Community garden plot, mostly silverbeet.'}),
+U('gus','Gus','footscray',10,['wl','we'],['soil-science','agriculture'],['economics-t'],
+ {pr:'he/him',about:'I measure what cover crops really do to soil carbon.',
+  stuck:'Why soil results take five years and farm decisions take five weeks.',
+  want:'How economists value things that take decades to change.',
+  can:'Why soil is an ecosystem, not dirt.',fun:'Sourdough rivalry with my neighbour.'}),
+/* --- Brisbane (6) --- */
+U('omar','Omar','stlucia',10,['wl','we'],['astronomy','radio-astronomy'],['music-cognition'],
+ {pr:'he/him',about:'I listen to the universe with radio telescopes and far too much coffee.',
+  stuck:'How to find the signals we have not thought to look for.',
+  want:'Why music moves people: I analyse signals all day but not that one.',
+  can:'What a pulsar sounds like.',fun:'I run a tiny vinyl club.'}),
+U('grace','Grace','southbrisbane',10,['wl','we'],['law-t','health-law'],['composition'],
+ {pr:'she/her',about:'I research consent law in hospitals: who decides, when, and how.',
+  stuck:'How consent can be real when people are frightened and rushed.',
+  want:'How composers build a piece from nothing.',
+  can:'Your rights in a hospital, in plain words.',fun:'Writing a musical, very secretly.'}),
+U('ruby','Ruby','stlucia',10,['wl','we'],['coral-reefs','marine-biology'],['environmental-law'],
+ {pr:'she/her',about:'I study which corals survive heatwaves and why.',
+  stuck:'Whether assisted evolution is rescue or hubris.',
+  want:'How environmental law actually protects a reef, if it does.',
+  can:'What bleaching looks like up close.',fun:'Underwater photography.',met:['finn']}),
+U('finn','Finn','kelvingrove',10,['wl','we'],['hci','software-engineering'],['health-promotion'],
+ {pr:'he/him',about:'I design apps people abandon, then study why they abandoned them.',
+  stuck:'Why habit apps work for 3 weeks and then stop.',
+  want:'What actually changes health behaviour at population scale.',
+  can:'Why good software feels invisible.',fun:'Parkrun pacer.',met:['ruby']}),
+U('yuki','Yuki','herston',10,['wl','we'],['health-promotion','epidemiology'],['hci'],
+ {pr:'she/her',about:'I design and evaluate campaigns that try to make the healthy choice the easy one.',
+  stuck:'Why knowledge changes attitudes but rarely behaviour.',
+  want:'How app designers think about habit and friction.',
+  can:'Why sunscreen campaigns worked.',fun:'Ocean pool swimmer.'}),
+U('lena','Lena','kelvingrove',10,['wl','we'],['zoology'],['statistics'],
+ {pr:'she/her',about:'I study flying fox colonies and how cities change their behaviour.',
+  stuck:'How to count animals that refuse to be counted.',
+  want:'The statistics my ecology papers keep getting wrong.',
+  can:'Why bats are the best urban neighbours you never thanked.',fun:'Night walks with a thermal camera.'}),
+/* --- Regional (6) --- */
+U('edie','Edie','broome',40,['wl','wk'],['indigenous-health','caring-for-country'],['health-policy'],
+ {pr:'she/her',about:'I work on community-led health programs in the Kimberley.',
+  stuck:'How to report outcomes that funders recognise without bending the program to the form.',
+  want:'How health policy actually gets written, and by whom.',
+  can:'What community-controlled health really means.',fun:'Fishing, tides permitting.',carry:true}),
+U('marco','Marco','wollongong',20,['wl','we'],['chemistry'],['materials-science'],
+ {pr:'he/him',about:'I make molecules that glow when they find what they are looking for.',
+  stuck:'Why my best sensor works in the lab and sulks in seawater.',
+  want:'How materials scientists scale a discovery up.',
+  can:'Why chemistry is cooking with better glassware.',fun:'Espresso tinkerer.'}),
+U('freya','Freya','wollongong',20,['wl','we'],['nanomaterials','materials-science'],['chemistry'],
+ {pr:'she/her',about:'I grow nanomaterials for batteries that charge faster and complain less.',
+  stuck:'Why batches made on Tuesdays work better. (Genuinely unresolved.)',
+  want:'The chemistry underneath my recipes: I inherited them and want to understand them.',
+  can:'How a battery ages.',fun:'Sea kayaking.'}),
+U('will','Will','newcastle',20,['wl','we'],['fisheries','marine-biology'],['history-t'],
+ {pr:'he/him',about:'I study fish stocks and the fishing communities that depend on them.',
+  stuck:'How to set quotas people trust when the data is two years old.',
+  want:'What fishing towns looked like a century ago: I only know the present.',
+  can:'Why "there are plenty of fish" is complicated.',fun:'Restoring a wooden dinghy.'}),
+U('june','June','newcastle',20,['wl','we'],['australian-history','history-t'],['marine-biology'],
+ {pr:'she/her',about:'I write about coastal working towns and what the sea took and gave.',
+  stuck:'How to tell true stories about places people still live in.',
+  want:'What is actually happening under the harbour now.',
+  can:'How to read a town through its pubs.',fun:'Lighthouse enthusiast.'}),
+U('theo','Theo','geelong',20,['wl','we'],['behavioural-economics'],['network-science'],
+ {pr:'he/him',about:'I study why people share energy with neighbours, or refuse to.',
+  stuck:'Whether trust can be designed or only grown.',
+  want:'What network science says about how cooperation spreads.',
+  can:'Why incentives backfire more often than they work.',fun:'Pottery wheel in the shed.'})
+]; const m={}; L.forEach(u=>m[u.id]=u); return m; }
+/* ============ seed past matches + surveys (so history, dashboard and Sparks are not empty) ============ */
+function seedPast(){
+  const matches=[
+   {id:'m0-hana-raj',week:0,a:'hana',b:'raj',tier:'mutual',scoreAB:1,scoreBA:1,distanceKm:1.7,
+    reason:'You were each curious about the other’s field.',status:'happened',
+    slots:[],chosenSlot:{day:'Wednesday',window:'wl'},venueType:'Campus café',duration:'1 hour',
+    messages:[{from:'hana',text:'House of Cards café at 12:30?'},{from:'raj',text:'Perfect, see you there.'}],
+    contactShare:{hana:{optIn:true,details:'hana@example.edu'},raj:{optIn:true,details:'raj@example.edu'}},
+    logged:{happened:'yes',duration:'About 90 minutes'}},
+   {id:'m0-nadia-dev',week:0,a:'nadia',b:'dev',tier:'open',scoreAB:0.1,scoreBA:0.1,distanceKm:1.6,
+    reason:'No mutual match existed this week, so we suggested someone nearby worth a coffee.',status:'happened',
+    slots:[],chosenSlot:{day:'Thursday',window:'we'},venueType:'Café',duration:'30 minutes',
+    messages:[],contactShare:{},logged:{happened:'yes',duration:'About an hour'}},
+   {id:'m0-ruby-finn',week:0,a:'ruby',b:'finn',tier:'oneWay',scoreAB:0.3,scoreBA:0.8,distanceKm:5.9,
+    reason:'One of you was curious about the other’s field, and you were nearby.',status:'happened',
+    slots:[],chosenSlot:{day:'Friday',window:'wl'},venueType:'Park',duration:'30 minutes',
+    messages:[],contactShare:{},logged:{happened:'yes',duration:'About 45 minutes'}}];
+  const surveys=[
+   {matchId:'m0-hana-raj',userId:'raj',comfort:5,learnedUnexpected:5,
+    takeaway:'Networks and neural nets are the same picture drawn twice.',
+    wouldRepeat:true,recommend:true,safetyConcern:'',privateFeedback:'',publicShare:true,publicNamed:false},
+   {matchId:'m0-hana-raj',userId:'hana',comfort:5,learnedUnexpected:4,
+    takeaway:'We are writing a tiny joint paper. Unplanned.',
+    wouldRepeat:true,recommend:true,safetyConcern:'',privateFeedback:'More weekend slots please.',publicShare:false,publicNamed:false},
+   {matchId:'m0-nadia-dev',userId:'nadia',comfort:4,learnedUnexpected:5,
+    takeaway:'Security people think about failure exactly the way epidemiologists do.',
+    wouldRepeat:true,recommend:true,safetyConcern:'',privateFeedback:'',publicShare:true,publicNamed:true},
+   {matchId:'m0-nadia-dev',userId:'dev',comfort:4,learnedUnexpected:4,
+    takeaway:'Contact tracing is incident response for bodies.',
+    wouldRepeat:true,recommend:true,safetyConcern:'',privateFeedback:'',publicShare:false,publicNamed:false},
+   {matchId:'m0-ruby-finn',userId:'ruby',comfort:4,learnedUnexpected:3,
+    takeaway:'Apps and reefs both die from a thousand small frictions.',
+    wouldRepeat:true,recommend:true,safetyConcern:'',privateFeedback:'',publicShare:true,publicNamed:false},
+   {matchId:'m0-ruby-finn',userId:'finn',comfort:5,learnedUnexpected:4,
+    takeaway:'I now care about coral. That was not the plan.',
+    wouldRepeat:true,recommend:true,safetyConcern:'',privateFeedback:'',publicShare:false,publicNamed:false}];
+  return {matches,surveys};
+}
+/* ============ state ============ */
+let S=null;
+function freshState(){
+  const past=seedPast();
+  return {week:1,theme:'auto',runWeeks:[],users:seedUsers(),matches:past.matches,
+    surveys:past.surveys,feedback:[{userId:'pete',week:1,kind:'pause',text:'Fieldwork: tagging season up the coast.'}],
+    view:'home',me:null,sel:null,onb:{step:0,draft:{}},diag:{},ccOpen:false,layout:'auto'};
+}
+function save(){ store.set(S); }
+function load(){
+  const v=store.get();
+  if(v&&v.users&&v.week){ S=v; }
+  else { S=freshState(); save(); }
+  if(!S.layout)S.layout='auto';
+  if(typeof S.ccOpen!=='boolean')S.ccOpen=false;
+}
+function resetDemo(){
+  if(!confirm('Reset the demo? All local demo data will be cleared.'))return;
+  store.clear(); S=freshState(); save(); render(); toast('Demo reset');
+}
+function me(){ return S.me?S.users[S.me]:null; }
+function isPaused(u){ return u.pausedUntilWeek>S.week || u.pausedUntilWeek===9999; }
+function userDist(a,b){ return haversine(AREA[a.area],AREA[b.area]); }
+function divOf(u){ const t=u.backgroundTopics[0]; return t&&TOPIC[t]?TOPIC[t].divLabel:'research'; }
+function matchFor(uid,wk){ return S.matches.find(m=>m.week===wk&&(m.a===uid||m.b===uid)); }
+function partnerOf(m,uid){ return m.a===uid?S.users[m.b]:S.users[m.a]; }
+function weekRun(wk){ return S.runWeeks.includes(wk); }
+/* ============ matching engine (section 9 of the handover) ============ */
+const T_MUTUAL=0.75;
+function pairEval(A,B){
+  /* hard filters */
+  if(isPaused(A)||isPaused(B))return {ok:false,why:'paused'};
+  if(!A.verified||!B.verified)return {ok:false,why:'unverified'};
+  if(A.matchedBefore.includes(B.id))return {ok:false,why:'already matched before (never re-matched)'};
+  if(A.blocked.includes(B.id)||B.blocked.includes(A.id))return {ok:false,why:'blocked'};
+  const d=userDist(A,B);
+  if(d>A.maxKm||d>B.maxKm)return {ok:false,why:'outside travel range ('+d.toFixed(0)+' km)'};
+  const overlap=A.availability.filter(w=>B.availability.includes(w));
+  if(overlap.length===0)return {ok:false,why:'no availability overlap'};
+  /* scores and tier */
+  const sAB=interestScore(A,B), sBA=interestScore(B,A);
+  const mutual=sAB>=T_MUTUAL&&sBA>=T_MUTUAL;
+  const oneWay=!mutual&&(sAB>=T_MUTUAL||sBA>=T_MUTUAL);
+  const tier=mutual?'mutual':oneWay?'oneWay':'open';
+  const union=new Set([...A.availability,...B.availability]).size;
+  const diffDiv=TOPIC[A.backgroundTopics[0]].div!==TOPIC[B.backgroundTopics[0]].div;
+  const tierBase=mutual?1000:oneWay?500:0;
+  const topicBonus=40*(sAB+sBA)/2;
+  const prox=Math.max(0,15*(1-d/Math.min(A.maxKm,B.maxKm)));
+  const avail=10*(overlap.length/union);
+  const bridge=(tier==='open'&&diffDiv)?10:0;
+  const carry=25*(A.unmatchedLastWeek?1:0)+25*(B.unmatchedLastWeek?1:0);
+  const weight=tierBase+topicBonus+prox+avail+bridge+carry;
+  return {ok:true,tier,sAB,sBA,d,overlap,weight,parts:{tierBase,topicBonus,prox,avail,bridge,carry}};
+}
+function matchReason(ev,A,B){
+  if(ev.tier==='mutual')return 'You are each curious about the other’s field, you are '+ev.d.toFixed(1)+' km apart, and your weeks overlap.';
+  if(ev.tier==='oneWay')return 'There is a strong curiosity link between your fields, and you are nearby with overlapping availability.';
+  return 'No mutual match existed this week, so we suggest someone nearby from a different corner of research. Everyone has something to share.';
+}
+function runMatching(){
+  const wk=S.week;
+  if(weekRun(wk)){ toast('Matching has already run for week '+wk); return; }
+  const users=Object.values(S.users);
+  const active=users.filter(u=>u.verified&&!isPaused(u));
+  const diag={perUser:{},unmatched:[],pairs:0};
+  active.forEach(u=>diag.perUser[u.id]={candidates:[],matchedWith:null});
+  const evCache={};
+  const eligible=[];
+  for(let i=0;i<active.length;i++)for(let j=i+1;j<active.length;j++){
+    const A=active[i],B=active[j];
+    const ev=pairEval(A,B); evCache[A.id+'|'+B.id]=ev;
+    diag.perUser[A.id].candidates.push({id:B.id,ev});
+    diag.perUser[B.id].candidates.push({id:A.id,ev});
+    if(ev.ok)eligible.push({a:A.id,b:B.id,ev});
+  }
+  /* Greedy by descending weight, then a swap-improvement pass.
+     NOT guaranteed optimal; the real version should use a proper
+     maximum-weight (blossom) matching, e.g. NetworkX max_weight_matching. */
+  eligible.sort((x,y)=>y.ev.weight-x.ev.weight);
+  const used=new Set(); let chosen=[];
+  for(const p of eligible){ if(!used.has(p.a)&&!used.has(p.b)){ chosen.push(p); used.add(p.a); used.add(p.b); } }
+  const getEv=(x,y)=>evCache[x+'|'+y]||evCache[y+'|'+x];
+  for(let pass=0;pass<2;pass++){
+    for(let i=0;i<chosen.length;i++)for(let j=i+1;j<chosen.length;j++){
+      const p=chosen[i],q=chosen[j];
+      const cur=p.ev.weight+q.ev.weight;
+      const alts=[[p.a,q.a,p.b,q.b],[p.a,q.b,p.b,q.a]];
+      for(const[a1,b1,a2,b2]of alts){
+        const e1=getEv(a1,b1),e2=getEv(a2,b2);
+        if(e1&&e1.ok&&e2&&e2.ok&&e1.weight+e2.weight>cur){
+          chosen[i]={a:a1,b:b1,ev:e1}; chosen[j]={a:a2,b:b2,ev:e2};
+        }
+      }
+    }
+  }
+  /* create matches */
+  for(const p of chosen){
+    const A=S.users[p.a],B=S.users[p.b];
+    const m={id:'m'+wk+'-'+p.a+'-'+p.b,week:wk,a:p.a,b:p.b,tier:p.ev.tier,
+      scoreAB:+p.ev.sAB.toFixed(2),scoreBA:+p.ev.sBA.toFixed(2),distanceKm:+p.ev.d.toFixed(1),
+      reason:matchReason(p.ev,A,B),status:'planning',slots:[],chosenSlot:null,venueType:null,
+      duration:null,messages:[],contactShare:{},logged:null};
+    S.matches.push(m);
+    A.matchedBefore.push(B.id); B.matchedBefore.push(A.id);
+    diag.perUser[p.a].matchedWith=p.b; diag.perUser[p.b].matchedWith=p.a;
+  }
+  diag.pairs=chosen.length;
+  /* carry-over flags */
+  for(const u of active){
+    const got=chosen.some(p=>p.a===u.id||p.b===u.id);
+    u.unmatchedLastWeek=!got;
+    if(!got)diag.unmatched.push(u.id);
+  }
+  S.runWeeks.push(wk);
+  S.diag[wk]=diag;
+  save(); render();
+  toast('Week '+wk+': '+chosen.length+' matches made, '+diag.unmatched.length+' people unmatched');
+}
+function advanceWeek(){
+  S.week++;
+  /* auto-resume anyone whose pause has lapsed happens implicitly via isPaused() */
+  save(); render(); toast('Now in week '+S.week);
+}
+/* ============ per-open match view state + time helpers ============ */
+let SKIPANIM=false;
+function scrollTopAll(){ window.scrollTo(0,0); const m=document.getElementById('app'); if(m)m.scrollTop=0; }
+function applyLayout(){
+  const mode=(S&&S.layout&&S.layout!=='auto')?S.layout:(window.innerWidth>=900?'desktop':'mobile');
+  document.documentElement.dataset.layout=mode;
+  document.documentElement.classList.toggle('wide',window.innerWidth>=760);
+}
+function animateCounts(){
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  document.querySelectorAll('.countdown .n,.stat .n').forEach(el=>{
+    const target=parseFloat(el.textContent); if(isNaN(target)||target===0)return;
+    const dec=el.textContent.includes('.')?2:0;
+    const t0=performance.now(), dur=600;
+    function step(t){
+      const k=Math.min(1,(t-t0)/dur), v=target*(1-Math.pow(1-k,3));
+      el.textContent=v.toFixed(dec);
+      if(k<1)requestAnimationFrame(step); else el.textContent=dec?target.toFixed(dec):String(target);
+    }
+    requestAnimationFrame(step);
+  });
+}
+const MSTATE={plan:false,proposeOpen:false,chatOpen:false,surveyOpen:false,notesOpen:false,editOpen:false,aboutOpen:false};
+function resetMstate(){MSTATE.plan=false;MSTATE.proposeOpen=false;MSTATE.chatOpen=false;MSTATE.surveyOpen=false;MSTATE.notesOpen=false;MSTATE.editOpen=false;MSTATE.aboutOpen=false;}
+const WHOUR={wm:9,wl:12.5,we:18,wk:10};
+function nextDayDate(dayName,hourF){
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const target=days.indexOf(dayName); if(target<0)return Date.now()+3*86400000;
+  const h=Math.floor(hourF),mi=Math.round((hourF-h)*60);
+  const cand=new Date(); cand.setHours(h,mi,0,0);
+  let add=(target-cand.getDay()+7)%7;
+  if(add===0&&cand.getTime()<=Date.now())add=7;
+  cand.setDate(cand.getDate()+add);
+  return cand.getTime();
+}
+function nextMondayMidnight(){
+  const d=new Date(); d.setHours(0,0,0,0);
+  let add=(1-d.getDay()+7)%7; if(add===0)add=7;
+  d.setDate(d.getDate()+add); return d.getTime();
+}
+function cdCells(ms){ if(ms<0)ms=0;
+  return {d:Math.floor(ms/86400000),h:Math.floor(ms%86400000/3600000),mi:Math.floor(ms%3600000/60000)};
+}
+function countdownHtml(ts,label){
+  if(!ts)return'';
+  const c=cdCells(ts-Date.now());
+  return '<div class="countdown" data-deadline="'+ts+'">'
+   +'<div class="tcell"><div class="n">'+c.d+'</div><div class="l">days</div></div>'
+   +'<div class="tcell"><div class="n">'+c.h+'</div><div class="l">hours</div></div>'
+   +'<div class="tcell"><div class="n">'+c.mi+'</div><div class="l">minutes</div></div></div>'
+   +(label?'<div class="muted small center">'+esc(label)+'</div>':'');
+}
+function timeReached(m){ return !!m.meetAt&&Date.now()>=m.meetAt; }
+function updateTimers(){
+  let crossed=false;
+  document.querySelectorAll('.countdown[data-deadline]').forEach(el=>{
+    const ms=+el.dataset.deadline-Date.now();
+    if(ms<=0)crossed=true;
+    const c=cdCells(ms), ns=el.querySelectorAll('.n');
+    if(ns.length===3){ns[0].textContent=c.d;ns[1].textContent=c.h;ns[2].textContent=c.mi;}
+  });
+  if(crossed)render();
+}
+/* ============ rendering ============ */
+const HONESTY='RCT is brand new, so your potential matches may not be as close as they will be later. You’re part of the start. Invite your friends, talk about it with people in your department, and the matches will get better.';
+function tierBadge(t){
+  return t==='mutual'?'<span class="tier mutual">Mutual match</span>':'<span class="tier wild">Wildcard</span>';
+}
+function profileCard(u,showArea,editBtn){
+  const initial=esc((u.displayName||'?').trim().charAt(0).toUpperCase());
+  return '<div class="pcard">'
+   +'<div class="pcover"></div>'
+   +'<div class="avatar" aria-hidden="true">'+initial+'</div>'
+   +'<div class="phead">'
+   +(editBtn?'<button class="btn small" style="float:right;margin-top:6px" data-action="toggleEdit">'+(MSTATE.editOpen?'Close':'Edit')+'</button>':'')
+   +'<h2>'+esc(u.displayName)+(u.pronouns?' <span class="muted small">('+esc(u.pronouns)+')</span>':'')+'</h2>'
+   +(u.institution?'<div class="muted">'+esc(u.institution)+'</div>':'')
+   +(showArea?'<div class="muted small">'+esc(AREA[u.area].name)+', '+esc(AREA[u.area].city)+'</div>':'')
+   +'</div></div>'
+   +'<div class="qawrap">'
+   +'<div class="qa"><div class="q">My background</div><div class="a">'+esc(u.background)+'</div></div>'
+   +'<div class="qa"><div class="q">A question I’m stuck on</div><div class="a">'+esc(u.stuckOn)+'</div></div>'
+   +'<div class="qa"><div class="q">Something I’d love someone to explain to me</div><div class="a">'+esc(u.wantExplained)+'</div></div>'
+   +'<div class="qa"><div class="q">Something I can explain over coffee</div><div class="a">'+esc(u.canExplain)+'</div></div>'
+   +'<div class="qa"><div class="q">One non-work thing about me</div><div class="a">'+esc(u.nonWork)+'</div></div>'
+   +'<div class="qa"><div class="q">What I know about</div><div>'+u.backgroundTopics.map(t=>'<span class="tag">'+esc(TOPIC[t].label)+'</span>').join('')+'</div></div>'
+   +'</div>';
+}
+/* --- topic search picker --- */
+const PICK={q:'',kind:null};
+function searchTopics(q){
+  q=q.trim().toLowerCase(); if(q.length<2)return[];
+  const qTokens=q.split(/\s+/);
+  const scored=[];
+  for(const id in TOPIC){
+    const t=TOPIC[id];
+    const cands=[t.label.toLowerCase(),...t.syn.map(s=>s.toLowerCase()),t.subLabel.toLowerCase()];
+    let best=0;
+    for(const c of cands){
+      if(c===q)best=Math.max(best,5);
+      else if(c.includes(q))best=Math.max(best,4);
+      else{
+        const cTok=c.split(/\s+/);
+        let hit=0;
+        for(const qt of qTokens){
+          if(cTok.some(ct=>ct.startsWith(qt)))hit+=2;
+          else if(qt.length>3&&cTok.some(ct=>lev(qt,ct)<=2))hit+=1;
+        }
+        best=Math.max(best,hit/qTokens.length);
+      }
+    }
+    if(best>=1)scored.push({id,best});
+  }
+  scored.sort((a,b)=>b.best-a.best);
+  return scored.slice(0,8).map(s=>s.id);
+}
+function pickerHtml(kind,selected,placeholder){
+  const res=PICK.kind===kind?searchTopics(PICK.q):[];
+  let resHtml='';
+  if(PICK.kind===kind&&PICK.q.trim().length>=2){
+    if(res.length===0)resHtml='<div class="notice small">No topic found for that yet. Try another word, or a broader one.</div>';
+    else{
+      /* group results under their subcategory so the mapping is visible */
+      const bySub={};
+      res.forEach(id=>{const t=TOPIC[id];(bySub[t.sub]=bySub[t.sub]||[]).push(id);});
+      resHtml='<div class="searchres">'+Object.keys(bySub).map(sub=>{
+        const first=TOPIC[bySub[sub][0]];
+        return '<div class="grp">'+esc(first.divLabel)+' &rsaquo; '+esc(first.subLabel)+'</div>'
+          +bySub[sub].map(id=>'<button type="button" data-action="pickTopic" data-kind="'+kind+'" data-topic="'+id+'">'
+            +esc(TOPIC[id].label)+(selected.includes(id)?' ✓':'')+'</button>').join('');
+      }).join('')+'</div>';
+    }
+  }
+  return '<input type="search" data-input="picker" data-kind="'+kind+'" placeholder="'+esc(placeholder)+'" value="'+(PICK.kind===kind?esc(PICK.q):'')+'" aria-label="'+esc(placeholder)+'">'
+    +resHtml
+    +'<div class="chips">'+selected.map(id=>'<button type="button" class="chip on" data-action="unpickTopic" data-kind="'+kind+'" data-topic="'+id+'">'+esc(TOPIC[id].label)+' ✕</button>').join('')
+    +(selected.length?'':'<span class="muted small">Nothing picked yet</span>')+'</div>';
+}
+function topicArr(kind){
+  const target=S.view==='onboard'?S.onb.draft:me();
+  if(!target)return[];
+  if(kind==='bg'){ target.backgroundTopics=target.backgroundTopics||[]; return target.backgroundTopics; }
+  target.interestTopics=target.interestTopics||[]; return target.interestTopics;
+}
+function topicsNearby(u){
+  /* topics held by active profiles within the user's travel range; names only, no counts, no identities */
+  const set=new Set();
+  Object.values(S.users).forEach(o=>{
+    if(o.id===u.id||!o.verified||isPaused(o))return;
+    if(!u.area||!o.area)return;
+    if(userDist(u,o)<=u.maxKm)o.backgroundTopics.forEach(t=>set.add(t));
+  });
+  (u.backgroundTopics||[]).forEach(t=>set.delete(t));
+  return [...set];
+}
+let NEARBY_SHUFFLE=1;
+function nearbyListHtml(u,selected){
+  const all=topicsNearby(u);
+  if(all.length===0)return '<div class="notice center">No topics from nearby researchers yet. '+esc(HONESTY)+'</div>';
+  /* deterministic shuffle so Refresh visibly reorders */
+  const arr=[...all].sort((a,b)=>((a+NEARBY_SHUFFLE).split('').reduce((x,c)=>x+c.charCodeAt(0),0))-((b+NEARBY_SHUFFLE).split('').reduce((x,c)=>x+c.charCodeAt(0),0)));
+  const show=arr.slice(0,12);
+  const bySub={};
+  show.forEach(id=>{const t=TOPIC[id];(bySub[t.sub]=bySub[t.sub]||[]).push(id);});
+  return '<div class="topicwrap"><p class="muted small">Things a few researchers near you could talk about (no names, no numbers):</p>'
+    +Object.keys(bySub).map(sub=>{
+      const first=TOPIC[bySub[sub][0]];
+      return '<div class="grphead">'+esc(first.subLabel)+'</div><div class="topicgrid">'
+        +bySub[sub].map(id=>'<button type="button" class="ttile spot'+(selected.includes(id)?' on':'')+'" data-action="toggleNearby" data-topic="'+id+'">'+esc(TOPIC[id].label)+'</button>').join('')+'</div>';
+    }).join('')
+    +'<button class="btn small" data-action="refreshNearby">↻ Refresh this list</button></div>';
+}
+/* --- views --- */
+const V={};
+V.welcome=function(){
+  return '<div class="card center hero"><svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 9.5h12v5.5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M16 10.5h2.3a2.4 2.4 0 0 1 0 4.8H16"/><path d="M7.5 6c0-1 .5-1.2.5-2.2M11 6c0-1 .5-1.2.5-2.2M14.5 6c0-1 .5-1.2.5-2.2"/></svg>'
+   +'<h2>Randomised Coffee Trial</h2>'
+   +'<p>Once a week, we match you with one other researcher nearby for an in-person coffee. Any field, any level, honours upward. No titles, no rankings, no feeds. Just a conversation with a curious stranger.</p>'
+   +'<div class="howgrid" style="text-align:left">'
+   +'<div><b>1. Tell us about you</b>A short, human profile. No titles, ever.</div>'
+   +'<div><b>2. Pick what you’re curious about</b>Privately. Nobody sees your picks.</div>'
+   +'<div><b>3. Get one match a week</b>Mutual curiosity first. A wildcard otherwise.</div>'
+   +'<div><b>4. Have a coffee</b>Plan it in a tiny chat, meet in a public place.</div></div>'
+   +'<p class="notice" style="text-align:left">'+esc(HONESTY)+'</p>'
+   +'<p class="muted small" style="text-align:left"><b>House rules:</b> this is for curiosity and conversation. Not recruitment, not sales, not dating.</p>'
+   +'<button class="btn primary" data-action="startOnboard">Create my profile</button>'
+   +'<button class="btn" data-action="exploreSample">Explore as a sample researcher</button>'
+   +'</div>';
+};
+V.onboard=function(){
+  const st=S.onb.step,d=S.onb.draft;
+  let body='';
+  const steps='<div class="steps">'+[1,2,3,4].map(i=>'<span class="'+(st>=i?'on':'')+'"></span>').join('')+'</div>';
+  if(st===1){
+    body='<h2>Verify it’s you</h2>'
+     +'<p>Every researcher signs in with <b>ORCID</b> to prove they’re a real, unique person. We only confirm your identity: your ORCID iD is <b>never shown to anyone</b> and never appears on your profile.</p>'
+     +'<p class="muted small">Don’t have an ORCID? It’s free and takes about two minutes at orcid.org/register. Honours students welcome.</p>';
+    if(d.orcidVerified){
+      body+='<div class="notice good">✓ Signed in with ORCID (simulated). Your iD stays private.</div>'
+       +'<button class="btn primary" data-action="onbNext">Continue</button>';
+    }else if(S.onb.login){
+      body+='<div class="orcidbox"><div class="obh">ORCID sign-in (simulated – this is a demo, nothing is sent anywhere)</div>'
+       +'<label class="f" for="orc-em">Email or ORCID iD</label><input type="text" id="orc-em" autocomplete="off">'
+       +'<label class="f" for="orc-pw">Password</label><input type="password" id="orc-pw" autocomplete="off">'
+       +'<p class="muted small">Demo shortcut: <button type="button" class="linkbtn" data-action="orcidSampleLogin">fill a sample account</button></p>'
+       +'<button class="btn primary" data-action="orcidAuth">Sign in and authorise</button>'
+       +'<button class="btn" data-action="orcidCancel">Cancel</button></div>';
+    }else{
+      body+='<button class="btn primary" data-action="orcidLoginOpen">Sign in with ORCID (simulated)</button>'
+       +'<p class="muted small">Signing in (rather than typing an iD) means nobody can claim someone else’s ORCID.</p>';
+    }
+  }else if(st===2){  }else if(st===2){
+    body='<h2>About you</h2><p class="muted small">Hand-written and human. No titles, no career stage, ever.</p>'
+     +'<label class="f" for="f-name">First name or display name</label><input type="text" id="f-name" value="'+esc(d.displayName||'')+'">'
+     +'<label class="f" for="f-pr">Pronouns <span class="opt">(optional)</span></label><input type="text" id="f-pr" value="'+esc(d.pronouns||'')+'">'
+     +'<label class="f" for="f-inst">Where you’re based <span class="opt">(optional)</span></label><input type="text" id="f-inst" value="'+esc(d.institution||'')+'">'
+     +'<label class="f" for="f-bg">My background (2–3 sentences)</label><textarea id="f-bg">'+esc(d.background||'')+'</textarea>'
+     +'<label class="f" for="f-stuck">A question I’m stuck on</label><textarea id="f-stuck">'+esc(d.stuckOn||'')+'</textarea>'
+     +'<label class="f" for="f-want">Something I’d love someone to explain to me</label><input type="text" id="f-want" value="'+esc(d.wantExplained||'')+'">'
+     +'<label class="f" for="f-can">Something I can explain over coffee</label><input type="text" id="f-can" value="'+esc(d.canExplain||'')+'">'
+     +'<label class="f" for="f-fun">One non-work thing about me</label><input type="text" id="f-fun" value="'+esc(d.nonWork||'')+'">'
+     +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbStep2Next">Continue</button>';
+  }else if(st===3){
+    body='<h2>Where and when</h2><p class="muted small">Only a coarse area is ever shown to a match, and only after you match.</p>'
+     +'<label class="f" for="f-area">Home area</label><select id="f-area">'
+     +AREAS.map(a=>'<option value="'+a.id+'"'+(d.area===a.id?' selected':'')+'>'+esc(a.name)+' ('+esc(a.city)+')</option>').join('')+'</select>'
+     +'<label class="f" for="f-km">How far will you travel for a good coffee?</label><select id="f-km">'
+     +MAXKM.map(k=>'<option value="'+k.v+'"'+(d.maxKm===k.v?' selected':'')+'>'+esc(k.l)+'</option>').join('')+'</select>'
+     +'<label class="f">When are you usually free?</label><div class="chips">'
+     +WINDOWS.map(w=>'<button type="button" class="chip'+((d.availability||[]).includes(w.id)?' on':'')+'" data-action="onbAvail" data-w="'+w.id+'">'+esc(w.label)+'</button>').join('')+'</div>'
+     +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbStep3Next">Continue</button>';
+  }else if(st===4){
+    const draftUser={id:'me',area:d.area,maxKm:d.maxKm,backgroundTopics:d.backgroundTopics||[],interestTopics:d.interestTopics||[]};
+    body='<h2>Topics</h2>'
+     +'<h3>What I know about</h3><p class="muted small">Shown on your profile after a match. Used to find people curious about your world.</p>'
+     +pickerHtml('bg',d.backgroundTopics||[],'Search your field, e.g. "back pain", "co design", "ML"')
+     +'<hr class="soft"><h3>What I’d love to learn about</h3>'
+     +'<p class="muted small"><b>Private.</b> Never shown to anyone, not even your match. Pick several.</p>'
+     +pickerHtml('int',d.interestTopics||[],'Search what you’re curious about')
+     +'<details><summary>Or browse what’s on offer near you</summary>'+nearbyListHtml(draftUser,d.interestTopics||[])+'</details>'
+     +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbFinish">Finish</button>';
+  }
+  return '<div class="card">'+steps+body+'</div>';
+};
+V.home=function(){
+  const u=me(); if(!u)return V.welcome();
+  if(isPaused(u)){
+    const until=u.pausedUntilWeek===9999?'until you resume':'until week '+u.pausedUntilWeek;
+    return '<div class="card"><h2>You’re paused</h2><p>No matches '+until+'. Enjoy the break.</p>'
+      +(u.pauseReason?'<p class="muted small">Your note: '+esc(u.pauseReason)+'</p>':'')
+      +'<button class="btn primary" data-action="resumeNow">Resume matching</button></div>';
+  }
+  if(!weekRun(S.week)){
+    return '<h2 class="pagetitle center">What I’d love to learn about this week</h2>'
+     +'<div class="cols"><div class="colA">'
+     +'<div class="card center"><div class="muted small">Time left to lock in your picks</div>'
+     +countdownHtml(nextMondayMidnight(),'Matches drop Monday midnight. Your picks decide who you meet.')
+     +'</div>'
+     +'<div class="notice small center">'+esc(HONESTY)+'</div>'
+     +'<p class="muted small center">Demo: “Run this week’s matching” in the control centre triggers the drop.</p>'
+     +'</div><div class="colB">'
+     +'<div class="card">'+nearbyListHtml(u,u.interestTopics)
+     +'<hr class="soft">'
+     +(u.interestTopics.length
+       ?'<div class="muted small center">Your picks this week (private, carried over until you change them):</div><div class="chips" style="justify-content:center">'+u.interestTopics.map(id=>'<button type="button" class="chip on" data-action="unpickTopic" data-kind="int" data-topic="'+id+'">'+esc(TOPIC[id].label)+' ✕</button>').join('')+'</div>'
+       :'<p class="muted small center">No picks yet. Choose a few from the list above.</p>')
+     +'</div>'
+     +'</div></div>';
+  }
+  const m=matchFor(u.id,S.week);
+  if(!m){
+    return '<h2 class="pagetitle center">Your match this week</h2>'
+     +'<div class="card center"><h2>No match this week</h2>'
+     +'<p>This is a new app, so there aren’t many people near you yet and we couldn’t find a match this week. <b>You’ll be first in line next week.</b></p>'
+     +'<p>The best thing you can do is tell a friend or a colleague.</p>'
+     +'<button class="btn primary" data-action="nav" data-v="invite">Invite a friend</button>'
+     +'<button class="btn" data-action="nav" data-v="pause">Pause for a while</button></div>';
+  }
+  const p=partnerOf(m,u.id);
+  const status={planning:'Not planned yet',scheduled:'Organised',happened:'Happened',cancelled:'Called off',noShow:'Didn’t happen'}[m.status];
+  return '<h2 class="pagetitle center">Your match this week</h2>'
+   +'<div class="card center"><h2>'+esc(p.displayName)+'</h2>'
+   +'<div class="muted">Around '+esc(AREA[p.area].name)+', '+esc(AREA[p.area].city)+'</div>'
+   +'<div class="muted small">'+esc(status)+'</div>'
+   +'<button class="btn primary" data-action="openMatch" data-m="'+m.id+'">Open match</button></div>';
+};
+V.match=function(){
+  const u=me(); const m=S.matches.find(x=>x.id===S.sel);
+  if(!u||!m)return V.home();
+  const p=partnerOf(m,u.id);
+  let out='<button class="btn small" data-action="nav" data-v="home">← Meet up</button>';
+  if(['cancelled','noShow'].includes(m.status)){
+    out+='<div class="card"><h2>'+(m.status==='cancelled'?'This match has ended for the week':'This one didn’t happen')+'</h2>'
+      +'<p class="muted">No penalty, no fuss. A new match comes with the next weekly drop.</p></div>';
+    return out;
+  }
+  if(m.status==='happened')return out+wentWellHtml(m,u,p);
+  if(m.status==='scheduled'&&timeReached(m))return out+afterMeetHtml(m,u,p);
+  if(!MSTATE.plan){
+    const tierLine=m.tier==='mutual'
+      ?'You are each curious about the other’s field.'
+      :'There wasn’t a perfect match this week, but everyone has something to share. We think this person is worth a coffee.';
+    if(MSTATE.aboutOpen){
+      return '<button class="btn small" data-action="aboutClose">← Back</button>'
+       +profileCard(p,true)
+       +'<div class="card center"><button class="btn primary" data-action="planCoffee">Plan coffee →</button></div>';
+    }
+    out+='<div class="card center"><h2>'+esc(p.displayName)+'</h2>'
+      +'<p class="muted">Around '+esc(AREA[p.area].name)+', '+esc(AREA[p.area].city)+'</p>'
+      +'<div class="notice small center">'+tierLine+'</div>'
+      +'<div><button class="btn" data-action="aboutPartner">About '+esc(p.displayName)+'</button>'
+      +'<button class="btn primary" data-action="planCoffee">Plan coffee →</button></div>'
+      +'<div><button class="linkbtn" data-action="cantMake" data-m="'+m.id+'">Can’t make it this week</button>'
+      +'<button class="linkbtn" data-action="blockUser" data-m="'+m.id+'">Block</button>'
+      +'<button class="linkbtn" data-action="reportUser" data-m="'+m.id+'">Report</button></div>'
+      +'<p class="muted small">Meet in a public place, tell a friend where you’re going, and trust your gut.</p></div>';
+    return out;
+  }
+  if(m.chosenSlot){
+    out+='<div class="card center"><h2>Meet up organised!</h2>'
+      +'<p>'+esc(m.chosenSlot.day)+', '+esc(WNAME[m.chosenSlot.window].toLowerCase())
+      +(m.venueType?' · '+esc(m.venueType.toLowerCase()):'')
+      +(m.duration?' · '+esc(m.duration.toLowerCase()):'')+'</p>'
+      +countdownHtml(m.meetAt,'until you meet '+p.displayName)
+      +'<button class="btn" data-action="changeTime" data-m="'+m.id+'">I need to change time</button>'
+      +'<button class="btn primary" data-action="openChat">'+(m.messages.length?'Open chat':'Send message')+(!MSTATE.chatOpen&&unreadCount(m,u)>0?' <span class="badge">'+unreadCount(m,u)+'</span>':'')+'</button></div>';
+    if(MSTATE.chatOpen)out+=chatCard(m,u,p,false);
+    return out;
+  }
+  const theirs=m.slots.map((x,i)=>Object.assign({},x,{i})).filter(x=>x.by!==u.id);
+  const mine=m.slots.map((x,i)=>Object.assign({},x,{i})).filter(x=>x.by===u.id);
+  out+='<div class="card"><h2>Plan the coffee</h2>'
+   +'<p class="muted small">Roughly midway: between '+esc(AREA[u.area].name)+' and '+esc(AREA[p.area].name)+' – pick a spot around there.</p>';
+  if(theirs.length){
+    out+='<h3>Proposed times by '+esc(p.displayName)+'</h3>'
+     +theirs.map(x=>'<div class="slot">'+esc(x.day)+', '+esc(WNAME[x.window].toLowerCase())
+       +(x.venue?' · '+esc(x.venue.toLowerCase()):'')+(x.duration?' · '+esc(x.duration.toLowerCase()):'')
+       +'<button class="btn small primary" data-action="acceptSlot" data-m="'+m.id+'" data-i="'+x.i+'">Accept</button></div>').join('');
+  }
+  if(mine.length){
+    out+='<h3>Your proposals</h3>'+mine.map(x=>'<div class="slot">'+esc(x.day)+', '+esc(WNAME[x.window].toLowerCase())
+      +(x.venue?' · '+esc(x.venue.toLowerCase()):'')+(x.duration?' · '+esc(x.duration.toLowerCase()):'')
+      +'<span class="muted small" style="margin-left:auto">waiting for '+esc(p.displayName)+'</span></div>').join('');
+  }
+  const showPickers=MSTATE.proposeOpen||!theirs.length;
+  if(!showPickers){
+    out+='<button class="linkbtn" data-action="proposeOther">or propose another time</button>';
+  }else if(mine.length<3){
+    if(!theirs.length&&!mine.length)out+='<p class="muted small">Suggest up to three times. Each proposal includes a venue and a duration.</p>';
+    out+='<div class="chips" style="gap:8px">'
+     +'<select id="slotDay" aria-label="Day" style="width:auto">'+['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(d=>'<option>'+d+'</option>').join('')+'</select>'
+     +'<select id="slotWin" aria-label="Time of day" style="width:auto">'+WINDOWS.map(w=>'<option value="'+w.id+'">'+esc(w.label)+'</option>').join('')+'</select>'
+     +'<select id="slotVenue" aria-label="Venue type" style="width:auto">'+VENUES.map(v=>'<option>'+esc(v)+'</option>').join('')+'</select>'
+     +'<select id="slotDur" aria-label="Duration" style="width:auto">'+DURATIONS.map(v=>'<option>'+esc(v)+'</option>').join('')+'</select>'
+     +'<button class="btn small" data-action="proposeSlot" data-m="'+m.id+'">Propose</button></div>'
+     +'<p class="muted small">Venues are public places only.</p>';
+  }
+  out+='<hr class="soft"><button class="linkbtn" data-action="cantMake" data-m="'+m.id+'">Can’t make it this week</button>'
+   +'<button class="linkbtn" data-action="blockUser" data-m="'+m.id+'">Block</button>'
+   +'<button class="linkbtn" data-action="reportUser" data-m="'+m.id+'">Report</button>'
+   +'</div>';
+  out+=chatCard(m,u,p,false);
+  return out;
+};
+function unreadCount(m,u){
+  m.seen=m.seen||{};
+  return m.messages.slice(m.seen[u.id]||0).filter(x=>x.from!==u.id).length;
+}
+function chatCard(m,u,p,locked){
+  m.seen=m.seen||{}; m.seen[u.id]=m.messages.length;
+  let out='<div class="card"><h2>Logistics chat</h2>';
+  if(m.messages.length)out+=m.messages.map(msg=>'<div class="msg '+(msg.from===u.id?'me':'them')+'"><span class="who">'+esc(S.users[msg.from]?S.users[msg.from].displayName:msg.from)+'</span>'+esc(msg.text)+'</div>').join('');
+  else out+='<p class="muted small">Say hi and sort out the where and when. This chat is just for planning.</p>';
+  if(locked||m.week<S.week)out+='<p class="notice small">This chat is closed now the meetup is wrapped up.</p>';
+  else out+='<div class="chatbox"><input type="text" id="chatIn" placeholder="Message about the plan…" aria-label="Chat message"><button class="btn small primary" data-action="sendMsg" data-m="'+m.id+'">Send</button></div>'
+   +'<p class="muted small">Demo tip: switch persona in the control centre to reply as '+esc(p.displayName)+'.</p>';
+  return out+'</div>';
+}
+function afterMeetHtml(m,u,p){
+  return '<div class="card"><h2>After you meet</h2>'
+   +'<p class="muted small">Your coffee with '+esc(p.displayName)+' was set for '+(m.chosenSlot?esc(m.chosenSlot.day)+', '+esc(WNAME[m.chosenSlot.window].toLowerCase()):'this week')+'. Meetups are logged to keep everyone accountable.</p>'
+   +'<form data-form="logMeetup" data-m="'+m.id+'">'
+   +'<label class="f">Did it happen?</label>'
+   +'<label><input type="radio" name="happened" value="yes" checked> Yes, we met</label><br>'
+   +'<label><input type="radio" name="happened" value="rescheduled"> Not yet, we rescheduled</label><br>'
+   +'<label><input type="radio" name="happened" value="no"> It didn’t happen</label>'
+   +'<label class="f" for="logDur">Roughly how long? <span class="opt">(if it happened)</span></label>'
+   +'<input type="text" id="logDur" name="dur" placeholder="e.g. about an hour">'
+   +'<button class="btn primary" type="submit">Log it</button></form>'
+   +'<hr class="soft"><button class="linkbtn" data-action="blockUser" data-m="'+m.id+'">Block</button>'
+   +'<button class="linkbtn" data-action="reportUser" data-m="'+m.id+'">Report</button></div>';
+}
+function wentWellHtml(m,u,p){
+  m.notes=m.notes||{};
+  const mine=m.notes[u.id]||{text:'',shared:false};
+  const theirs=m.notes[p.id];
+  let out='<div class="card center"><h2>We hope it went well!</h2>'
+   +'<p class="muted small">Thanks for logging your coffee with '+esc(p.displayName)+'.</p>';
+  if(MSTATE.notesOpen||mine.text){
+    out+='<form data-form="notes" data-m="'+m.id+'" style="text-align:left">'
+     +'<label class="f" for="noteTxt">My notes on what I learned</label>'
+     +'<textarea id="noteTxt" name="text" placeholder="Just for you, unless you choose to share…">'+esc(mine.text)+'</textarea>'
+     +'<label class="small"><input type="checkbox" name="shared"'+(mine.shared?' checked':'')+'> Share these notes with '+esc(p.displayName)+'</label><br>'
+     +'<button class="btn primary small" type="submit">Save notes</button></form>';
+  }else{
+    out+='<div><button class="btn" data-action="openNotes">Write my own notes about what I learned</button></div>';
+  }
+  const done=S.surveys.some(x=>x.matchId===m.id&&x.userId===u.id);
+  if(done)out+='<div class="notice good small">✓ Survey received. Thank you.</div>';
+  else if(!MSTATE.surveyOpen)out+='<div><button class="btn" data-action="openSurvey">Optional survey</button></div>';
+  out+='</div>';
+  if(theirs&&theirs.shared&&theirs.text)out+='<div class="card"><h3 style="margin-top:0">Notes '+esc(p.displayName)+' shared with you</h3><p>'+esc(theirs.text)+'</p></div>';
+  if(!done&&MSTATE.surveyOpen)out+=surveyCard(m);
+  out+='<div class="card">'+contactHtml(m,u,p).replace('<hr class="soft">','')+'</div>';
+  return out;
+}
+function surveyCard(m){
+  return '<div class="card"><h2>One minute: how was it?</h2>'
+   +'<form data-form="survey" data-m="'+m.id+'">'
+   +'<label class="f" for="svC">How comfortable did you feel? (1–5)</label><select id="svC" name="comfort">'+[1,2,3,4,5].map(n=>'<option'+(n===4?' selected':'')+'>'+n+'</option>').join('')+'</select>'
+   +'<label class="f" for="svL">Did you learn something you didn’t expect? (1–5)</label><select id="svL" name="learned">'+[1,2,3,4,5].map(n=>'<option'+(n===4?' selected':'')+'>'+n+'</option>').join('')+'</select>'
+   +'<label class="f" for="svT">One thing I took away (one sentence)</label><input type="text" id="svT" name="takeaway">'
+   +'<label class="small"><input type="checkbox" name="pub"> Share this takeaway publicly on the Sparks wall (anonymised)</label><br>'
+   +'<label class="small"><input type="checkbox" name="named"> …and you may attach my first name</label>'
+   +'<label class="f">Would you do this again?</label>'
+   +'<label class="small"><input type="checkbox" name="repeat" checked> Yes</label> '
+   +'<label class="small"><input type="checkbox" name="recommend" checked> I’d recommend it</label>'
+   +'<label class="f" for="svS">Any safety concern? <span class="opt">(private, goes to the team)</span></label><input type="text" id="svS" name="safety">'
+   +'<label class="f" for="svF">Anything else for the app team? <span class="opt">(private)</span></label><input type="text" id="svF" name="fb">'
+   +'<p class="muted small">Everything here is private by default. Only what you tick is ever shown, and only as you chose.</p>'
+   +'<button class="btn primary" type="submit">Send survey</button></form></div>';
+}
+function contactHtml(m,u,p){
+  const mine=m.contactShare[u.id]||{optIn:false,details:''};
+  const theirs=m.contactShare[p.id];
+  let out='<hr class="soft"><h3>Stay in touch?</h3><p class="muted small">You two won’t be matched again. If you’d like to keep talking, share contact details. They’re revealed <b>only if you both opt in</b>.</p>';
+  if(mine.optIn)out+='<div class="notice good">✓ You’ve offered to share: '+esc(mine.details)+'</div>';
+  else out+='<form data-form="contact" data-m="'+m.id+'"><input type="text" name="details" placeholder="What to share, e.g. your email" aria-label="Contact details to share"> <button class="btn small primary" type="submit">Share my contact details</button></form>';
+  if(mine.optIn&&theirs&&theirs.optIn)out+='<div class="notice good"><b>'+esc(p.displayName)+' shared back:</b> '+esc(theirs.details)+'</div>';
+  else if(mine.optIn)out+='<p class="muted small">If '+esc(p.displayName)+' opts in too, you’ll both see each other’s details.</p>';
+  return out;
+}
+V.topics=function(){
+  const u=me(); if(!u)return V.welcome();
+  return '<button class="btn small" data-action="nav" data-v="profile">← Profile</button>'
+   +'<div class="card"><h2>What I know about</h2>'
+   +'<p class="muted small">Part of your profile: shown to a match after you’re matched, and how others find your world. Update it whenever there’s something new you could talk about over coffee.</p>'
+   +pickerHtml('bg',u.backgroundTopics,'Search your field, e.g. "back pain", "co design", "ML"')
+   +'</div>';
+};
+V.profile=function(){
+  const u=me(); if(!u)return V.welcome();
+  return profileCard(u,true,true)
+   +(MSTATE.editOpen?editFormHtml(u):'')
+   +'<hr class="soft">'
+   +'<div class="sectlabel">Profile sections</div>'
+   +'<div class="proftools">'
+   +'<button class="listlink spot tool" data-action="nav" data-v="topics"><span><b>What I know about</b><span class="d">'+u.backgroundTopics.length+' topics · shown after a match</span></span><span class="chev" aria-hidden="true">›</span></button>'
+   +'<button class="listlink spot tool" data-action="nav" data-v="history"><span><b>History</b><span class="d">Past matches · never repeated</span></span><span class="chev" aria-hidden="true">›</span></button>'
+   +'</div>'
+   +'<div class="notice small">Above is what a match sees, and <b>only after</b> you’re matched. Your weekly picks, exact location and ORCID are never shown.</div>';
+};
+function editFormHtml(u){
+  return '<div class="card"><h2>Edit profile</h2>'
+   +'<form data-form="editProfile">'
+   +'<label class="f" for="e-name">Display name</label><input type="text" id="e-name" name="displayName" value="'+esc(u.displayName)+'">'
+   +'<label class="f" for="e-pr">Pronouns <span class="opt">(optional)</span></label><input type="text" id="e-pr" name="pronouns" value="'+esc(u.pronouns)+'">'
+   +'<label class="f" for="e-inst">Where you’re based <span class="opt">(optional)</span></label><input type="text" id="e-inst" name="institution" value="'+esc(u.institution)+'">'
+   +'<label class="f" for="e-bg">My background</label><textarea id="e-bg" name="background">'+esc(u.background)+'</textarea>'
+   +'<label class="f" for="e-stuck">A question I’m stuck on</label><textarea id="e-stuck" name="stuckOn">'+esc(u.stuckOn)+'</textarea>'
+   +'<label class="f" for="e-want">Something I’d love someone to explain to me</label><input type="text" id="e-want" name="wantExplained" value="'+esc(u.wantExplained)+'">'
+   +'<label class="f" for="e-can">Something I can explain over coffee</label><input type="text" id="e-can" name="canExplain" value="'+esc(u.canExplain)+'">'
+   +'<label class="f" for="e-fun">One non-work thing about me</label><input type="text" id="e-fun" name="nonWork" value="'+esc(u.nonWork)+'">'
+   +'<label class="f" for="e-area">Home area</label><select id="e-area" name="area">'+AREAS.map(a=>'<option value="'+a.id+'"'+(u.area===a.id?' selected':'')+'>'+esc(a.name)+' ('+esc(a.city)+')</option>').join('')+'</select>'
+   +'<label class="f" for="e-km">Max travel</label><select id="e-km" name="maxKm">'+MAXKM.map(k=>'<option value="'+k.v+'"'+(u.maxKm===k.v?' selected':'')+'>'+esc(k.l)+'</option>').join('')+'</select>'
+   +'<label class="f">Availability</label><div class="chips">'+WINDOWS.map(w=>'<button type="button" class="chip'+(u.availability.includes(w.id)?' on':'')+'" data-action="toggleAvail" data-w="'+w.id+'">'+esc(w.label)+'</button>').join('')+'</div>'
+   +'<button class="btn primary" type="submit">Save</button></form></div>';
+}
+V.history=function(){
+  const u=me(); if(!u)return V.welcome();
+  const mine=S.matches.filter(m=>m.a===u.id||m.b===u.id).sort((a,b)=>b.week-a.week);
+  if(!mine.length)return '<button class="btn small" data-action="nav" data-v="profile">← Profile</button><div class="card"><h2>History</h2><p>No matches yet. They’ll collect here, and you’ll never get the same person twice.</p></div>';
+  return '<button class="btn small" data-action="nav" data-v="profile">← Profile</button>'
+   +'<div class="card"><h2>History</h2><p class="muted small">You’re never matched with the same person twice.</p>'
+   +mine.map(m=>{
+     const p=partnerOf(m,u.id);
+     const st={planning:'planning',scheduled:'scheduled',happened:'met ✓',cancelled:'called off',noShow:'didn’t happen'}[m.status];
+     return '<button class="listlink spot" data-action="openMatch" data-m="'+m.id+'"><span><b>'+esc(p.displayName)+'</b> · week '+m.week+' · '+st+'<span class="d">'+(m.tier==='mutual'?'Mutual match':'Wildcard')+' · '+esc(AREA[p.area].name)+'</span></span></button>';
+   }).join('')+'</div>';
+};
+V.more=function(){
+  const items=[
+   ['dashboard','Impact dashboard','Aggregate numbers only'],
+   ['sparks','Sparks wall','What people took away'],
+   ['pause','Pause matching','Away for a bit? No problem'],
+   ['invite','Invite a friend','The matches get better with every person'],
+   ['settings','Settings and privacy','What’s shown to whom'],
+   ['about','About RCT','What this is and why']];
+  return items.map(i=>'<button class="listlink spot" data-action="nav" data-v="'+i[0]+'"><span><b>'+i[1]+'</b><span class="d">'+i[2]+'</span></span></button>').join('');
+};
+V.about=function(){
+  return '<button class="btn small" data-action="nav" data-v="more">← More</button>'+V.welcome();
+};
+V.dashboard=function(){
+  const happened=S.matches.filter(m=>m.status==='happened');
+  const all=S.matches.filter(m=>['happened','scheduled','planning','noShow','cancelled'].includes(m.status));
+  const mut=all.filter(m=>m.tier==='mutual').length;
+  const pcMut=all.length?Math.round(100*mut/all.length):0;
+  const sv=S.surveys;
+  const learned=sv.length?Math.round(100*sv.filter(s=>s.learnedUnexpected>=4).length/sv.length):0;
+  /* disciplinary distance: 1 - best similarity between the pair's background topics (aggregate only) */
+  let dd=0;
+  if(happened.length){
+    dd=happened.reduce((acc,m)=>{
+      const A=S.users[m.a],B=S.users[m.b]; if(!A||!B)return acc;
+      let best=0; A.backgroundTopics.forEach(x=>B.backgroundTopics.forEach(y=>{const s=similarity(x,y); if(s>best)best=s;}));
+      return acc+(1-best);
+    },0)/happened.length;
+  }
+  const counts={}; Object.values(S.users).forEach(u=>{const n=S.matches.filter(m=>m.a===u.id||m.b===u.id).length; if(n>1)counts[u.id]=n;});
+  const repeat=Object.keys(counts).length;
+  const pauses=S.feedback.filter(f=>f.kind==='pause');
+  return '<button class="btn small" data-action="nav" data-v="more">← More</button>'
+   +'<div class="card"><h2>Impact dashboard</h2><p class="muted small">Aggregates only. No individual data, ever. (The sort of numbers a funder would ask for.)</p>'
+   +'<div class="statrow">'
+   +'<div class="stat"><div class="n">'+happened.length+'</div><div class="l">meetups happened</div></div>'
+   +'<div class="stat"><div class="n">'+pcMut+'%</div><div class="l">mutual (vs wildcard)</div></div>'
+   +'<div class="stat"><div class="n">'+learned+'%</div><div class="l">learned something unexpected</div></div>'
+   +'<div class="stat"><div class="n">'+dd.toFixed(2)+'</div><div class="l">avg disciplinary distance (0–1)</div></div>'
+   +'<div class="stat"><div class="n">'+repeat+'</div><div class="l">people with repeat meetups</div></div>'
+   +'<div class="stat"><div class="n">'+pauses.length+'</div><div class="l">pauses recorded</div></div>'
+   +'</div>'
+   +(pauses.length?'<h3>Why people pause</h3><ul class="small">'+pauses.map(p=>'<li>'+esc(p.text||'(no reason given)')+'</li>').join('')+'</ul>':'')
+   +'</div>';
+};
+V.sparks=function(){
+  const pub=S.surveys.filter(s=>s.publicShare&&s.takeaway);
+  return '<button class="btn small" data-action="nav" data-v="more">← More</button>'
+   +'<div class="card"><h2>✨ Sparks</h2><p class="muted small">Things people chose to share after a coffee. Anonymous unless they attached their name.</p>'
+   +(pub.length?pub.map(s=>{
+     const m=S.matches.find(x=>x.id===s.matchId); if(!m)return'';
+     const author=S.users[s.userId], other=author?partnerOf(m,author.id):null;
+     const who=s.publicNamed&&author?esc(author.displayName):'Someone';
+     const meta=who+' in '+esc(author?divOf(author).toLowerCase():'research')+' met someone in '+esc(other?divOf(other).toLowerCase():'research');
+     return '<div class="spark"><div class="t">“'+esc(s.takeaway)+'”</div><div class="meta">'+meta+'</div></div>';
+   }).join(''):'<p class="muted">Nothing shared yet. The wall fills as coffees happen.</p>')
+   +'</div>';
+};
+V.pause=function(){
+  const u=me(); if(!u)return V.welcome();
+  if(isPaused(u))return V.home();
+  return '<button class="btn small" data-action="nav" data-v="more">← More</button>'
+   +'<div class="card"><h2>Pause matching</h2><p class="muted small">Away, swamped, in the field? Pause, then come back. No penalty.</p>'
+   +'<form data-form="pause">'
+   +'<label class="f" for="p-len">How long?</label><select id="p-len" name="len">'
+   +'<option value="1">1 week</option><option value="2">2 weeks</option><option value="4">4 weeks</option><option value="9999">Until I resume</option></select>'
+   +'<label class="f" for="p-why">Reason <span class="opt">(optional, helps us improve)</span></label><select id="p-why" name="why">'
+   +'<option value="">Prefer not to say</option><option>Travelling</option><option>Busy period</option><option>Fieldwork</option><option>Holiday</option><option>Other</option></select>'
+   +'<label class="f" for="p-txt">Anything to add? <span class="opt">(optional)</span></label><input type="text" id="p-txt" name="txt">'
+   +'<button class="btn primary" type="submit">Pause</button></form></div>';
+};
+V.invite=function(){
+  return '<button class="btn small" data-action="nav" data-v="more">← More</button>'
+   +'<div class="card"><h2>Invite a friend</h2>'
+   +'<p>Every person you bring in makes everyone’s matches better, including yours.</p>'
+   +'<p class="notice">'+esc(HONESTY)+'</p>'
+   +'<button class="btn primary" data-action="copyInvite">Copy invite link</button>'
+   +'<p class="muted small">Demo: copies a sample invite message to your clipboard.</p></div>';
+};
+V.settings=function(){
+  const u=me();
+  return '<button class="btn small" data-action="nav" data-v="more">← More</button>'
+   +'<div class="card"><h2>Privacy: what’s shown to whom</h2>'
+   +'<ul class="small">'
+   +'<li><b>Before a match:</b> nobody sees anything about you. Your topics feed anonymous local lists only (names of topics, never names of people, never small counts).</li>'
+   +'<li><b>After a match:</b> your match sees your profile, your background topics, and your coarse area ('+(u?esc(AREA[u.area].name):'suburb')+' level). Nothing more.</li>'
+   +'<li><b>Never shown to anyone:</b> your ORCID iD, your interest picks, your exact location, your survey answers (unless you tick share).</li>'
+   +'<li><b>No titles, no career stages, anywhere.</b> By design.</li></ul></div>'
+   +'<div class="card"><h2>Appearance</h2><div class="chips">'
+   +['auto','light','dark'].map(t=>'<button type="button" class="chip'+(S.theme===t?' on':'')+'" data-action="theme" data-t="'+t+'">'+t[0].toUpperCase()+t.slice(1)+'</button>').join('')
+   +'</div></div>'
+   +'<div class="card"><h2>Account</h2>'
+   +'<div class="notice good small">✓ Verified with ORCID (simulated). Your iD is used only to confirm you’re a real, unique person. It is never displayed or shared.</div>'
+   +'<button class="btn danger" data-action="deleteAccount">Delete my account (demo)</button></div>';
+};
+V.explain=function(){
+  const u=me();
+  const wk=weekRun(S.week)?S.week:S.runWeeks[S.runWeeks.length-1];
+  const d=wk!=null?S.diag[wk]:null;
+  let out='<button class="btn small" data-action="nav" data-v="home">← Back</button>'
+   +'<div class="card diag"><h2>How was this decided?</h2>'
+   +'<p class="notice warn small"><b>Demo/admin view only.</b> Real users never see this: it exposes other people’s private interests via scores.</p>';
+  if(!d){ out+='<p>No matching run yet. Use "Run this week’s matching" in the control centre.</p></div>'; return out; }
+  out+='<p class="small">Week '+wk+': '+d.pairs+' pairs made. Mutual pairs (both topic-fit scores ≥ '+T_MUTUAL+') always outrank wildcards (base weight 1000 vs 500 vs 0). Topic fit uses the curated similarity layer, so "chronic pain" and "low back pain" score 0.9. Greedy pairing with a swap pass, not guaranteed optimal.</p>';
+  if(d.unmatched.length)out+='<p class="small"><b>Unmatched this week (get carry-over priority):</b> '+d.unmatched.map(id=>esc(S.users[id]?S.users[id].displayName:id)).join(', ')+'</p>';
+  if(u&&d.perUser[u.id]){
+    const pu=d.perUser[u.id];
+    const cands=[...pu.candidates].sort((a,b)=>(b.ev.ok?b.ev.weight:-1)-(a.ev.ok?a.ev.weight:-1));
+    out+='<h3>Candidates for '+esc(u.displayName)+'</h3><table><tr><th>Person</th><th>Outcome</th></tr>'
+     +cands.map(c=>{
+       const o=S.users[c.id]; const name=o?o.displayName:c.id;
+       if(!c.ev.ok)return '<tr><td>'+esc(name)+'</td><td>✕ excluded: '+esc(c.ev.why)+'</td></tr>';
+       const chosen=pu.matchedWith===c.id;
+       const pr=c.ev.parts;
+       return '<tr><td>'+esc(name)+(chosen?' <b>← matched</b>':'')+'</td><td>'+c.ev.tier+' · weight '+c.ev.weight.toFixed(1)
+        +'<br><span class="muted">fit '+c.ev.sAB.toFixed(2)+' / '+c.ev.sBA.toFixed(2)+' · '+c.ev.d.toFixed(1)+' km · base '+pr.tierBase+' + topics '+pr.topicBonus.toFixed(1)+' + prox '+pr.prox.toFixed(1)+' + avail '+pr.avail.toFixed(1)+' + bridge '+pr.bridge+' + carry '+pr.carry+'</span></td></tr>';
+     }).join('')+'</table>';
+    if(!pu.matchedWith)out+='<p class="small">'+esc(u.displayName)+' went unmatched: '+(pu.candidates.some(c=>c.ev.ok)?'every eligible candidate was taken by a heavier pair (odd one out).':'no candidate passed the hard filters (range, availability, history, blocks, pause).')+'</p>';
+  } else if(u) out+='<p class="small">'+esc(u.displayName)+' was not in that run (paused or added later).</p>';
+  out+='</div>';
+  return out;
+};
+/* --- nav + demo drawer --- */
+const NAVS=[['home','Meet up'],['profile','Profile'],['more','More']];
+function navTab(){
+  if(S.view==='match')return 'home';
+  if(['topics','history'].includes(S.view))return 'profile';
+  if(['dashboard','sparks','settings','pause','invite','about','explain'].includes(S.view))return 'more';
+  return S.view;
+}
+function renderNav(){
+  const html=S.me?NAVS.map(x=>'<button data-action="nav" data-v="'+x[0]+'" class="'+(navTab()===x[0]?'on':'')+'" aria-label="'+x[1]+'">'+x[1]+'</button>').join(''):'';
+  document.getElementById('nav').innerHTML=html;
+  const tn=document.getElementById('topnav'); if(tn)tn.innerHTML=html;
+}
+function renderDemo(){
+  const d=document.getElementById('demoDrawer');
+  const fabIcon='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h8M18.5 7H20M4 17h3.5M14 17h6"/><circle cx="15" cy="7" r="2.3"/><circle cx="10.5" cy="17" r="2.3"/></svg>';
+  const fab='<button class="fab" data-action="ccToggle" aria-label="Demo control centre" title="Demo control centre">'+fabIcon+'</button>';
+  if(!S.ccOpen){ d.innerHTML=fab; return; }
+  const u=me();
+  const run=weekRun(S.week);
+  const m=u&&run?matchFor(u.id,S.week):null;
+  const canSim=!!(m&&m.status==='scheduled'&&m.meetAt&&Date.now()<m.meetAt);
+  const diag=S.diag[S.week];
+  const statusLine=!u?'Pick a persona to explore':(isPaused(u)?'Paused':!run?'Waiting for the weekly drop':
+    m?({planning:'Matched · planning',scheduled:'Matched · organised',happened:'Met this week',cancelled:'Match ended',noShow:'Didn’t happen'})[m.status]:'Unmatched this week');
+  const opts=Object.values(S.users).map(x=>'<option value="'+x.id+'"'+(S.me===x.id?' selected':'')+'>'+esc(x.displayName)+' ('+esc(AREA[x.area].name)+')'+(isPaused(x)?' · paused':'')+'</option>').join('');
+  d.innerHTML=fab
+   +'<div class="ccpanel" role="dialog" aria-label="Demo control centre">'
+   +'<div class="cchead"><b>Control centre</b><span class="muted small">demo only · everyone is fictional</span><button class="ccclose" data-action="ccToggle" aria-label="Close">×</button></div>'
+   +'<div class="ccstats"><div><b>Week '+S.week+'</b><span>'+(run?((diag?diag.pairs:'?')+' matches made'):'drop not run yet')+'</span></div>'
+   +'<div><b>'+(u?esc(u.displayName):'—')+'</b><span>'+esc(statusLine)+'</span></div></div>'
+   +'<div class="cctile wide"><label class="cclabel" for="personaSel">Viewing as</label>'
+   +'<select id="personaSel" data-change="persona"><option value="">(choose a persona)</option>'+opts+'</select></div>'
+   +'<div class="ccgrid">'
+   +(run
+     ?'<button class="cctile act spot" data-action="advWeek"><span class="ck">Advance week</span><span class="cv">move on to week '+(S.week+1)+'</span></button>'
+     :'<button class="cctile act prime spot" data-action="runMatch"><span class="ck">Run matching</span><span class="cv">trigger the week '+S.week+' drop</span></button>')
+   +'<button class="cctile act spot'+(canSim?'':' dim')+'" data-action="simMeet"><span class="ck">Time travel</span><span class="cv">'+(canSim?'jump to the meet-up time':'needs an organised meet-up')+'</span></button>'
+   +'<button class="cctile act spot" data-action="nav" data-v="explain"><span class="ck">Explain</span><span class="cv">how this week was decided</span></button>'
+   +'<button class="cctile act dangert spot" data-action="reset"><span class="ck">Reset demo</span><span class="cv">back to fresh seeded data</span></button>'
+   +'</div>'
+   +'<div class="cctile wide"><span class="cclabel">Layout</span><div class="seg">'
+   +['auto','mobile','desktop'].map(l=>'<button class="'+(S.layout===l?'on':'')+'" data-action="layoutSet" data-l="'+l+'">'+l[0].toUpperCase()+l.slice(1)+'</button>').join('')+'</div>'
+   +'<span class="cclabel">Theme</span><div class="seg">'
+   +['auto','light','dark'].map(t=>'<button class="'+(S.theme===t?'on':'')+'" data-action="theme" data-t="'+t+'">'+t[0].toUpperCase()+t.slice(1)+'</button>').join('')+'</div></div>'
+   +'</div>';
+}
+function render(){
+  applyLayout();
+  document.documentElement.dataset.theme=S.theme==='auto'?'':S.theme;
+  document.getElementById('weekChip').textContent='Week '+S.week;
+  const v=(S.me||S.view==='onboard')?(V[S.view]||V.home):V.welcome;
+  const app=document.getElementById('app');
+  app.classList.toggle('noanim',SKIPANIM); SKIPANIM=false;
+  app.innerHTML=v();
+  renderNav(); renderDemo();
+  animateCounts();
+  save();
+}
+/* ============ actions ============ */
+function goto(v){ S.view=v; S.sel=(v==='match')?S.sel:null; PICK.q=''; PICK.kind=null; resetMstate(); S.ccOpen=false; render(); scrollTopAll(); }
+const ACTIONS={
+  nav:d=>goto(d.v),
+  startOnboard:()=>{ S.view='onboard'; S.onb={step:1,draft:{availability:[],backgroundTopics:[],interestTopics:[]}}; render(); },
+  exploreSample:()=>{ S.me='sam'; goto('home'); toast('Viewing as Sam, a fictional pain researcher'); },
+  orcidLoginOpen:()=>{ S.onb.login=true; render(); },
+  orcidCancel:()=>{ S.onb.login=false; render(); },
+  orcidSampleLogin:()=>{
+    const e=document.getElementById('orc-em'),pw=document.getElementById('orc-pw');
+    if(e)e.value='sample.researcher@example.edu'; if(pw)pw.value='demo-password';
+  },
+  orcidAuth:()=>{
+    /* simulated OAuth: in the real version this is a redirect to ORCID's own
+       sign-in (3-legged OAuth) and we never see the password at all */
+    const e=document.getElementById('orc-em'),pw=document.getElementById('orc-pw');
+    if(!e||!e.value.trim()||!pw||!pw.value.trim()){ toast('Enter the sample email and password (simulated)'); return; }
+    S.onb.draft.orcidVerified=true; S.onb.login=false; render();
+    toast('Signed in with ORCID (simulated). Your iD stays private.');
+  },
+  onbNext:()=>{ S.onb.step++; render(); },
+  onbBack:()=>{ S.onb.step=Math.max(1,S.onb.step-1); render(); },
+  onbStep2Next:()=>{
+    const d=S.onb.draft, g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+    d.displayName=g('f-name'); d.pronouns=g('f-pr'); d.institution=g('f-inst');
+    d.background=g('f-bg'); d.stuckOn=g('f-stuck'); d.wantExplained=g('f-want'); d.canExplain=g('f-can'); d.nonWork=g('f-fun');
+    if(!d.displayName){ toast('A first name or display name is the one thing we need'); return; }
+    S.onb.step=3; render();
+  },
+  onbAvail:d=>{ const a=S.onb.draft.availability; const i=a.indexOf(d.w); i>=0?a.splice(i,1):a.push(d.w);
+    const area=document.getElementById('f-area'),km=document.getElementById('f-km');
+    if(area)S.onb.draft.area=area.value; if(km)S.onb.draft.maxKm=+km.value; render(); },
+  onbStep3Next:()=>{
+    const d=S.onb.draft;
+    d.area=document.getElementById('f-area').value; d.maxKm=+document.getElementById('f-km').value;
+    if(!d.availability.length){ toast('Pick at least one time you’re usually free'); return; }
+    S.onb.step=4; render();
+  },
+  onbFinish:()=>{
+    const d=S.onb.draft;
+    if(!(d.backgroundTopics||[]).length){ toast('Add at least one topic you know about'); return; }
+    if(!(d.interestTopics||[]).length){ toast('Pick at least one thing you’d love to learn about'); return; }
+    S.users.me={id:'me',displayName:d.displayName,pronouns:d.pronouns||'',institution:d.institution||'',
+      verified:true,background:d.background||'',stuckOn:d.stuckOn||'',wantExplained:d.wantExplained||'',
+      canExplain:d.canExplain||'',nonWork:d.nonWork||'',backgroundTopics:d.backgroundTopics,
+      interestTopics:d.interestTopics,area:d.area,maxKm:d.maxKm,availability:d.availability,
+      pausedUntilWeek:0,pauseReason:'',unmatchedLastWeek:false,blocked:[],matchedBefore:[]};
+    S.me='me'; goto('home'); toast('Welcome aboard.');
+  },
+  pickTopic:d=>{ const arr=topicArr(d.kind); if(!arr.includes(d.topic))arr.push(d.topic); PICK.q=''; render(); },
+  unpickTopic:d=>{ const arr=topicArr(d.kind); const i=arr.indexOf(d.topic); if(i>=0)arr.splice(i,1); render(); },
+  toggleNearby:d=>{ const arr=topicArr('int'); const i=arr.indexOf(d.topic); i>=0?arr.splice(i,1):arr.push(d.topic); render(); },
+  refreshNearby:()=>{ NEARBY_SHUFFLE++; render(); toast('Refreshed from profiles near you'); },
+  toggleAvail:d=>{ const a=me().availability; const i=a.indexOf(d.w); if(i>=0){ if(a.length===1){toast('Keep at least one window');return;} a.splice(i,1);} else a.push(d.w); render(); },
+  openMatch:d=>{ S.sel=d.m; S.view='match'; resetMstate(); render(); scrollTopAll(); },
+  proposeSlot:d=>{
+    const m=S.matches.find(x=>x.id===d.m);
+    const day=document.getElementById('slotDay').value, win=document.getElementById('slotWin').value;
+    const venEl=document.getElementById('slotVenue'), durEl=document.getElementById('slotDur');
+    m.slots.push({day,window:win,venue:venEl?venEl.value:null,duration:durEl?durEl.value:null,by:S.me});
+    render();
+  },
+  acceptSlot:d=>{
+    const m=S.matches.find(x=>x.id===d.m);
+    m.chosenSlot={...m.slots[+d.i],i:+d.i}; m.status='scheduled';
+    if(m.chosenSlot.venue)m.venueType=m.chosenSlot.venue;
+    if(m.chosenSlot.duration)m.duration=m.chosenSlot.duration;
+    m.meetAt=nextDayDate(m.chosenSlot.day,WHOUR[m.chosenSlot.window]!==undefined?WHOUR[m.chosenSlot.window]:12);
+    render(); toast('Meet up organised!');
+  },
+  planCoffee:()=>{ MSTATE.plan=true; render(); scrollTopAll(); },
+  toggleEdit:()=>{ MSTATE.editOpen=!MSTATE.editOpen; render(); },
+  aboutPartner:()=>{ MSTATE.aboutOpen=true; render(); scrollTopAll(); },
+  aboutClose:()=>{ MSTATE.aboutOpen=false; render(); scrollTopAll(); },
+  proposeOther:()=>{ MSTATE.proposeOpen=true; render(); },
+  openChat:()=>{ MSTATE.chatOpen=!MSTATE.chatOpen; render(); },
+  openNotes:()=>{ MSTATE.notesOpen=true; render(); },
+  openSurvey:()=>{ MSTATE.surveyOpen=true; render(); },
+  changeTime:d=>{
+    const m=S.matches.find(x=>x.id===d.m);
+    m.chosenSlot=null; m.meetAt=null; m.status='planning'; MSTATE.proposeOpen=true;
+    render(); toast('No stress. Agree on a new time.');
+  },
+  simMeet:()=>{
+    const u=me(); if(!u){ toast('Pick a persona first'); return; }
+    const m=weekRun(S.week)?matchFor(u.id,S.week):null;
+    if(!m||m.status!=='scheduled'||!m.meetAt){ toast('No organised meet-up for this persona this week'); return; }
+    m.meetAt=Date.now()-60000; S.sel=m.id; S.view='match'; MSTATE.plan=true;
+    render(); toast('Meet-up time reached (simulated)');
+  },
+  setVenue:d=>{ S.matches.find(x=>x.id===d.m).venueType=d.v; render(); },
+  setDuration:d=>{ S.matches.find(x=>x.id===d.m).duration=d.v; render(); },
+  sendMsg:d=>{
+    const i=document.getElementById('chatIn'); const t=i?i.value.trim():'';
+    if(!t)return;
+    S.matches.find(x=>x.id===d.m).messages.push({from:S.me,text:t}); render();
+  },
+  cantMake:d=>{
+    if(!confirm('End this match for the week? No penalty, and it’s logged kindly.'))return;
+    const m=S.matches.find(x=>x.id===d.m); m.status='cancelled';
+    S.feedback.push({userId:S.me,week:S.week,kind:'cantMake',text:'Could not make it in week '+m.week});
+    goto('home'); toast('All good. See you next week.');
+  },
+  blockUser:d=>{
+    const m=S.matches.find(x=>x.id===d.m); const p=partnerOf(m,S.me);
+    if(!confirm('Block '+p.displayName+'? You’ll never be matched again and this match ends.'))return;
+    me().blocked.push(p.id); m.status='cancelled'; goto('home'); toast('Blocked. You’re in control here.');
+  },
+  reportUser:d=>{
+    const m=S.matches.find(x=>x.id===d.m); const p=partnerOf(m,S.me);
+    const why=prompt('What happened? This goes privately to the team (demo).');
+    if(why==null)return;
+    S.feedback.push({userId:S.me,week:S.week,kind:'report',text:'Report about '+p.id+': '+why});
+    toast('Report logged (demo). Thank you for telling us.');
+  },
+  runMatch:runMatching,
+  advWeek:advanceWeek,
+  reset:resetDemo,
+  ccToggle:()=>{ S.ccOpen=!S.ccOpen; render(); },
+  layoutSet:d=>{ S.layout=d.l; render(); },
+  resumeNow:()=>{ const u=me(); u.pausedUntilWeek=0; u.pauseReason=''; render(); toast('Welcome back.'); },
+  copyInvite:()=>{
+    const txt='Fancy a coffee with a curious stranger? I’m trying the Randomised Coffee Trial: one researcher, one coffee, once a week. (Demo link: this prototype runs locally.)';
+    const done=()=>toast('Invite copied');
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,()=>toast('Could not copy on this browser'));
+    else toast('Copy not available in this browser');
+  },
+  theme:d=>{ S.theme=d.t; render(); },
+  deleteAccount:()=>{
+    const u=me();
+    if(!confirm('Delete '+u.displayName+'’s account (demo)? Their matches and surveys go too.'))return;
+    S.matches=S.matches.filter(m=>m.a!==u.id&&m.b!==u.id);
+    S.surveys=S.surveys.filter(s=>s.userId!==u.id);
+    Object.values(S.users).forEach(o=>{
+      o.blocked=o.blocked.filter(x=>x!==u.id); o.matchedBefore=o.matchedBefore.filter(x=>x!==u.id);
+    });
+    delete S.users[u.id]; S.me=null; goto('home'); toast('Account deleted (demo)');
+  }
+};
+const FORMS={
+  editProfile:(f)=>{
+    const u=me(); const fd=new FormData(f);
+    ['displayName','pronouns','institution','background','stuckOn','wantExplained','canExplain','nonWork','area'].forEach(k=>u[k]=String(fd.get(k)||'').trim());
+    u.maxKm=+fd.get('maxKm'); MSTATE.editOpen=false; render(); toast('Profile saved');
+  },
+  logMeetup:(f,d)=>{
+    const m=S.matches.find(x=>x.id===d.m); const fd=new FormData(f);
+    const h=fd.get('happened');
+    if(h==='yes'){ m.status='happened'; m.logged={happened:'yes',duration:String(fd.get('dur')||'').trim()}; toast('Logged. One quick survey when you’re ready.'); }
+    else if(h==='rescheduled'){ m.status='planning'; m.chosenSlot=null; m.meetAt=null; MSTATE.plan=true; MSTATE.proposeOpen=true; toast('No stress. Propose a new time.'); }
+    else { m.status='noShow'; m.logged={happened:'no'}; toast('Logged. Sorry it didn’t work out this week.'); }
+    render();
+  },
+  survey:(f,d)=>{
+    const fd=new FormData(f);
+    S.surveys.push({matchId:d.m,userId:S.me,comfort:+fd.get('comfort'),learnedUnexpected:+fd.get('learned'),
+      takeaway:String(fd.get('takeaway')||'').trim(),wouldRepeat:!!fd.get('repeat'),recommend:!!fd.get('recommend'),
+      safetyConcern:String(fd.get('safety')||'').trim(),privateFeedback:String(fd.get('fb')||'').trim(),
+      publicShare:!!fd.get('pub'),publicNamed:!!fd.get('named')});
+    if(String(fd.get('safety')||'').trim())S.feedback.push({userId:S.me,week:S.week,kind:'safety',text:String(fd.get('safety'))});
+    render(); toast('Thanks, that helps everyone.');
+  },
+  notes:(f,d)=>{
+    const m=S.matches.find(x=>x.id===d.m); const fd=new FormData(f);
+    m.notes=m.notes||{};
+    m.notes[S.me]={text:String(fd.get('text')||'').trim(),shared:!!fd.get('shared')};
+    MSTATE.notesOpen=true; render();
+    toast(fd.get('shared')?'Notes saved and shared':'Notes saved, just for you');
+  },
+  contact:(f,d)=>{
+    const m=S.matches.find(x=>x.id===d.m); const fd=new FormData(f);
+    const details=String(fd.get('details')||'').trim();
+    if(!details){ toast('Add what you’d like to share first'); return; }
+    m.contactShare[S.me]={optIn:true,details}; render(); toast('Shared. Revealed only if they opt in too.');
+  },
+  pause:(f)=>{
+    const u=me(); const fd=new FormData(f);
+    const len=+fd.get('len');
+    u.pausedUntilWeek=len===9999?9999:S.week+len;
+    const why=[String(fd.get('why')||''),String(fd.get('txt')||'').trim()].filter(Boolean).join(': ');
+    u.pauseReason=why;
+    if(why)S.feedback.push({userId:u.id,week:S.week,kind:'pause',text:why});
+    goto('home'); toast('Paused. Come back whenever.');
+  }
+};
+/* ============ event wiring ============ */
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-action]');
+  if(!el)return;
+  const fn=ACTIONS[el.dataset.action];
+  if(fn)fn(el.dataset,el);
+});
+document.addEventListener('submit',e=>{
+  const f=e.target.closest('[data-form]');
+  if(!f)return;
+  e.preventDefault();
+  const fn=FORMS[f.dataset.form];
+  if(fn)fn(f,f.dataset);
+});
+document.addEventListener('input',e=>{
+  const el=e.target.closest('[data-input="picker"]');
+  if(!el)return;
+  PICK.q=el.value; PICK.kind=el.dataset.kind;
+  SKIPANIM=true;
+  /* re-render results only, keeping focus: simplest is full render then restore focus */
+  const pos=el.selectionStart;
+  render();
+  const again=document.querySelector('[data-input="picker"][data-kind="'+el.dataset.kind+'"]');
+  if(again){ again.focus(); try{again.setSelectionRange(pos,pos);}catch(err){} }
+});
+document.addEventListener('change',e=>{
+  const el=e.target.closest('[data-change="persona"]');
+  if(!el)return;
+  if(!el.value)return;
+  S.me=el.value; goto('home');
+});
+/* ORCID checksum: ISO 7064 mod 11-2 */
+function orcidValid(str){
+  const s=String(str).replace(/[^0-9Xx]/g,'').toUpperCase();
+  if(!/^\d{15}[\dX]$/.test(s))return false;
+  let total=0;
+  for(let i=0;i<15;i++)total=(total+ +s[i])*2;
+  const res=(12-(total%11))%11;
+  return (res===10?'X':String(res))===s[15];
+}
+/* ============ init ============ */
+window.addEventListener('resize',()=>{ applyLayout(); });
+document.addEventListener('pointermove',e=>{
+  const el=e.target.closest&&e.target.closest('.spot');
+  if(!el)return;
+  const r=el.getBoundingClientRect();
+  el.style.setProperty('--mx',(e.clientX-r.left)+'px');
+  el.style.setProperty('--my',(e.clientY-r.top)+'px');
+});
+load();
+render();
+setInterval(updateTimers,30000);
+</script>
+</body>
+</html>
