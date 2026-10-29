@@ -65,7 +65,7 @@ html[data-layout="desktop"] .qawrap{display:grid; grid-template-columns:1fr 1fr;
 html[data-layout="desktop"] .qawrap .qa{margin:14px 0 0}
 html.wide[data-layout="mobile"] body{background:var(--bg)}
 html.wide[data-layout="mobile"] #framewrap{display:flex; justify-content:center; padding:26px 12px 90px}
-html.wide[data-layout="mobile"] #shell{width:394px; height:min(830px,calc(100vh - 150px)); min-height:480px;
+html.wide[data-layout="mobile"] #shell{width:calc(var(--phw,390px) + 4px); height:min(var(--phh,844px),calc(100vh - 150px)); min-height:480px;
   background:var(--bg); border:10px solid #16130d; border-radius:48px; overflow:hidden;
   box-shadow:0 34px 90px rgba(27,22,14,.4); position:relative}
 html.wide[data-layout="mobile"] main{overflow-y:auto; min-height:0; padding-bottom:40px}
@@ -183,7 +183,7 @@ textarea{min-height:64px; resize:vertical}
   box-shadow:var(--sh); min-height:88px}
 .how2 .c1{background:var(--yellow)} .how2 .c2{background:var(--purple)}
 .how2 .c3{background:var(--green)} .how2 .c4{background:var(--orange); color:#fff}
-.how2 .hnum{display:inline-flex; width:24px; height:24px; border-radius:50%; background:var(--card); color:var(--ink);
+.how2 .hnum,.howcard .hnum{display:inline-flex; width:24px; height:24px; border-radius:50%; background:var(--card); color:var(--ink);
   border:var(--bw) solid var(--line); align-items:center; justify-content:center; font-size:12px; margin-bottom:8px}
 .brandnew{display:inline-block; background:var(--card); border:var(--bw) solid var(--line); border-radius:999px;
   padding:1px 10px; font-size:10px; font-weight:800; letter-spacing:.07em; margin-bottom:6px}
@@ -197,6 +197,9 @@ textarea{min-height:64px; resize:vertical}
 .revealcard .dashes{border-top:var(--bw) dashed var(--line); opacity:.5; margin:12px 20px}
 .bluehero .btn.ghost{background:transparent; color:#fff; border-color:#fff; box-shadow:3px 3px 0 rgba(0,0,0,.4)}
 /* ---- profile ---- */
+.orcbadge{display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px;
+  border-radius:50%; background:#A6CE39; color:#fff; font-size:8px; font-weight:800;
+  border:1.5px solid var(--line); vertical-align:-3px; margin-right:2px}
 .pcard{background:var(--purple); border:var(--bw) solid var(--line); border-radius:18px; overflow:hidden;
   margin:14px 0; box-shadow:var(--sh)}
 .pcover{display:none}
@@ -254,6 +257,112 @@ textarea{min-height:64px; resize:vertical}
   border-radius:14px; padding:9px 12px; margin:8px 0; font-size:13px; font-weight:700; box-shadow:var(--sh)}
 .slot .btn{margin:0 0 0 auto}
 .slot.chosen{background:var(--green)}
+/* ---- docked chat input + overlays ---- */
+.chatcard.docked{position:fixed; left:0; right:0; top:0; bottom:0; z-index:30; margin:0;
+  display:flex; flex-direction:column; border:none; border-radius:0; box-shadow:none; animation:none !important}
+.chatcard.docked .darkhead{flex:0 0 auto; display:flex; align-items:center; gap:10px}
+.hback{background:none; border:none; color:var(--bg); font-family:inherit; font-weight:800; font-size:18px;
+  cursor:pointer; padding:0 4px 0 0; line-height:1}
+.chatcard.docked .chatbody{flex:1 1 auto; min-height:0; overflow-y:auto; scrollbar-width:none; padding-bottom:10px}
+.chatcard.docked .safebanner{margin:2px 0 12px}
+.chatcard.docked .chatbox{position:static; flex:0 0 auto; margin:8px 12px calc(12px + env(safe-area-inset-bottom,0px));
+  background:var(--card); border:var(--bw) solid var(--line); border-radius:999px;
+  padding:5px 6px; box-shadow:var(--shbig); transition:transform .2s ease}
+.chatcard.docked .chatbox input{border:none; background:none; box-shadow:none}
+html.wide[data-layout="mobile"] .chatcard.docked{position:absolute}
+html.wide[data-layout="mobile"] .chatcard.docked .chatbox{margin:8px 10px 12px}
+html[data-layout="desktop"] .chatcard.docked{left:50%; right:auto; transform:translateX(-50%); width:min(680px,92vw);
+  border:var(--bw) solid var(--line); border-bottom:none; border-radius:22px 22px 0 0}
+.ovl{position:fixed; inset:0; z-index:52; background:rgba(27,22,14,.45);
+  display:flex; align-items:flex-end; justify-content:center}
+html.wide[data-layout="mobile"] .ovl{position:absolute}
+.ovlcard{background:var(--bg); border:var(--bw) solid var(--line); border-bottom:none;
+  border-radius:22px 22px 0 0; width:100%; max-width:720px; max-height:84%; overflow-y:auto;
+  padding:6px 14px 18px; animation:sheetUp .3s cubic-bezier(.2,.8,.25,1) both}
+.ovlcard .card{border:none; box-shadow:none; margin:4px 0; padding:8px 2px; background:none}
+.ovlhead{display:flex; justify-content:flex-end; padding:4px 0 0}
+@keyframes sheetUp{from{transform:translateY(46px); opacity:0} to{transform:none; opacity:1}}
+@keyframes sheetDown{to{transform:translateY(46px); opacity:0}}
+@keyframes ovlOut{to{opacity:0}}
+.ovl.closing{animation:ovlOut .19s ease both}
+.ovl.closing .ovlcard{animation:sheetDown .19s ease both}
+.ovlcard{scrollbar-width:none}
+.ovlcard::-webkit-scrollbar,.chatcard.docked .chatbody::-webkit-scrollbar{display:none}
+html[data-layout="desktop"] .ovl{align-items:center; padding:24px}
+html[data-layout="desktop"] .ovlcard{border-radius:22px; border-bottom:var(--bw) solid var(--line)}
+@keyframes msgIn{from{opacity:0; transform:translateY(16px) scale(.9)}}
+.msg.anim-in{animation:msgIn .28s cubic-bezier(.2,.8,.25,1)}
+#app.noanim > :not(.ovl){animation:none !important}
+#app.noanim > :not(.ovl) *:not(.anim-in){animation:none !important}
+/* ---- v22: rounded chat header, ghost base, cov hero title, no-anim backdrop ---- */
+.chatcard .darkhead{margin:10px 10px 0; border-radius:14px; border:var(--bw) solid var(--line)}
+.btn.ghost{background:transparent; color:var(--ink); border-color:var(--line)}
+.bluehero.cov-blue .pagetitle,.bluehero.cov-pink .pagetitle,.bluehero.cov-green .pagetitle,.bluehero.cov-orange .pagetitle{color:var(--ink)}
+#app>.ovl{animation:none !important}
+/* ---- v21: pinned overlay chat, sched days/time, covers, photos, hero fit ---- */
+.ovlcard.chatovl{height:84%; display:flex; flex-direction:column; overflow:hidden}
+.ovlcard.chatovl .chatcard{flex:1 1 auto; min-height:0; display:flex; flex-direction:column; overflow:hidden; margin:4px 0}
+.ovlcard.chatovl .chatbody{flex:1 1 auto; min-height:0; overflow-y:auto; scrollbar-width:none}
+.ovlcard.chatovl .chatbody::-webkit-scrollbar{display:none}
+.ovlcard.chatovl .chatbox{flex:0 0 auto; margin-top:8px}
+.ditem.off{opacity:.35; pointer-events:none}
+.timerow{display:flex; gap:8px; align-items:center}
+.timerow select{flex:1 1 auto; width:auto; min-width:0; margin:0}
+.timerow .tcolon{font-weight:800}
+.avatar img{width:100%; height:100%; object-fit:cover; border-radius:50%; display:block}
+.cov-blue{background-color:color-mix(in srgb,var(--blue) 24%,var(--card));
+  background-image:radial-gradient(color-mix(in srgb,var(--blue) 50%,transparent) 2.5px,transparent 3px); background-size:17px 17px}
+.cov-pink{background-color:color-mix(in srgb,var(--pink) 50%,var(--card));
+  background-image:radial-gradient(color-mix(in srgb,var(--pink) 80%,var(--ink) 20%) 2.5px,transparent 3px); background-size:17px 17px}
+.cov-green{background-color:color-mix(in srgb,var(--green) 45%,var(--card));
+  background-image:radial-gradient(color-mix(in srgb,var(--green) 70%,var(--ink) 25%) 2.5px,transparent 3px); background-size:17px 17px}
+.cov-orange{background-color:color-mix(in srgb,var(--orange) 26%,var(--card));
+  background-image:radial-gradient(color-mix(in srgb,var(--orange) 55%,transparent) 2.5px,transparent 3px); background-size:17px 17px}
+.lookrow{display:flex; gap:9px; align-items:center; padding:0 16px 14px; flex-wrap:wrap; position:relative; z-index:2}
+.lookrow .lbl{font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em}
+.covdot{width:26px; height:26px; border-radius:50%; border:var(--bw) solid var(--line); cursor:pointer; padding:0; box-shadow:var(--sh)}
+.covdot.on{outline:3px solid var(--ink); outline-offset:2px}
+.lookrow .btn.small{margin:0 0 0 auto}
+html[data-layout="mobile"] #app.vcenter{display:flex; flex-direction:column}
+html[data-layout="mobile"] #app.vcenter > .herofit{margin:auto 0}
+html[data-layout="mobile"] .herofit .bluehero{padding:14px 14px 16px; margin:6px 0}
+html[data-layout="mobile"] .herofit .pagetitle{margin:2px 0 10px}
+html[data-layout="mobile"] .herofit .revealcard{padding:13px 14px}
+html[data-layout="mobile"] .herofit .avatar.big{width:68px; height:68px; font-size:28px}
+html[data-layout="mobile"] .herofit .dashes{margin:9px 20px}
+/* ---- chat plus menu + schedule bubbles ---- */
+.pluswrap{position:relative; flex:0 0 auto}
+.plusbtn{width:40px; height:40px; border-radius:50%; border:var(--bw) solid var(--line);
+  background:var(--yellow); color:var(--ink); cursor:pointer; box-shadow:var(--sh);
+  display:flex; align-items:center; justify-content:center; transition:transform .1s ease}
+.plusbtn:active{transform:translate(1px,1px)}
+.plusmenu{position:absolute; bottom:48px; left:0; background:var(--card); border:var(--bw) solid var(--line);
+  border-radius:14px; box-shadow:var(--shbig); z-index:7; min-width:210px; overflow:hidden;
+  animation:ccIn .18s ease both}
+.plusmenu button{display:block; width:100%; text-align:left; padding:11px 14px; border:none; background:none;
+  font-family:inherit; font-weight:800; font-size:13px; color:var(--ink); cursor:pointer}
+.plusmenu button+button{border-top:1.5px solid color-mix(in srgb,var(--line) 25%,transparent)}
+.plusmenu button:hover{background:var(--yellow)}
+.schedmsg{display:flex; gap:10px; align-items:flex-start; max-width:88%; padding:10px 12px; margin:8px 0;
+  border:var(--bw) solid var(--line); border-radius:14px; background:var(--purple); box-shadow:var(--sh); font-size:13px; font-weight:700}
+.schedmsg.me{margin-left:auto; border-bottom-right-radius:4px}
+.schedmsg.them{border-bottom-left-radius:4px}
+.schedmsg svg{flex:0 0 auto; margin-top:2px}
+.schedstat{font-size:11px; font-weight:800; color:var(--muted); margin-top:3px}
+.schedstat.ok{color:var(--good)}
+/* ---- chat reactions + receipts ---- */
+.msg{position:relative}
+.rbadge{position:absolute; top:-12px; right:-8px; background:var(--card); border:var(--bw) solid var(--line);
+  border-radius:999px; padding:2px 6px; display:flex; gap:3px; align-items:center; box-shadow:var(--sh); color:var(--ink)}
+.msg.them .rbadge{right:auto; left:-8px}
+.rpick{position:absolute; top:-46px; right:0; background:var(--card); border:var(--bw) solid var(--line);
+  border-radius:999px; padding:4px 7px; display:flex; gap:4px; box-shadow:var(--shbig); z-index:6;
+  animation:ccIn .18s ease both}
+.msg.them .rpick{right:auto; left:0}
+.rpick button{border:none; background:none; cursor:pointer; padding:4px; border-radius:50%; color:var(--ink); display:flex; font-family:inherit}
+.rpick button:hover{background:var(--yellow)}
+.receipt{text-align:right; font-size:10px; font-weight:800; color:var(--muted); margin:2px 2px 4px}
+#msgs{overflow:visible}
 /* ---- plan pills ---- */
 .safebanner{display:flex; align-items:center; gap:10px; background:var(--green); border:var(--bw) solid var(--line);
   border-radius:16px; padding:11px 14px; margin:14px 0; font-size:13px; font-weight:700; box-shadow:var(--sh)}
@@ -266,6 +375,82 @@ textarea{min-height:64px; resize:vertical}
 .daypill.day{padding:5px 9px}
 .sumpill{display:inline-block; background:var(--yellow); border:var(--bw) solid var(--line); border-radius:14px;
   padding:9px 14px; font-size:13px; font-weight:800; margin:14px 0 4px; box-shadow:var(--sh)}
+/* ---- onboarding: auth, location, intro ---- */
+.loctile{display:block; width:100%; text-align:left; background:var(--card); border:var(--bw) solid var(--line);
+  border-radius:14px; padding:12px 14px; margin:8px 0; font-family:inherit; color:var(--ink); cursor:pointer;
+  box-shadow:var(--sh); font-weight:800; font-size:14px}
+.loctile .d{display:block; font-size:12px; color:var(--muted); font-weight:600; margin-top:2px}
+.loctile.on{background:var(--green)}
+.oauthrow{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0}
+.oauthrow .btn{margin:0; display:flex; align-items:center; justify-content:center; gap:8px; font-size:13px}
+.radmap{border:var(--bw) solid var(--line); border-radius:14px; overflow:hidden; margin:10px 0; box-shadow:var(--sh)}
+.radmap svg{display:block}
+input[type=range]{width:100%; accent-color:var(--orange); margin:8px 0 2px}
+.popin{opacity:0; animation:popIn .55s cubic-bezier(.3,1.35,.4,1) forwards}
+#wintro{min-height:calc(100vh - 230px); display:flex; flex-direction:column; justify-content:center}
+#wrest.show{display:block; animation:none}
+.wstep{min-height:calc(100vh - 240px); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:16px}
+html.wide[data-layout="mobile"] .wstep{min-height:460px}
+.wstep .howcard{max-width:420px}
+.wstep .notice,.wstep .darkcard{max-width:460px; text-align:left}
+.wdots{display:flex; gap:7px; justify-content:center}
+.wdots span{width:9px; height:9px; border-radius:50%; border:var(--bw) solid var(--line); background:var(--card)}
+.wdots span.on{background:var(--ink)}
+.xhint2{font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:var(--muted);
+  animation:hintBob 1.6s ease-in-out infinite}
+@keyframes hintBob{0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)}}
+#app>#wintro,#app>#wrest{animation:none !important}
+.srev{opacity:0; transform:translateY(26px); transition:opacity .75s ease, transform .75s ease}
+.srev.in{opacity:1; transform:none}
+.howrow{min-height:42vh; display:flex; align-items:center}
+html.wide[data-layout="mobile"] .howrow{min-height:300px}
+.howcard{width:100%; border:var(--bw) solid var(--line); border-radius:16px; padding:24px 18px;
+  font-weight:800; font-size:16px; box-shadow:var(--shbig)}
+.howcard.c1{background:var(--yellow)} .howcard.c2{background:var(--purple)}
+.howcard.c3{background:var(--green)} .howcard.c4{background:var(--orange); color:#fff}
+@keyframes fadeUpSlow{from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:none}}
+html.wide[data-layout="mobile"] #wintro{min-height:480px}
+html.wide[data-layout="mobile"] #wrest.show{min-height:480px}
+@keyframes popIn{from{opacity:0; transform:translateY(16px) scale(.96)} to{opacity:1; transform:none}}
+#app.introing>*{animation:none}
+@media (prefers-reduced-motion: reduce){ .popin{animation:none; opacity:1} .srev{transition:none; opacity:1; transform:none} }
+/* ---- propose stepper ---- */
+.dstrip{display:flex; gap:10px; overflow-x:auto; padding:4px 2px 12px; scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch; scrollbar-width:none}
+.dstrip::-webkit-scrollbar{display:none}
+.ditem{flex:0 0 calc((100% - 30px)/4.3); scroll-snap-align:start; background:none; border:none;
+  font-family:inherit; cursor:pointer; text-align:center; padding:0; color:var(--ink)}
+.dname{display:block; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--muted); margin-bottom:6px}
+.dcirc{display:flex; align-items:center; justify-content:center; width:54px; height:54px; margin:0 auto;
+  border-radius:50%; border:var(--bw) solid var(--line); background:var(--card); box-shadow:var(--sh);
+  font-size:17px; font-weight:800}
+.ditem:hover .dcirc{transform:translate(-1px,-1px)}
+.ditem.on .dcirc{background:var(--ink); color:var(--bg)}
+.ditem.on .dname{color:var(--ink)}
+.pchip{background:var(--yellow)}
+.step{font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.07em;
+  margin-top:10px; text-align:right}
+html[data-layout="desktop"] .dstrip{overflow-x:visible; justify-content:center; gap:10px}
+html[data-layout="desktop"] .ditem{flex:0 0 64px}
+/* ---- cafe recommendations ---- */
+.caferow{display:block; width:100%; text-align:left; background:var(--card); border:var(--bw) solid var(--line);
+  border-radius:14px; padding:10px 12px; margin:10px 0; font-family:inherit; color:var(--ink); cursor:pointer;
+  box-shadow:var(--sh); transition:transform .1s ease}
+.caferow:hover{transform:translate(-1px,-1px)}
+.caferow:active{transform:translate(1px,1px)}
+.caferow.on{background:var(--green)}
+.caferow{display:flex; justify-content:space-between; align-items:center; gap:12px; position:relative; overflow:visible}
+.cbadge{position:absolute; top:-10px; right:-8px; width:26px; height:26px; border-radius:50%;
+  background:var(--purple); border:var(--bw) solid var(--line); box-shadow:var(--sh);
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; z-index:2}
+.cafeleft{display:flex; flex-direction:column; gap:2px; min-width:0}
+.cafeleft b{font-size:14px; font-weight:800}
+.cstars{display:flex; flex-direction:column; gap:3px; flex:0 0 auto}
+.ccat{display:flex; justify-content:flex-end; gap:8px; font-size:9.5px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.05em; color:var(--muted)}
+.ccat .cs{color:var(--orange); letter-spacing:1px; white-space:nowrap}
+.ccat .cs b{color:var(--ink); letter-spacing:0}
 /* ---- stats / sparks ---- */
 .statrow{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin:12px 0}
 .stat{background:var(--card); border:var(--bw) solid var(--line); border-radius:14px; padding:12px; text-align:center; box-shadow:var(--sh)}
@@ -488,7 +673,7 @@ const WINDOWS=[
   {id:'we',label:'Weekday evening'},{id:'wk',label:'Weekend'}];
 const WNAME=Object.fromEntries(WINDOWS.map(w=>[w.id,w.label]));
 const VENUES=['Café','Campus café','Library café','Park'];
-const DURATIONS=['30 minutes','1 hour','As long as it takes'];
+const DURATIONS=['30 minutes','1 hour','I\u2019m in no rush'];
 const MAXKM=[{v:5,l:'Up to 5 km'},{v:10,l:'Up to 10 km'},{v:20,l:'Up to 20 km'},{v:40,l:'Up to 40 km'},{v:60,l:'Anywhere in my city'}];
 const AREAS=[
   {id:'camperdown',name:'Camperdown',city:'Sydney',lat:-33.889,lon:151.178},
@@ -690,6 +875,7 @@ function U(id,name,area,maxKm,avail,bg,ints,p){
     pausedUntilWeek:p.paused||0,pauseReason:p.pauseReason||'',
     unmatchedLastWeek:!!p.carry,blocked:p.blocked||[],matchedBefore:p.met||[]};
 }
+const FAVS={sam:'The Long Black',priya:'Marigold & Co',noah:'Common Grounds',tara:'Little Ember'};
 const PAPERS={
  sam:[{t:'Reframing protection: how pain explanations change behaviour',v:'J. Pain Education',y:'2024'},
       {t:'Words that stick: metaphor retention in the pain consult',v:'Clinical Communication',y:'2023'},
@@ -904,7 +1090,7 @@ U('theo','Theo','geelong',20,['wl','we'],['behavioural-economics'],['network-sci
   stuck:'Whether trust can be designed or only grown.',
   want:'What network science says about how cooperation spreads.',
   can:'Why incentives backfire more often than they work.',fun:'Pottery wheel in the shed.'})
-]; const m={}; L.forEach(u=>{u.papers=PAPERS[u.id]||[]; m[u.id]=u;}); return m; }
+]; const m={}; L.forEach(u=>{u.papers=PAPERS[u.id]||[]; u.favCafe=FAVS[u.id]||''; u.orcid=genOrcid(u.id); m[u.id]=u;}); return m; }
 /* ============ seed past matches + surveys (so history, dashboard and Sparks are not empty) ============ */
 function seedPast(){
   const matches=[
@@ -949,7 +1135,7 @@ function freshState(){
   const past=seedPast();
   return {week:1,theme:'auto',runWeeks:[],users:seedUsers(),matches:past.matches,
     surveys:past.surveys,feedback:[{userId:'pete',week:1,kind:'pause',text:'Fieldwork: tagging season up the coast.'}],
-    view:'home',me:null,sel:null,onb:{step:0,draft:{}},diag:{},ccOpen:false,layout:'auto',customTopics:[],pickEdit:false};
+    view:'home',me:null,sel:null,onb:{step:0,draft:{}},diag:{},ccOpen:false,layout:'auto',customTopics:[],pickEdit:false,phone:{w:390,h:844}};
 }
 function save(){ store.set(S); }
 function load(){
@@ -958,6 +1144,7 @@ function load(){
   else { S=freshState(); save(); }
   if(!S.layout)S.layout='auto';
   if(typeof S.ccOpen!=='boolean')S.ccOpen=false;
+  if(!S.phone||!S.phone.w)S.phone={w:390,h:844};
   if(!S.customTopics)S.customTopics=[];
   S.customTopics.forEach(t=>{ TOPIC[t.id]={id:t.id,label:t.label,syn:[],sub:'sub-'+t.id,subLabel:'Custom topics',div:'div-'+t.id,divLabel:'Custom'}; });
 }
@@ -1072,11 +1259,120 @@ function advanceWeek(){
 /* ============ per-open match view state + time helpers ============ */
 let SKIPANIM=false;
 window.ONB_OPEN=false;
+window.INTRO_DONE=false; window.INTRO_T=null;
+const UNIS=[['University of Sydney','camperdown'],['UTS','ultimo'],['UNSW Sydney','kensington'],
+ ['Macquarie University','chatswood'],['Western Sydney University','parramatta'],
+ ['University of Melbourne','parkville'],['RMIT University','carlton'],['Monash University','clayton'],
+ ['Deakin University','geelong'],['La Trobe University','fitzroy'],
+ ['University of Queensland','stlucia'],['QUT','kelvingrove'],['Griffith University','southbrisbane'],
+ ['University of Wollongong','wollongong'],['University of Newcastle','newcastle'],
+ ['James Cook University','townsville'],['University of New England','armidale'],['Notre Dame Broome','broome']];
+function radMapSvg(km){
+  const r=Math.min(82,10+km*1.2).toFixed(0);
+  let g='';
+  for(let y=30;y<=150;y+=30)g+='<line x1="0" y1="'+y+'" x2="320" y2="'+y+'" stroke="#D8CDB6" stroke-width="3"/>';
+  for(let x=40;x<=280;x+=40)g+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="180" stroke="#D8CDB6" stroke-width="3"/>';
+  return '<div class="radmap"><svg viewBox="0 0 320 180" width="100%" aria-hidden="true">'
+   +'<rect width="320" height="180" fill="#EDE6D4"/>'+g
+   +'<rect x="48" y="38" width="24" height="16" rx="3" fill="#E2D8C2"/>'
+   +'<rect x="208" y="128" width="30" height="14" rx="3" fill="#E2D8C2"/>'
+   +'<rect x="128" y="64" width="18" height="12" rx="3" fill="#E2D8C2"/>'
+   +'<circle id="radCirc" cx="160" cy="90" r="'+r+'" fill="rgba(235,90,45,.16)" stroke="#EB5A2D" stroke-width="3"/>'
+   +'<circle cx="160" cy="90" r="6" fill="#EB5A2D" stroke="#1B160E" stroke-width="2"/>'
+   +'</svg></div>';
+}
 function scrollTopAll(){ window.scrollTo(0,0); const m=document.getElementById('app'); if(m)m.scrollTop=0; }
+function sizeChat(){
+  const card=document.querySelector('.chatcard.docked');
+  if(!card)return;
+  const framed=document.documentElement.classList.contains('wide')&&document.documentElement.dataset.layout==='mobile';
+  let top;
+  if(framed){ top=document.getElementById('app').offsetTop; }
+  else{
+    scrollTopAll();
+    const hd=document.querySelector('header.app');
+    top=hd?Math.max(0,hd.getBoundingClientRect().bottom):document.getElementById('app').getBoundingClientRect().top;
+  }
+  card.style.top=Math.round(top)+'px';
+  const body=card.querySelector('.chatbody');
+  if(body)body.scrollTop=body.scrollHeight;
+}
+function scrollChatBottom(){
+  setTimeout(()=>{
+    const oc=document.querySelector('.ovl .ovlcard');
+    if(oc&&oc.querySelector('.chatcard')){ const b=oc.querySelector('.chatbody'); if(b)b.scrollTop=b.scrollHeight; else oc.scrollTop=oc.scrollHeight; return; }
+    scrollTopAll(); sizeChat();
+  },0);
+}
+function renderQuiet(){
+  render();
+  const a=document.getElementById('app');
+  if(a)a.classList.add('noanim'); /* render() resets className, so this sticks until the next full render */
+}
+function ovlCtx(){
+  const u=me(); const m=S.matches.find(x=>x.id===S.sel);
+  return (m&&u)?{u,m,p:partnerOf(m,u.id)}:null;
+}
+function showOvl(){
+  const c=ovlCtx(); if(!c)return;
+  document.getElementById('app').insertAdjacentHTML('beforeend',cafeSchedOvl(c.m,c.u,c.p));
+}
+function removeTopOvl(){
+  const os=document.querySelectorAll('.ovl');
+  if(os.length)os[os.length-1].remove();
+}
+function closeOvl(done){
+  const os=document.querySelectorAll('.ovl');
+  const o=os[os.length-1];
+  if(!o){ done(); return; }
+  o.classList.add('closing');
+  setTimeout(done,190);
+}
 function applyLayout(){
   const mode=(S&&S.layout&&S.layout!=='auto')?S.layout:(window.innerWidth>=900?'desktop':'mobile');
   document.documentElement.dataset.layout=mode;
   document.documentElement.classList.toggle('wide',window.innerWidth>=760);
+  const ph=(typeof S!=='undefined'&&S&&S.phone)?S.phone:{w:390,h:844};
+  document.documentElement.style.setProperty('--phw',ph.w+'px');
+  document.documentElement.style.setProperty('--phh',ph.h+'px');
+}
+window.WSTEP=0;
+const WSW={y:0,active:false,t:0};
+function welcomeActive(){ return !S.me&&S.view!=='onboard'&&!!window.INTRO_DONE; }
+function WSTEPS(){
+  return [
+   '<div class="howcard c1"><span class="hnum">1</span><br>Tell us about you</div>',
+   '<div class="howcard c2"><span class="hnum">2</span><br>Pick what you\u2019re curious about</div>',
+   '<div class="howcard c3"><span class="hnum">3</span><br>Get one match a week</div>',
+   '<div class="howcard c4"><span class="hnum">4</span><br>Have a coffee</div>',
+   '<div class="notice"><span class="brandnew">Brand new</span><br>'+esc(HONESTY)+'</div>',
+   '<div class="darkcard"><h2>House rules</h2><div class="muted small">This is for curiosity and conversation.</div>'
+    +'<div style="margin-top:8px"><span class="ruletag ok">\u2713 Curiosity</span><span class="ruletag ok">\u2713 Conversation</span>'
+    +'<span class="ruletag">\u2715 Not recruitment</span><span class="ruletag">\u2715 Not sales</span><span class="ruletag">\u2715 Not dating</span></div></div>',
+   '<h2 class="pagetitle center" style="margin:0">Ready for a coffee?</h2>'
+    +'<div class="center"><button class="btn primary" data-action="startOnboard">Create my profile</button>'
+    +'<button class="btn" data-action="exploreSample">Explore as a sample researcher</button></div>'
+  ];
+}
+function wstepHtml(){
+  const steps=WSTEPS();
+  const i=Math.min(window.WSTEP||0,steps.length-1);
+  return '<div class="wstep"><div class="popin" style="animation-delay:.05s;width:100%;display:flex;flex-direction:column;align-items:center;gap:14px">'+steps[i]+'</div>'
+   +'<div class="wdots">'+steps.map((x,k)=>'<span class="'+(k===i?'on':'')+'"></span>').join('')+'</div>'
+   +(i<steps.length-1?'<div class="xhint2" aria-hidden="true">swipe up \u2193</div>':'')
+   +'</div>';
+}
+function updWstep(){ const w=document.getElementById('wrest'); if(w&&w.classList.contains('show'))w.innerHTML=wstepHtml(); }
+function wNext(){ const n=WSTEPS().length; if((window.WSTEP||0)<n-1){ window.WSTEP++; updWstep(); } }
+function wPrev(){ if((window.WSTEP||0)>0){ window.WSTEP--; updWstep(); } }
+function initSrev(){
+  if(window.SREV)window.SREV.disconnect();
+  const els=[...document.querySelectorAll('.srev:not(.in)')];
+  if(!els.length)return;
+  window.SREV=new IntersectionObserver(ents=>{
+    ents.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); window.SREV.unobserve(en.target); } });
+  },{threshold:0.25});
+  els.forEach(el=>window.SREV.observe(el));
 }
 function animateCounts(){
   if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
@@ -1163,10 +1459,174 @@ function xexpand(){
   const sc=Math.max(0,Math.min(1,(8-r.top)/dist));
   hero.style.setProperty('--xp',sc.toFixed(3));
 }
-let PROP={day:'Monday',win:'wm',ven:'Caf\u00e9',dur:'30 minutes'};
-function propSummary(){ return PROP.day+' \u00b7 '+WNAME[PROP.win]+' \u00b7 '+PROP.ven+' \u00b7 '+PROP.dur; }
-const MSTATE={plan:false,proposeOpen:false,chatOpen:false,surveyOpen:false,notesOpen:false,editOpen:false,aboutOpen:false,safety:false};
-function resetMstate(){MSTATE.plan=false;MSTATE.proposeOpen=false;MSTATE.chatOpen=false;MSTATE.surveyOpen=false;MSTATE.notesOpen=false;MSTATE.editOpen=false;MSTATE.aboutOpen=false;MSTATE.safety=false;}
+let PROP={day:'Monday',win:'wm',ven:'Caf\u00e9',dur:'30 minutes',cafe:null};
+function h32(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function genOrcid(seed){
+  let h=h32(String(seed)); let digits='000';
+  for(let i=0;i<12;i++){ h=Math.imul(h,1664525)+1013904223>>>0; digits+=String((h>>>16)%10); }
+  let total=0; for(let i=0;i<15;i++) total=(total+ +digits[i])*2;
+  const res=(12-(total%11))%11;
+  const full=digits+(res===10?'X':String(res));
+  return full.slice(0,4)+'-'+full.slice(4,8)+'-'+full.slice(8,12)+'-'+full.slice(12);
+}
+function cafeRecs(A,B){
+  /* simulated Google Places layer: real midpoint distances, deterministic ratings.
+     Real version: Places Nearby Search (type=cafe) around the pair midpoint + Place
+     Details, with atmosphere/coffee sub-scores derived from review text server-side. */
+  const names=['The Hidden Fig','Common Grounds','Little Ember','Marigold & Co','The Long Black','Paper Cup','Sunroom Coffee','The Kindling','Field Notes Espresso','Good Neighbour','The Corner Filter','Husk & Honey'];
+  const seed=h32(A.area+'|'+B.area);
+  const n=4+(seed%2);
+  const out=[];
+  for(let i=0;i<n;i++){
+    const hh=h32(seed+':'+i);
+    const name=names[(seed+i*7)%names.length];
+    const dist=0.15+((hh%100)/100)*1.4;
+    const rev=3.5+(((hh>>3)%4)*0.5);
+    const atm=3.5+(((hh>>5)%4)*0.5);
+    const cof=3.5+(((hh>>7)%4)*0.5);
+    /* recommended score: proximity weighted highest (meetups actually happening),
+       then atmosphere and reviews, then coffee */
+    const prox=5-Math.min(1,Math.max(0,(dist-0.15)/1.4))*2;
+    const score=0.35*prox+0.25*atm+0.25*rev+0.15*cof;
+    out.push({name,dist,rev,atm,cof,score});
+  }
+  out.sort((a,b)=>b.score-a.score);
+  return out.slice(0,5);
+}
+function cstar(label,v){
+  const r=Math.round(v);
+  return '<span class="ccat"><span class="cl">'+label+'</span><span class="cs">'+'\u2605'.repeat(r)+'\u2606'.repeat(5-r)+' <b>'+v.toFixed(1)+'</b></span></span>';
+}
+function cafesCard(u,p,m){
+  const recs=cafeRecs(u,p);
+  m.cafes=m.cafes||{};
+  const mineSel=m.cafes[u.id]||[];
+  const theirSel=m.cafes[p.id]||[];
+  const pin=esc((p.displayName||'?').trim().charAt(0).toUpperCase());
+  return '<div class="card"><h2>Recommended caf\u00e9s to meet</h2>'
+   +recs.map(c=>'<button type="button" class="caferow'+(mineSel.includes(c.name)?' on':'')+'" data-action="cafePick" data-name="'+esc(c.name)+'" aria-pressed="'+(mineSel.includes(c.name)?'true':'false')+'">'
+     +(theirSel.includes(c.name)?'<span class="cbadge" title="'+esc(p.displayName)+' picked this">'+pin+'</span>':'')
+     +'<span class="cafeleft"><b>'+esc(c.name)+'</b><span class="muted small">'+Math.round(c.dist*1000)+' m from your midpoint</span></span>'
+     +'<span class="cstars">'+cstar('Atmosphere',c.atm)+cstar('Reviews',c.rev)+cstar('Coffee',c.cof)+'</span>'
+     +'</button>').join('')
+   +'<p class="muted small" style="margin-bottom:0">Select cafés you’re keen on meeting at.</p>'
+   +'</div>';
+}
+function propSummary(){ return PROP.day+' \u00b7 '+WNAME[PROP.win]+' \u00b7 '+(PROP.cafe||PROP.ven)+' \u00b7 '+PROP.dur; }
+let PSTEP={step:1,days:[],dur:null};
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DOWS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function schedDays(){
+  const out=[], now=new Date(); now.setHours(0,0,0,0);
+  const mon=new Date(now); mon.setDate(now.getDate()-((now.getDay()+6)%7));
+  for(let i=0;i<7;i++){
+    const d=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+i);
+    out.push({ts:d.getTime(),dow:DOWS[d.getDay()],n:d.getDate(),label:DOWS[d.getDay()]+' '+d.getDate()+' '+MONTHS[d.getMonth()],past:d.getTime()<now.getTime()});
+  }
+  return out;
+}
+function pdays(){
+  const out=[], d0=new Date();
+  for(let i=0;i<7;i++){
+    const d=new Date(d0.getFullYear(),d0.getMonth(),d0.getDate()+i);
+    out.push({ts:d.getTime(),dow:DOWS[d.getDay()],n:d.getDate(),label:DOWS[d.getDay()]+' '+d.getDate()+' '+MONTHS[d.getMonth()]});
+  }
+  return out;
+}
+function blockStartHour(blocks){
+  if(!blocks||!blocks.length)return null;
+  const mm=String(blocks[0]).match(/(\d{1,2})(?::(\d{2}))?/);
+  if(!mm)return null;
+  let h=+mm[1]; const mins=mm[2]?+mm[2]/60:0;
+  const pm=/pm/i.test(blocks[0]) && !/am/i.test(String(blocks[0]).split(/[-\u2013]/)[0]);
+  if(pm&&h<12)h+=12;
+  if(h<6)h+=12;
+  return h+mins;
+}
+function slotText(x){
+  const t=(x.blocks&&x.blocks.length)?x.blocks.join(' & '):(x.window&&WNAME[x.window]?WNAME[x.window].toLowerCase():null);
+  return [x.day?esc(x.day):null,t?esc(t):null,x.cafe?esc(x.cafe):null,x.duration?esc(x.duration.toLowerCase()):null].filter(Boolean).join(' \u00b7 ');
+}
+function pstepSummary(){
+  const n=PSTEP.days.reduce((a,d)=>a+d.blocks.filter(Boolean).length,0);
+  return n+' proposed time'+(n===1?'':'s')+' \u00b7 Caf\u00e9 \u00b7 '+(PSTEP.dur||'');
+}
+function captureBlocks(){
+  document.querySelectorAll('.blockin').forEach(inp=>{
+    const di=+inp.dataset.di, bi=+inp.dataset.bi;
+    if(PSTEP.days[di])PSTEP.days[di].blocks[bi]=inp.value.trim();
+  });
+}
+function pstepHtml(m){
+  let out='';
+  if(PSTEP.step===1){
+    out+='<h3>Which days?</h3><div class="dstrip">'+pdays().map(d=>{
+      const on=PSTEP.days.some(x=>x.ts===d.ts);
+      return '<button type="button" class="ditem'+(on?' on':'')+'" data-action="pstepDayToggle" data-ts="'+d.ts+'" data-label="'+esc(d.label)+'" aria-pressed="'+(on?'true':'false')+'"><span class="dname">'+d.dow+'</span><span class="dcirc">'+d.n+'</span></button>';
+    }).join('')+'</div>'
+     +'<p class="muted small">Pick every day that could work.</p>'
+     +'<div class="center"><button class="btn primary small" data-action="pstepDaysNext">Next</button></div>'
+     +'<div class="step">Step 1 of 3</div>';
+  }else if(PSTEP.step===2){
+    out+='<h3>What times suit you?</h3>';
+    PSTEP.days.forEach((d,di)=>{
+      out+='<div style="margin:10px 0 2px;font-weight:800">'+esc(d.label)+'</div>'
+       +(d.blocks.length?d.blocks:['']).map((b,bi)=>'<input type="text" class="blockin" data-di="'+di+'" data-bi="'+bi+'" placeholder="e.g. 9\u201311am" value="'+esc(b)+'" style="margin:4px 0" aria-label="'+esc(d.label)+' time block '+(bi+1)+'">').join('')
+       +'<button type="button" class="linkbtn" data-action="pstepBlockAdd" data-di="'+di+'">+ Add another time block</button>';
+    });
+    out+='<div class="center" style="margin-top:6px"><button class="btn" data-action="pstepGoto" data-s="1">Back</button><button class="btn primary small" data-action="pstepBlocksNext">Next</button></div>'
+     +'<div class="step">Step 2 of 3</div>';
+  }else if(PSTEP.step===3){
+    out+='<h3>How long?</h3><div class="pillgrp">'+DURATIONS.map(v=>'<button type="button" class="daypill" data-action="pstepDur" data-v="'+esc(v)+'">'+esc(v)+'</button>').join('')+'</div>'
+     +'<div class="step">Step 3 of 3</div>';
+  }else{
+    out+='<div class="chips">';
+    PSTEP.days.forEach((d,di)=>d.blocks.forEach((b,bi)=>{
+      if(b)out+='<button type="button" class="chip pchip" data-action="pstepRmBlock" data-di="'+di+'" data-bi="'+bi+'">'+esc(d.label)+' \u00b7 '+esc(b)+' \u2715</button>';
+    }));
+    if(PSTEP.dur)out+='<button type="button" class="chip pchip" data-action="pstepGoto" data-s="3">'+esc(PSTEP.dur)+' \u2715</button>';
+    out+='</div>'
+     +'<div class="center"><span class="sumpill" id="psum">'+esc(pstepSummary())+'</span></div>'
+     +'<div class="center"><button class="btn orange" data-action="proposeSlot" data-m="'+(m?m.id:'')+'">Propose \u2192</button></div>'
+     +'<div class="center"><button type="button" class="linkbtn" data-action="pstepGoto" data-s="1">Edit days</button>'
+     +'<button type="button" class="linkbtn" data-action="pstepGoto" data-s="2">Edit times</button></div>';
+  }
+  return out;
+}
+let SCHED={ts:null,label:null,time:'',dur:null};
+function timeToMs(str){
+  const mt=/^(\d{1,2}):(\d{2})(am|pm)$/.exec(String(str||'').toLowerCase());
+  if(!mt)return 0;
+  let h=(+mt[1])%12; if(mt[3]==='pm')h+=12;
+  return (h*60+(+mt[2]))*60000;
+}
+function schedTimeVal(){
+  const h=document.getElementById('schedH'),mi=document.getElementById('schedM'),ap=document.getElementById('schedAP');
+  if(!h||!mi||!ap)return'';
+  return h.value+':'+mi.value+ap.value;
+}
+function schedFormHtml(m,p){
+  return '<div class="card"><h2 style="margin-bottom:0">Schedule coffee</h2><div class="with">with '+esc(p.displayName)+'</div>'
+   +'<h3>Date</h3><div class="dstrip">'+schedDays().map(d=>d.past
+     ?'<button type="button" class="ditem off" disabled aria-disabled="true"><span class="dname">'+d.dow+'</span><span class="dcirc">'+d.n+'</span></button>'
+     :'<button type="button" class="ditem'+(SCHED.ts===d.ts?' on':'')+'" data-action="schedDay" data-ts="'+d.ts+'" data-label="'+esc(d.label)+'"><span class="dname">'+d.dow+'</span><span class="dcirc">'+d.n+'</span></button>').join('')+'</div>'
+   +'<h3>Time</h3><div class="timerow">'
+   +'<select id="schedH" aria-label="Hour">'+[1,2,3,4,5,6,7,8,9,10,11,12].map(h=>'<option value="'+h+'"'+(h===9?' selected':'')+'>'+h+'</option>').join('')+'</select>'
+   +'<span class="tcolon">:</span>'
+   +'<select id="schedM" aria-label="Minutes">'+['00','05','10','15','20','25','30','35','40','45','50','55'].map(mi=>'<option value="'+mi+'">'+mi+'</option>').join('')+'</select>'
+   +'<select id="schedAP" aria-label="AM or PM"><option value="am">AM</option><option value="pm">PM</option></select>'
+   +'</div>'
+   +'<h3>How long</h3><div class="pillgrp">'+DURATIONS.map(v=>'<button type="button" class="daypill'+(SCHED.dur===v?' on':'')+'" data-action="schedDur" data-v="'+esc(v)+'">'+esc(v)+'</button>').join('')+'</div>'
+   +'<div class="center" style="margin-top:12px"><button class="btn orange" data-action="schedSend" data-m="'+m.id+'">Send to chat \u2192</button></div>'
+   +'</div>';
+}
+function renderPstep(){
+  const el=document.getElementById('pstep'); if(!el)return;
+  const m=S.matches.find(x=>x.id===S.sel);
+  el.innerHTML=pstepHtml(m);
+}
+const MSTATE={plan:false,proposeOpen:false,chatOpen:false,surveyOpen:false,notesOpen:false,editOpen:false,aboutOpen:false,safety:false,cafesOpen:false,schedOpen:false};
+function resetMstate(){MSTATE.plan=false;MSTATE.proposeOpen=false;MSTATE.chatOpen=false;MSTATE.surveyOpen=false;MSTATE.notesOpen=false;MSTATE.editOpen=false;MSTATE.aboutOpen=false;MSTATE.safety=false;MSTATE.cafesOpen=false;MSTATE.schedOpen=false;}
 const WHOUR={wm:9,wl:12.5,we:18,wk:10};
 function nextDayDate(dayName,hourF){
   const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -1232,15 +1692,22 @@ function tierBadge(t){
 }
 function profileCard(u,showArea,editBtn){
   const initial=esc((u.displayName||'?').trim().charAt(0).toUpperCase());
-  return '<div class="pcard">'
+  return '<div class="pcard'+(u.cover?' cov-'+u.cover:'')+'">'
    +'<div class="pcover"></div>'
-   +'<div class="avatar" aria-hidden="true">'+initial+'</div>'
+   +'<div class="avatar" aria-hidden="true">'+(u.photo?'<img src="'+u.photo+'" alt="">':initial)+'</div>'
    +'<div class="phead">'
    +(editBtn?'<button class="btn small" style="float:right;margin-top:6px" data-action="toggleEdit">'+(MSTATE.editOpen?'Close':'Edit')+'</button>':'')
    +'<h2>'+esc(u.displayName)+(u.pronouns?' <span class="muted small">('+esc(u.pronouns)+')</span>':'')+'</h2>'
    +(u.institution?'<div class="muted">'+esc(u.institution)+'</div>':'')
    +(showArea?'<div class="muted small">'+esc(AREA[u.area].name)+', '+esc(AREA[u.area].city)+'</div>':'')
-   +'</div></div>'
+   +(u.orcid?'<div class="muted small" style="margin-top:3px"><span class="orcbadge">iD</span> '+esc(u.orcid)+'</div>':'')
+   +'</div>'
+   +(editBtn?'<div class="lookrow"><span class="lbl">Card colour</span>'
+     +['blue','pink','green','orange'].map(c=>'<button type="button" class="covdot cov-'+c+(u.cover===c?' on':'')+'" data-action="coverSet" data-c="'+c+'" aria-label="'+c+' card background" aria-pressed="'+(u.cover===c?'true':'false')+'"></button>').join('')
+     +'<label class="btn small">'+(u.photo?'Change photo':'Add photo')+'<input type="file" id="pfile" accept="image/*" hidden></label>'
+     +(u.photo?'<button type="button" class="linkbtn" data-action="photoRemove" style="margin:0">Remove</button>':'')
+     +'</div>':'')
+   +'</div>'
    +'<div class="qawrap">'+qaListHtml(u)+'</div>';
 }
 function qaListHtml(u){
@@ -1249,6 +1716,7 @@ function qaListHtml(u){
    +'<div class="qa"><div class="q">Something I’d love someone to explain to me</div><div class="a">'+esc(u.wantExplained)+'</div></div>'
    +'<div class="qa"><div class="q">Something I can explain over coffee</div><div class="a">'+esc(u.canExplain)+'</div></div>'
    +'<div class="qa"><div class="q">One non-work thing about me</div><div class="a">'+esc(u.nonWork)+'</div></div>'
+   +(u.favCafe?'<div class="qa"><div class="q">Favourite caf\u00e9</div><div class="a">'+esc(u.favCafe)+'</div></div>':'')
    +'<div class="qa"><div class="q">What I know about</div><div>'+u.backgroundTopics.map(t=>'<span class="tag">'+esc(TOPIC[t].label)+'</span>').join('')+'</div></div>'
 
 }
@@ -1262,8 +1730,8 @@ function papersHtml(u,own){
   const stepX=dw*scale+12;
   const TURN=[4,-5,3,-4,4.5];
   const REST=[[0.16*W,0,3],[-0.17*W,0.05*H,-3.5],[0,0.10*H,0.5],[0.08*W,0.07*H,-1.5],[-0.08*W,0.03*H,2]];
-  return '<div class="qa" style="background:none;border:none;box-shadow:none;margin:14px 0 0;padding:0;text-align:center"><div class="q">Optional reads</div></div>'
-   +'<div class="folderwrap rbscene center" style="--fw:'+W.toFixed(0)+'px;--fh:'+H.toFixed(0)+'px;--tab:'+TAB.toFixed(0)+'px;--dw:'+dw.toFixed(0)+'px;--dh:'+dh.toFixed(0)+'px">'
+  const lbl=own?'Optional reads':esc(u.displayName)+'’s optional reads';
+  return '<div class="folderwrap rbscene center" style="--fw:'+W.toFixed(0)+'px;--fh:'+H.toFixed(0)+'px;--tab:'+TAB.toFixed(0)+'px;--dw:'+dw.toFixed(0)+'px;--dh:'+dh.toFixed(0)+'px">'
    +'<div class="rbfolder" data-action="folderToggle" role="button" tabindex="0" aria-expanded="false" aria-label="Optional reads folder, '+n+' paper'+(n>1?'s':'')+'">'
    +'<span class="rbtab"></span><span class="rbback"></span>'
    +ps.map((pp,i)=>{
@@ -1279,7 +1747,8 @@ function papersHtml(u,own){
     }).join('')
    +'<span class="rbfront"></span>'
    +'</div>'
-   +'</div>';
+   +'</div>'
+   +'<div class="qa" style="background:none;border:none;box-shadow:none;margin:10px 0 0;padding:0;text-align:center"><div class="q" style="position:static;display:inline-block">'+lbl+'</div></div>';
 }
 /* --- topic search picker --- */
 const PICK={q:'',kind:null};
@@ -1394,9 +1863,10 @@ function nearbyListHtml(u,selected){
 /* --- views --- */
 const V={};
 V.welcome=function(){
-  return '<div class="bigtitle center">Randomised <span class="titlehl">Coffee</span> Trial</div>'
-   +'<p class="center" style="font-weight:700;margin-top:0">One coffee a week with a curious stranger.</p>'
-   +'<div class="illus"><svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+  const introing=!window.INTRO_DONE;
+  const w=(inner,delay)=>'<div class="popin" style="animation-delay:'+delay+'s">'+inner+'</div>';
+  const title='<div class="bigtitle center">Randomised <span class="titlehl">Coffee</span> Trial</div>';
+  const illus='<div class="illus"><svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
    +'<rect width="360" height="150" fill="#C9B8F2"/>'
    +'<circle cx="38" cy="34" r="12" fill="#F7C64B" stroke="#1B160E" stroke-width="3"/>'
    +'<path d="M300 24q10 -12 20 0t20 0" fill="none" stroke="#1B160E" stroke-width="4" stroke-linecap="round"/>'
@@ -1408,68 +1878,100 @@ V.welcome=function(){
    +'<path d="M236 70c3 -8 0 -11 3 -17" stroke="#1B160E" stroke-width="4" stroke-linecap="round" fill="none"/>'
    +'<path d="M222 78h52v18a24 24 0 0 1 -24 24h-6a24 24 0 0 1 -22 -24z" fill="#F7C64B" stroke="#1B160E" stroke-width="4"/>'
    +'<ellipse cx="190" cy="126" rx="80" ry="7" fill="#1B160E" opacity=".18"/>'
-   +'</svg></div>'
-   +'<p style="font-weight:700" class="center">Once a week, we match you with <b>one other researcher nearby</b> for an in-person coffee.</p>'
-   +'<h2 class="pagetitle">How it works</h2>'
-   +'<div class="how2">'
-   +'<div class="c1"><span class="hnum">1</span><br>Tell us about you</div>'
-   +'<div class="c2"><span class="hnum">2</span><br>Pick what you’re curious about</div>'
-   +'<div class="c3"><span class="hnum">3</span><br>Get one match a week</div>'
-   +'<div class="c4"><span class="hnum">4</span><br>Have a coffee</div>'
-   +'</div>'
-   +'<div class="notice"><span class="brandnew">Brand new</span><br>'+esc(HONESTY)+'</div>'
-   +'<div class="darkcard"><h2>House rules</h2><div class="muted small">This is for curiosity and conversation.</div>'
-   +'<div style="margin-top:8px"><span class="ruletag ok">✓ Curiosity</span><span class="ruletag ok">✓ Conversation</span>'
-   +'<span class="ruletag">✕ Not recruitment</span><span class="ruletag">✕ Not sales</span><span class="ruletag">✕ Not dating</span></div></div>'
-   +'<h2 class="pagetitle center" style="margin-top:22px">Ready for a coffee?</h2>'
-   +'<div class="center"><button class="btn primary" data-action="startOnboard">Create my profile</button>'
-   +'<button class="btn" data-action="exploreSample">Explore as a sample researcher</button></div>';
+   +'</svg></div>';
+  const pitch='<p style="font-weight:700" class="center">Once a week, we match you with another researcher for a coffee.</p>';
+  const trio=introing?'<div id="wintro">'+w(title,0.1)+w(illus,0.8)+w(pitch,1.5)+'</div>':'';
+  return trio
+   +'<div id="wrest" class="'+(introing?'':'show')+'"'+(introing?' style="display:none"':'')+'>'+wstepHtml()+'</div>';
 };
 V.onboard=function(){
-  const st=S.onb.step,d=S.onb.draft;
+  const st=S.onb.step,d=S.onb.draft,au=S.onb.auth||{};
   let body='';
-  const steps='<div class="steps">'+[1,2,3,4,5].map(i=>'<span class="'+(st>=i?'on':'')+'"></span>').join('')+'</div>';
-  if(st===1){
-    body='<h2>Let’s start with you</h2><p class="muted small">No titles, no career stage, ever.</p>'
+  const total=d.viaOrcid?4:5;
+  const steps=st>=1?'<div class="steps">'+Array.from({length:total},(x,i)=>'<span class="'+(st>=i+1?'on':'')+'"></span>').join('')+'</div>':'';
+  if(st===0){
+    const gIcon='<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5h-4v3.1C3.3 21.3 7.3 24 12 24z"/><path fill="#FBBC05" d="M5.3 14.3c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3V6.6h-4C.5 8.2 0 10 0 12s.5 3.8 1.3 5.4z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4C18 1.2 15.2 0 12 0 7.3 0 3.3 2.7 1.3 6.6l4 3.1c.9-2.9 3.6-4.9 6.7-4.9z"/></svg>';
+    const aIcon='<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.7 12.9c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3.1 2.4 1.2 0 1.7-.8 3.2-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.6-1-2.7-3.9zM14.4 5.8c.7-.8 1.1-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4z"/></svg>';
+    const oIcon='<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#A6CE39"/><text x="12" y="16.2" text-anchor="middle" font-size="10" font-weight="800" fill="#fff" font-family="inherit">iD</text></svg>';
+    const iIcon='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6"/><path d="M5.5 10v7M10 10v7M14 10v7M18.5 10v7"/><path d="M3 17.5h18M3 20.5h18"/></svg>';
+    if(!au.stage||au.stage==='email'){
+      body='<h2>Create your account</h2>'
+       +'<label class="f" for="a-em">Email</label><input type="text" id="a-em" autocomplete="off" value="'+esc(au.email||'')+'">'
+       +'<div class="center" style="margin-top:8px"><button class="btn primary" data-action="onbEmailNext">Continue</button></div>'
+       +'<hr class="soft"><div class="sectlabel center">Or continue with</div>'
+       +'<div class="oauthrow">'
+       +'<button class="btn" data-action="onbOauth" data-prov="Google">'+gIcon+'Gmail</button>'
+       +'<button class="btn" data-action="onbOauth" data-prov="Apple">'+aIcon+'Apple ID</button>'
+       +'<button class="btn" data-action="onbOauth" data-prov="ORCID">'+oIcon+'ORCID</button>'
+       +'<button class="btn" data-action="onbOauth" data-prov="Institution">'+iIcon+'Institutional email</button>'
+       +'</div>'
+       +'<p class="muted small center">All sign-ins are simulated in this demo.</p>';
+    }else{
+      body='<h2>Secure your account</h2>'
+       +'<p class="muted small">'+esc(au.email)+' <button type="button" class="linkbtn" data-action="onbEmailBack">change</button></p>'
+       +'<label class="f" for="a-pw">Create password</label><input type="password" id="a-pw" autocomplete="off">'
+       +'<label class="f" for="a-pw2">Confirm password</label><input type="password" id="a-pw2" autocomplete="off">'
+       +(au.sent
+         ?'<div class="notice small">We\u2019ve emailed a verification code to <b>'+esc(au.email)+'</b>. <span class="muted">(Demo: the code is <b>'+au.code+'</b> \u2013 no real email is sent.)</span></div>'
+          +'<label class="f" for="a-code">Verification code</label><input type="text" id="a-code" inputmode="numeric" autocomplete="off">'
+          +'<button class="btn primary" data-action="onbVerifyCode">Verify and continue</button>'
+         :'<button class="btn primary" data-action="onbSendCode">Send verification code</button>');
+    }
+  }else if(st===1){
+    body='<h2>Let\u2019s start with you</h2><p class="muted small">No titles, no career stage, ever.</p>'
      +'<label class="f" for="f-name">First name or display name</label><input type="text" id="f-name" value="'+esc(d.displayName||'')+'">'
      +'<label class="f" for="f-pr">Pronouns <span class="opt">(optional)</span></label><input type="text" id="f-pr" value="'+esc(d.pronouns||'')+'">'
-     +'<label class="f" for="f-inst">Where you’re based <span class="opt">(optional)</span></label><input type="text" id="f-inst" value="'+esc(d.institution||'')+'">'
+     +'<label class="f" for="f-fav">Favourite caf\u00e9 <span class="opt">(optional)</span></label><input type="text" id="f-fav" value="'+esc(d.favCafe||'')+'">'
      +'<button class="btn primary" data-action="onbStep2Next">Next</button>';
   }else if(st===2){
     body='<h2>About you</h2><p class="muted small">Hand-written and human.</p>'
-     +'<label class="f" for="f-bg">My background (2–3 sentences)</label><textarea id="f-bg">'+esc(d.background||'')+'</textarea>'
-     +'<label class="f" for="f-stuck">A question I’m stuck on</label><textarea id="f-stuck">'+esc(d.stuckOn||'')+'</textarea>'
-     +'<label class="f" for="f-want">Something I’d love someone to explain to me</label><input type="text" id="f-want" value="'+esc(d.wantExplained||'')+'">'
+     +'<label class="f" for="f-bg">My background (2\u20133 sentences)</label><textarea id="f-bg">'+esc(d.background||'')+'</textarea>'
+     +'<label class="f" for="f-stuck">A question I\u2019m stuck on</label><textarea id="f-stuck">'+esc(d.stuckOn||'')+'</textarea>'
+     +'<label class="f" for="f-want">Something I\u2019d love someone to explain to me</label><input type="text" id="f-want" value="'+esc(d.wantExplained||'')+'">'
      +'<label class="f" for="f-can">Something I can explain over coffee</label><input type="text" id="f-can" value="'+esc(d.canExplain||'')+'">'
      +'<label class="f" for="f-fun">One non-work thing about me</label><input type="text" id="f-fun" value="'+esc(d.nonWork||'')+'">'
      +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbAboutNext">Next</button>';
   }else if(st===3){
-    body='<h2>Where you can meet</h2><p class="muted small">Only a coarse area is ever shown to a match, and only after you match.</p>'
-     +'<label class="f" for="f-area-q">Home area</label>'
-     +'<input type="search" id="f-area-q" data-input="areaq" placeholder="Search your suburb or city" autocomplete="off" value="'+(d.area&&AREA[d.area]?esc(AREA[d.area].name+', '+AREA[d.area].city):'')+'">'
-     +'<div class="searchres" id="areaRes" style="display:none"></div>'
-     +'<p class="muted small">The demo includes a sample of Australian areas. The real app will search any city.</p>'
-     +'<label class="f" for="f-km">How far will you travel for a good coffee?</label><select id="f-km">'
-     +MAXKM.map(k=>'<option value="'+k.v+'"'+(d.maxKm===k.v?' selected':'')+'>'+esc(k.l)+'</option>').join('')+'</select>'
-     +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbStep3Next">Next</button>';
+    body='<h2>Where you can meet</h2>'
+     +'<label class="f">Where you\u2019re located</label>'
+     +'<button type="button" class="loctile'+(d.locMode==='current'?' on':'')+'" data-action="locCurrent">Use my current location'
+     +(d.locMode==='current'&&d.locLabel?'<span class="d">'+esc(d.locLabel)+'</span>':'<span class="d">We\u2019ll ask your device for location access.</span>')+'</button>'
+     +'<button type="button" class="loctile'+(d.locMode==='uni'?' on':'')+'" data-action="locUni">Use my university/organisation location'
+     +'<span class="d">Your matches are based from here. You can change this later in Settings.</span></button>';
+    if(d.locMode==='uni'){
+      body+='<label class="f" for="f-uni-q">Search my university/organisation</label>'
+       +'<input type="search" id="f-uni-q" data-input="uniq" placeholder="e.g. University of Sydney" autocomplete="off" value="'+(d.uniName?esc(d.uniName):'')+'">'
+       +'<div class="searchres" id="uniRes" style="display:none"></div>'
+       +'<p class="muted small">Demo list of Australian institutions \u2013 the real app searches a global registry.</p>';
+    }
+    if(d.area&&d.locMode){
+      const km=d.maxKm||10;
+      body+='<label class="f">How far are you willing and able to travel for a good coffee?</label>'
+       +'<input type="range" id="f-rad" data-input="radius" min="2" max="60" step="1" value="'+km+'" aria-label="Travel radius">'
+       +'<div class="center muted small" id="radLabel"><b>'+km+' km</b> from '+esc(d.locLabel||'your location')+'</div>'
+       +radMapSvg(km)
+       +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbStep3Next">Next</button>';
+    }else{
+      body+='<button class="btn" data-action="onbBack">Back</button>';
+    }
   }else if(st===4){
     const draftUser={id:'me',area:d.area,maxKm:d.maxKm,backgroundTopics:d.backgroundTopics||[],interestTopics:d.interestTopics||[]};
     body='<h2>Topics I know about</h2>'
      +pickerHtml('bg',d.backgroundTopics||[],'Search or add your field, e.g. "back pain", "co design", "ML"')
-     +'<hr class="soft"><h3>What I’d love to learn about</h3>'
-     +pickerHtml('int',d.interestTopics||[],'Search or add what you’re curious about')
-     +'<details id="onbBrowse" ontoggle="window.ONB_OPEN=this.open"'+(window.ONB_OPEN?' open':'')+'><summary>Or browse what’s on offer near you</summary>'+nearbyListHtml(draftUser,d.interestTopics||[])+'</details>'
-     +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbTopicsNext">Next</button>';
+     +'<hr class="soft"><h3>What I\u2019d love to learn about</h3>'
+     +pickerHtml('int',d.interestTopics||[],'Search or add what you\u2019re curious about')
+     +'<details id="onbBrowse" ontoggle="window.ONB_OPEN=this.open"'+(window.ONB_OPEN?' open':'')+'><summary>Or browse what\u2019s on offer near you</summary>'+nearbyListHtml(draftUser,d.interestTopics||[])+'</details>'
+     +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbTopicsNext">'+(d.viaOrcid?'Finish':'Next')+'</button>';
   }else if(st===5){
-    body='<h2>Last step: verify it’s you</h2>'
-     +'<p>Every researcher signs in with <b>ORCID</b> to prove they’re a real, unique person. We only confirm your identity: your ORCID iD is <b>never shown to anyone</b> and never appears on your profile.</p>'
-     +'<p class="muted small">Don’t have an ORCID? It’s free and takes about two minutes at orcid.org/register. Honours students welcome.</p>'
-     +'<div class="notice small center">ORCID is not public or shared.</div>';
+    body='<h2>Last step: verify it\u2019s you</h2>'
+     +'<p>Every researcher signs in with <b>ORCID</b> to prove they\u2019re a real, unique person.</p>'
+     +'<p class="muted small">Don\u2019t have an ORCID? It\u2019s free and takes about two minutes at orcid.org/register. Honours students welcome.</p>'
+     +'<div class="notice small center">Your ORCID iD will appear on your profile, visible to your matches.</div>';
     if(d.orcidVerified){
-      body+='<div class="notice good">✓ Signed in with ORCID (simulated). Your iD stays private.</div>'
+      body+='<div class="notice good">\u2713 Signed in with ORCID (simulated).</div>'
        +'<button class="btn" data-action="onbBack">Back</button><button class="btn primary" data-action="onbFinish">Finish</button>';
     }else if(S.onb.login){
-      body+='<div class="orcidbox"><div class="obh">ORCID sign-in (simulated – this is a demo, nothing is sent anywhere)</div>'
+      body+='<div class="orcidbox"><div class="obh">ORCID sign-in (simulated \u2013 this is a demo, nothing is sent anywhere)</div>'
        +'<label class="f" for="orc-em">Email or ORCID iD</label><input type="text" id="orc-em" autocomplete="off">'
        +'<label class="f" for="orc-pw">Password</label><input type="password" id="orc-pw" autocomplete="off">'
        +'<p class="muted small">Demo shortcut: <button type="button" class="linkbtn" data-action="orcidSampleLogin">fill a sample account</button></p>'
@@ -1477,8 +1979,7 @@ V.onboard=function(){
        +'<button class="btn" data-action="orcidCancel">Cancel</button></div>';
     }else{
       body+='<button class="btn" data-action="onbBack">Back</button>'
-       +'<button class="btn primary" data-action="orcidLoginOpen">Sign in with ORCID (simulated)</button>'
-       +'<p class="muted small">Signing in (rather than typing an iD) means nobody can claim someone else’s ORCID.</p>';
+       +'<button class="btn primary" data-action="orcidLoginOpen">Sign in with ORCID (simulated)</button>';
     }
   }
   return '<div class="card">'+steps+body+'</div>';
@@ -1492,7 +1993,7 @@ V.home=function(){
       +'<button class="btn primary" data-action="resumeNow">Resume matching</button></div>';
   }
   if(S.pickEdit){
-    return '<button class="btn small" data-action="editTopicsDone">← Done</button>'
+    return '<button class="btn small" data-action="goBack">← Back</button>'
      +'<h2 class="pagetitle center" style="margin-top:4px">Modify topics for next week</h2>'
      +picksBody(u,true);
   }
@@ -1515,27 +2016,28 @@ V.home=function(){
    +'<path d="M300 268q10 -12 20 0t20 0" fill="none" stroke="#F7C64B" stroke-width="5" stroke-linecap="round"/>'
    +'</svg>';
   if(!m){
-    return '<div class="bluehero">'+deco+'<h2 class="pagetitle center">Your match this week</h2>'
+    return '<div class="herofit"><div class="bluehero">'+deco+'<h2 class="pagetitle center">Your match this week</h2>'
      +'<div class="revealcard"><h2>No match this week</h2>'
      +'<p>This is a new app, so there aren’t many people near you yet and we couldn’t find a match this week. <b>You’ll be first in line next week.</b></p>'
      +'<button class="btn primary" data-action="nav" data-v="invite">Invite a friend</button>'
-     +'<button class="btn" data-action="nav" data-v="pause">Pause for a while</button></div>'
-     +'<div class="center" style="margin-top:14px"><button class="btn ghost" data-action="editTopics">Modify topics for next week</button></div>'
+     +'</div></div>'
+     +'<div class="center" style="margin-top:12px"><button class="btn ghost" data-action="editTopics">Modify topics for next week</button></div>'
      +'</div>';
   }
   const p=partnerOf(m,u.id);
   const initial=esc((p.displayName||'?').trim().charAt(0).toUpperCase());
-  return '<div class="bluehero">'+deco+'<h2 class="pagetitle center">Your match this week</h2>'
+  const al=matchAlerts(m,u);
+  return '<div class="herofit"><div class="bluehero'+(p.cover?' cov-'+p.cover:'')+'">'+deco+'<h2 class="pagetitle center">Your match this week</h2>'
    +'<div class="revealcard">'
-   +'<div class="avatar big" style="margin:0 auto 8px" aria-hidden="true">'+initial+'</div>'
+   +'<div class="avatar big" style="margin:0 auto 8px" aria-hidden="true">'+(p.photo?'<img src="'+p.photo+'" alt="">':initial)+'</div>'
    +'<h2 style="margin:0">'+esc(p.displayName)+'</h2>'
    +'<div class="muted small">Around '+esc(AREA[p.area].name)+', '+esc(AREA[p.area].city)+'</div>'
    +'<div class="dashes"></div>'
    +'<p style="font-weight:800;margin:6px 0">'+(m.tier==='mutual'?'You are each curious about the other’s field.':'Everyone has something to share. We think this person is worth a coffee.')+'</p>'
    +'<div>'+p.backgroundTopics.slice(0,3).map(t=>'<span class="tag">'+esc(TOPIC[t].label)+'</span>').join('')+'</div>'
-   +'<div style="margin-top:12px"><button class="btn primary" data-action="openMatch" data-m="'+m.id+'">Open match →</button></div>'
-   +'</div>'
-   +'<div class="center" style="margin-top:14px"><button class="btn ghost" data-action="editTopics">Modify topics for next week</button></div>'
+   +'<div style="margin-top:12px"><button class="btn primary" data-action="openMatch" data-m="'+m.id+'">Open match →'+(al?'<span class="badge">'+al+'</span>':'')+'</button></div>'
+   +'</div></div>'
+   +'<div class="center" style="margin-top:12px"><button class="btn ghost" data-action="editTopics">Modify topics for next week</button></div>'
    +'</div>';
 };
 function picksBody(u,editMode){
@@ -1556,25 +2058,32 @@ function picksBody(u,editMode){
    +'</div>'
    +'</div>';
 }
+function cafeSchedOvl(m,u,p){
+  if(!MSTATE.cafesOpen&&!MSTATE.schedOpen)return'';
+  const closeAct=MSTATE.schedOpen?'schedClose':'menuCafesClose';
+  return '<div class="ovl" data-action="'+closeAct+'"><div class="ovlcard" data-action="ovlNoop">'
+   +'<div class="ovlhead"><button type="button" class="ccclose" data-action="'+closeAct+'" aria-label="Close">\u2715</button></div>'
+   +(MSTATE.schedOpen?schedFormHtml(m,p):cafesCard(u,p,m))
+   +'</div></div>';
+}
 V.match=function(){
   const u=me(); const m=S.matches.find(x=>x.id===S.sel);
   if(!u||!m)return V.home();
   const p=partnerOf(m,u.id);
   /* past weeks are archived: only the profile and the chat history remain */
   if(m.week<S.week){
-    return '<button class="btn small" data-action="nav" data-v="history">← History</button>'
+    return '<button class="btn small" data-action="goBack">← Back</button>'
      +'<div class="muted small center" style="margin-top:6px">Week '+m.week+' · '+(m.tier==='mutual'?'mutual match':'wildcard')+'</div>'
      +profileCard(p,true)
      +chatCard(m,u,p,true);
   }
-  let out='<button class="btn small" data-action="nav" data-v="home">← Meet up</button>';
+  let out='<button class="btn small" data-action="goBack">← Back</button>';
   if(['cancelled','noShow'].includes(m.status)){
     out+='<div class="card"><h2>'+(m.status==='cancelled'?'This match has ended for the week':'This one didn’t happen')+'</h2>'
       +'<p class="muted">No penalty, no fuss. A new match comes with the next weekly drop.</p></div>';
     return out;
   }
-  if(m.status==='happened')return out+wentWellHtml(m,u,p);
-  if(m.status==='scheduled'&&timeReached(m))return out+afterMeetHtml(m,u,p);
+  if(m.status==='happened')return '<button class="btn small" data-action="uncompleteMeet" data-m="'+m.id+'">\u2190 Back</button>'+wentWellHtml(m,u,p);
   if(!MSTATE.plan){
     out+=profileCard(p,true)
       +papersHtml(p,false)
@@ -1585,63 +2094,109 @@ V.match=function(){
     return out;
   }
   if(m.chosenSlot){
+    if(MSTATE.chatOpen){
+      out=chatCard(m,u,p,false,true);
+      out+=cafeSchedOvl(m,u,p);
+      return out;
+    }
     out+='<div class="card center"><h2>Meet up organised!</h2>'
-      +'<p>'+esc(m.chosenSlot.day)+', '+esc(WNAME[m.chosenSlot.window].toLowerCase())
-      +(m.venueType?' · '+esc(m.venueType.toLowerCase()):'')
-      +(m.duration?' · '+esc(m.duration.toLowerCase()):'')+'</p>'
+      +'<p>'+slotText(m.chosenSlot)+(m.chosenSlot.duration?'':(m.duration?' \u00b7 '+esc(m.duration.toLowerCase()):''))+'</p>'
       +countdownHtml(m.meetAt,'until you meet '+p.displayName)
-      +'<button class="btn" data-action="changeTime" data-m="'+m.id+'">I need to change time</button>'
-      +'<button class="btn primary" data-action="openChat">'+(m.messages.length?'Open chat':'Send message')+(!MSTATE.chatOpen&&unreadCount(m,u)>0?' <span class="badge">'+unreadCount(m,u)+'</span>':'')+'</button></div>';
-    if(MSTATE.chatOpen)out+=chatCard(m,u,p,false);
+      +'<button class="btn primary" data-action="openChat">'+(m.messages.length?'Open chat':'Send message')+(!MSTATE.chatOpen&&unreadCount(m,u)>0?' <span class="badge">'+unreadCount(m,u)+'</span>':'')+'</button>'
+      +(m.timeChangeBy&&m.timeChangeBy!==u.id?'<div style="margin-top:8px"><button class="btn small orange" data-action="openChat">'+esc(p.displayName)+' has requested to change the scheduled time</button></div>':'')
+      +'<div style="margin-top:6px"><button class="btn small" data-action="addToCal" data-m="'+m.id+'">Add to calendar</button></div>'
+      +(timeReached(m)?'<div style="margin-top:8px"><button class="btn orange" data-action="completeMeet" data-m="'+m.id+'">Complete \u2192</button></div>':'')
+      +'</div>';
     return out;
   }
-  const theirs=m.slots.map((x,i2)=>Object.assign({},x,{i:i2})).filter(x=>x.by!==u.id);
-  const mine=m.slots.map((x,i2)=>Object.assign({},x,{i:i2})).filter(x=>x.by===u.id);
-  out+='<div class="safebanner"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>'
-   +'<span>Meet in a public place, tell a friend where you\u2019re going, and trust your gut.</span></div>';
-  out+='<div class="card planhead"><h2 style="margin-bottom:0">Propose a time</h2><div class="with">with '+esc(p.displayName)+'</div>';
-  if(theirs.length){
-    out+='<h3>Proposed times by '+esc(p.displayName)+'</h3>'
-     +theirs.map(x=>'<div class="slot">'+esc(x.day)+', '+esc(WNAME[x.window].toLowerCase())
-       +(x.venue?' \u00b7 '+esc(x.venue.toLowerCase()):'')+(x.duration?' \u00b7 '+esc(x.duration.toLowerCase()):'')
-       +'<button class="btn small primary" data-action="acceptSlot" data-m="'+m.id+'" data-i="'+x.i+'">Accept</button></div>').join('');
-  }
-  out+='<div id="mineslots">'+(mine.length?'<h3>Your proposals</h3>'+mine.map(x=>'<div class="slot">'+esc(x.day)+', '+esc(WNAME[x.window].toLowerCase())
-    +(x.venue?' \u00b7 '+esc(x.venue.toLowerCase()):'')+(x.duration?' \u00b7 '+esc(x.duration.toLowerCase()):'')
-    +'<span class="muted small" style="margin-left:auto">waiting for '+esc(p.displayName)+'</span></div>').join(''):'')+'</div>';
-  const showPickers=MSTATE.proposeOpen||!theirs.length;
-  if(!showPickers){
-    out+='<button class="linkbtn" data-action="proposeOther">or propose another time</button>';
-  }else if(mine.length<3){
-    const DAYS=[['Monday','Mon'],['Tuesday','Tue'],['Wednesday','Wed'],['Thursday','Thu'],['Friday','Fri'],['Saturday','Sat'],['Sunday','Sun']];
-    out+='<div id="proposerow">'
-     +'<h3>Day</h3><div class="pillgrp" data-pk="day">'+DAYS.map(dd=>'<button type="button" class="daypill day'+(PROP.day===dd[0]?' on':'')+'" data-action="propSet" data-k="day" data-v="'+dd[0]+'">'+dd[1]+'</button>').join('')+'</div>'
-     +'<h3>When</h3><div class="pillgrp" data-pk="win">'+WINDOWS.map(w=>'<button type="button" class="daypill'+(PROP.win===w.id?' on':'')+'" data-action="propSet" data-k="win" data-v="'+w.id+'">'+esc(w.label)+'</button>').join('')+'</div>'
-     +'<h3>Where</h3><div class="pillgrp" data-pk="ven">'+VENUES.map(v=>'<button type="button" class="daypill'+(PROP.ven===v?' on':'')+'" data-action="propSet" data-k="ven" data-v="'+esc(v)+'">'+esc(v)+'</button>').join('')+'</div>'
-     +'<h3>How long</h3><div class="pillgrp" data-pk="dur">'+DURATIONS.map(v=>'<button type="button" class="daypill'+(PROP.dur===v?' on':'')+'" data-action="propSet" data-k="dur" data-v="'+esc(v)+'">'+esc(v)+'</button>').join('')+'</div>'
-     +'<div class="center"><span class="sumpill" id="sumpill">'+esc(propSummary())+'</span></div>'
-     +'<div class="center"><button class="btn orange" data-action="proposeSlot" data-m="'+m.id+'">Propose \u2192</button></div>'
-     +'</div>';
-  }
-  out+='<div class="center" style="margin-top:8px"><button class="linkbtn" data-action="cantMake" data-m="'+m.id+'">Can\u2019t make it this week</button>'
-   +'<button class="linkbtn" data-action="blockUser" data-m="'+m.id+'">Block</button>'
-   +'<button class="linkbtn" data-action="reportUser" data-m="'+m.id+'">Report</button></div>'
-   +'</div>';
-  out+=chatCard(m,u,p,false);
+  m.slotsSeen=m.slotsSeen||{}; m.slotsSeen[u.id]=m.slots.length;
+  out=chatCard(m,u,p,false,true);
+  out+=cafeSchedOvl(m,u,p);
   return out;
 };
 function unreadCount(m,u){
   m.seen=m.seen||{};
   return m.messages.slice(m.seen[u.id]||0).filter(x=>x.from!==u.id).length;
 }
-function chatCard(m,u,p,locked){
+function unseenSlots(m,u){
+  m.slotsSeen=m.slotsSeen||{};
+  const seen=m.slotsSeen[u.id]||0;
+  return m.slots.slice(seen).filter(x=>x.by!==u.id).length;
+}
+function matchAlerts(m,u){
+  let n=unreadCount(m,u);
+  if(m.status==='planning')n+=unseenSlots(m,u);
+  return n;
+}
+const REACT={t:null,open:null,just:0,sx:0,sy:0};
+function reactSvg(t,sz){
+  const thumb='<path d="M8 11l2.6-5.2A1.8 1.8 0 0 1 14 6.6L13.4 10H17a2 2 0 0 1 2 2.4l-.9 4A2 2 0 0 1 16.1 18H10a2 2 0 0 1-2-2z"/><rect x="4" y="10.5" width="3" height="7.5" rx="1"/>';
+  const map={
+    up:'<g>'+thumb+'</g>',
+    down:'<g transform="rotate(180 12 12)">'+thumb+'</g>',
+    heart:'<path d="M12 19.5s-7-4.3-8.8-8.3A4.6 4.6 0 0 1 11.5 7a4.6 4.6 0 0 1 8.3 4.2C18 15.2 12 19.5 12 19.5z"/>',
+    laugh:'<circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 13.5a4.2 4.2 0 0 0 8 0z"/><circle cx="9.3" cy="10" r="1.1"/><circle cx="14.7" cy="10" r="1.1"/>'
+  };
+  return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'+(map[t]||'')+'</svg>';
+}
+function msgReactsHtml(msg){
+  const r=msg.r?[...new Set(Object.values(msg.r))]:[];
+  if(!r.length)return'';
+  return '<span class="rbadge">'+r.map(t=>reactSvg(t,12)).join('')+'</span>';
+}
+function openReactPicker(mg){
+  closeReactPicker();
+  const pick=document.createElement('div');
+  pick.className='rpick';
+  pick.innerHTML=['up','down','heart','laugh'].map(t=>'<button type="button" data-action="reactSet" data-mi="'+mg.dataset.mi+'" data-t="'+t+'" aria-label="React '+t+'">'+reactSvg(t,18)+'</button>').join('');
+  mg.appendChild(pick);
+  REACT.open=mg; REACT.just=Date.now();
+}
+function closeReactPicker(){ document.querySelectorAll('.rpick').forEach(x=>x.remove()); REACT.open=null; }
+function chatCard(m,u,p,locked,dock){
   m.seen=m.seen||{}; m.seen[u.id]=m.messages.length;
-  let out='<div class="card chatcard"><div class="darkhead">Chat</div><div class="chatbody">';
-  out+='<div id="msgs">'+m.messages.map(msg=>'<div class="msg '+(msg.from===u.id?'me':'them')+'"><span class="who">'+esc(S.users[msg.from]?S.users[msg.from].displayName:msg.from)+'</span>'+esc(msg.text)+'</div>').join('')+'</div>';
-  if(locked||m.week<S.week)out+='<p class="notice small">This chat is closed now the meetup is wrapped up.</p>';
-  else out+='<div class="chatbox"><input type="text" id="chatIn" placeholder="Message about the plan\u2026" aria-label="Chat message"><button class="btn small primary" data-action="sendMsg" data-m="'+m.id+'">Send</button></div>'
-   +'<p class="muted small">Demo tip: switch persona in the control centre to reply as '+esc(p.displayName)+'.</p>';
-  return out+'</div></div>';
+  const closed=locked||m.week<S.week;
+  const canSee=(u.readReceipts!==false)&&(p.readReceipts!==false);
+  let lastOwn=-1; m.messages.forEach((msg,i)=>{ if(msg.from===u.id)lastOwn=i; });
+  let lastPend=-1; m.messages.forEach((msg,i)=>{ if(msg.kind==='sched'&&msg.status==='pending')lastPend=i; });
+  const calIco='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>';
+  const dk=dock&&!closed;
+  let out='<div class="card chatcard'+(dk?' docked':'')+'"><div class="darkhead">'
+   +(dk?'<button type="button" class="hback" data-action="goBack" aria-label="Back">\u2190</button>':'')
+   +'Chat</div><div class="chatbody">'
+   +(dk?'<div class="safebanner"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span>Meet in a public place, tell a friend where you\u2019re going, and trust your gut.</span></div>':'');
+  out+='<div id="msgs" class="'+(closed?'locked':'')+'">'+m.messages.map((msg,i)=>{
+    let b='';
+    if(msg.kind==='sched'){
+      const mine=msg.from===u.id;
+      let status='';
+      if(msg.status==='accepted'){
+        status='<div class="schedstat ok">\u2713 Accepted</div>'
+         +(m.status==='scheduled'&&!closed?'<div><button type="button" class="btn small" data-action="addToCal" data-m="'+m.id+'">Add to calendar</button></div>':'');
+      }else if(mine)status='<div class="schedstat">waiting for '+esc(p.displayName)+'</div>';
+      else if(!closed&&i===lastPend)status='<div style="margin-top:4px"><button type="button" class="btn small primary" data-action="schedAccept" data-mi="'+i+'">Accept</button></div>';
+      b='<div class="schedmsg '+(mine?'me':'them')+'">'+calIco+'<div><b>Coffee</b>'
+       +'<div class="small" style="font-weight:700">'+esc(msg.schedLabel||'')+' \u00b7 '+esc(msg.time||'')+' \u00b7 '+esc((msg.duration||'').toLowerCase())+'</div>'
+       +status+'</div></div>';
+    }else{
+      b='<div class="msg '+(msg.from===u.id?'me':'them')+'" data-mi="'+i+'"><span class="who">'+esc(S.users[msg.from]?S.users[msg.from].displayName:msg.from)+'</span>'+esc(msg.text)+msgReactsHtml(msg)+'</div>';
+    }
+    if(i===lastOwn&&canSee&&!closed)b+='<div class="receipt">'+(((m.seen[p.id]||0)>lastOwn)?'Seen':'Delivered')+'</div>';
+    return b;
+  }).join('')+'</div>';
+  if(closed)out+='<p class="notice small">This chat is closed now the meetup is wrapped up.</p></div>';
+  else{
+    const cupIco='<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9.5h12v5.5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M16 10.5h2.3a2.4 2.4 0 0 1 0 4.8H16"/><path d="M7.5 6c0-1 .5-1.2.5-2.2M11 6c0-1 .5-1.2.5-2.2"/></svg>';
+    out+='</div><div class="chatbox">'
+     +'<div class="pluswrap"><button type="button" class="plusbtn" data-action="chatPlus" aria-label="Coffee options">'+cupIco+'</button>'
+     +'<div class="plusmenu" id="plusmenu" style="display:none">'
+     +'<button type="button" data-action="menuCafes">Recommended caf\u00e9s</button>'
+     +'<button type="button" data-action="menuSched">'+(m.chosenSlot?'Change scheduled coffee time':'Schedule coffee')+'</button>'
+     +'</div></div>'
+     +'<input type="text" id="chatIn" placeholder="Message\u2026" aria-label="Chat message">'
+     +'<button class="btn small primary" data-action="sendMsg" data-m="'+m.id+'">Send</button></div>';
+  }
+  return out+'</div>';
 }
 function afterMeetHtml(m,u,p){
   return '<div class="card"><h2>After you meet</h2>'
@@ -1661,8 +2216,15 @@ function wentWellHtml(m,u,p){
   m.notes=m.notes||{};
   const mine=m.notes[u.id]||{text:'',shared:false};
   const theirs=m.notes[p.id];
-  let out='<div class="card center"><h2>We hope it went well!</h2>'
-   +'<p class="muted small">Thanks for logging your coffee with '+esc(p.displayName)+'.</p>';
+  const wdeco='<svg class="deco" viewBox="0 0 360 300" preserveAspectRatio="none" aria-hidden="true">'
+   +'<circle cx="330" cy="30" r="34" fill="#C9B8F2" stroke="#1B160E" stroke-width="3"/>'
+   +'<circle cx="24" cy="250" r="22" fill="#F5A9C6" stroke="#1B160E" stroke-width="3"/>'
+   +'<path d="M20 60q10 -12 20 0t20 0" fill="none" stroke="#F7C64B" stroke-width="5" stroke-linecap="round"/>'
+   +'<path d="M300 268q10 -12 20 0t20 0" fill="none" stroke="#F7C64B" stroke-width="5" stroke-linecap="round"/>'
+   +'</svg>';
+  let out='<div class="bluehero center"><h2 class="pagetitle center" style="position:relative;z-index:2">We hope it went well!</h2>'+wdeco
+   +'<div class="revealcard">'
+   +'<p class="muted small" style="margin-top:0">Thanks for logging your coffee with '+esc(p.displayName)+'.</p>';
   if(MSTATE.notesOpen||mine.text){
     out+='<form data-form="notes" data-m="'+m.id+'" style="text-align:left">'
      +'<label class="f" for="noteTxt">My notes on what I learned</label>'
@@ -1675,7 +2237,7 @@ function wentWellHtml(m,u,p){
   const done=S.surveys.some(x=>x.matchId===m.id&&x.userId===u.id);
   if(done)out+='<div class="notice good small">✓ Survey received. Thank you.</div>';
   else if(!MSTATE.surveyOpen)out+='<div><button class="btn" data-action="openSurvey">Optional survey</button></div>';
-  out+='</div>';
+  out+='</div></div>';
   if(theirs&&theirs.shared&&theirs.text)out+='<div class="card"><h3 style="margin-top:0">Notes '+esc(p.displayName)+' shared with you</h3><p>'+esc(theirs.text)+'</p></div>';
   if(!done&&MSTATE.surveyOpen)out+=surveyCard(m);
   out+='<div class="card">'+contactHtml(m,u,p).replace('<hr class="soft">','')+'</div>'
@@ -1709,14 +2271,14 @@ function contactHtml(m,u,p){
   const theirs=m.contactShare[p.id];
   let out='<hr class="soft"><h3>Stay in touch?</h3><p class="muted small">You two won’t be matched again. If you’d like to keep talking, share contact details. They’re revealed <b>only if you both opt in</b>.</p>';
   if(mine.optIn)out+='<div class="notice good">✓ You’ve offered to share: '+esc(mine.details)+'</div>';
-  else out+='<form data-form="contact" data-m="'+m.id+'"><input type="text" name="details" placeholder="What to share, e.g. your email" aria-label="Contact details to share"> <button class="btn small primary" type="submit">Share my contact details</button></form>';
+  else out+='<form data-form="contact" data-m="'+m.id+'"><input type="text" name="details" placeholder="What to share, e.g. your email" aria-label="Contact details to share"><div style="text-align:right;margin-top:8px"><button class="btn small primary" type="submit">Share my contact details</button></div></form>';
   if(mine.optIn&&theirs&&theirs.optIn)out+='<div class="notice good"><b>'+esc(p.displayName)+' shared back:</b> '+esc(theirs.details)+'</div>';
   else if(mine.optIn)out+='<p class="muted small">If '+esc(p.displayName)+' opts in too, you’ll both see each other’s details.</p>';
   return out;
 }
 V.topics=function(){
   const u=me(); if(!u)return V.welcome();
-  return '<button class="btn small" data-action="nav" data-v="profile">← Profile</button>'
+  return '<button class="btn small" data-action="goBack">← Back</button>'
    +'<div class="card"><h2>What I know about</h2>'
    +'<p class="muted small">Part of your profile: shown to a match after you’re matched, and how others find your world. Update it whenever there’s something new you could talk about over coffee.</p>'
    +pickerHtml('bg',u.backgroundTopics,'Search your field, e.g. "back pain", "co design", "ML"')
@@ -1745,6 +2307,7 @@ function editFormHtml(u){
    +'<label class="f" for="e-want">Something I’d love someone to explain to me</label><input type="text" id="e-want" name="wantExplained" value="'+esc(u.wantExplained)+'">'
    +'<label class="f" for="e-can">Something I can explain over coffee</label><input type="text" id="e-can" name="canExplain" value="'+esc(u.canExplain)+'">'
    +'<label class="f" for="e-fun">One non-work thing about me</label><input type="text" id="e-fun" name="nonWork" value="'+esc(u.nonWork)+'">'
+   +'<label class="f" for="e-fav">Favourite caf\u00e9 <span class="opt">(optional)</span></label><input type="text" id="e-fav" name="favCafe" value="'+esc(u.favCafe||'')+'">'
    +'<label class="f" for="e-area">Home area</label><select id="e-area" name="area">'+AREAS.map(a=>'<option value="'+a.id+'"'+(u.area===a.id?' selected':'')+'>'+esc(a.name)+' ('+esc(a.city)+')</option>').join('')+'</select>'
    +'<label class="f" for="e-km">Max travel</label><select id="e-km" name="maxKm">'+MAXKM.map(k=>'<option value="'+k.v+'"'+(u.maxKm===k.v?' selected':'')+'>'+esc(k.l)+'</option>').join('')+'</select>'
    +'<h3>Optional reads</h3><p class="muted small" style="margin-top:0">Attach three to five papers others can optionally read. Title, plus a link if you have one.</p>'
@@ -1758,8 +2321,8 @@ function editFormHtml(u){
 V.history=function(){
   const u=me(); if(!u)return V.welcome();
   const mine=S.matches.filter(m=>m.a===u.id||m.b===u.id).sort((a,b)=>b.week-a.week);
-  if(!mine.length)return '<button class="btn small" data-action="nav" data-v="profile">← Profile</button><div class="card"><h2>History</h2><p>No matches yet. They’ll collect here, and you’ll never get the same person twice.</p></div>';
-  return '<button class="btn small" data-action="nav" data-v="profile">← Profile</button>'
+  if(!mine.length)return '<button class="btn small" data-action="goBack">← Back</button><div class="card"><h2>History</h2><p>No matches yet. They’ll collect here, and you’ll never get the same person twice.</p></div>';
+  return '<button class="btn small" data-action="goBack">← Back</button>'
    +'<div class="card"><h2>History</h2><p class="muted small">You’re never matched with the same person twice.</p>'
    +mine.map(m=>{
      const p=partnerOf(m,u.id);
@@ -1779,7 +2342,7 @@ V.more=function(){
    +items.map(i=>'<button class="listlink spot" data-action="nav" data-v="'+i[0]+'"><span><b>'+i[1]+'</b><span class="d">'+i[2]+'</span></span></button>').join('');
 };
 V.about=function(){
-  return '<button class="btn small" data-action="nav" data-v="more">← More</button>'+V.welcome();
+  return '<button class="btn small" data-action="goBack">← Back</button>'+V.welcome();
 };
 V.dashboard=function(){
   const happened=S.matches.filter(m=>m.status==='happened');
@@ -1800,7 +2363,7 @@ V.dashboard=function(){
   const counts={}; Object.values(S.users).forEach(u=>{const n=S.matches.filter(m=>m.a===u.id||m.b===u.id).length; if(n>1)counts[u.id]=n;});
   const repeat=Object.keys(counts).length;
   const pauses=S.feedback.filter(f=>f.kind==='pause');
-  return '<button class="btn small" data-action="nav" data-v="more">← More</button>'
+  return '<button class="btn small" data-action="goBack">← Back</button>'
    +'<div class="card"><h2>Impact dashboard</h2><p class="muted small">Aggregates only. No individual data, ever. (The sort of numbers a funder would ask for.)</p>'
    +'<div class="statrow">'
    +'<div class="stat"><div class="n">'+happened.length+'</div><div class="l">meetups happened</div></div>'
@@ -1815,7 +2378,7 @@ V.dashboard=function(){
 };
 V.sparks=function(){
   const pub=S.surveys.filter(s=>s.publicShare&&s.takeaway);
-  return '<button class="btn small" data-action="nav" data-v="more">← More</button>'
+  return '<button class="btn small" data-action="goBack">← Back</button>'
    +'<div class="card"><h2>✨ Sparks</h2><p class="muted small">Things people chose to share after a coffee. Anonymous unless they attached their name.</p>'
    +(pub.length?pub.map(s=>{
      const m=S.matches.find(x=>x.id===s.matchId); if(!m)return'';
@@ -1829,7 +2392,7 @@ V.sparks=function(){
 V.pause=function(){
   const u=me(); if(!u)return V.welcome();
   if(isPaused(u))return V.home();
-  return '<button class="btn small" data-action="nav" data-v="more">← More</button>'
+  return '<button class="btn small" data-action="goBack">← Back</button>'
    +'<div class="card"><h2>Pause matching</h2><p class="muted small">Away, swamped, in the field? Pause, then come back. No penalty.</p>'
    +'<form data-form="pause">'
    +'<label class="f" for="p-len">How long?</label><select id="p-len" name="len">'
@@ -1840,7 +2403,7 @@ V.pause=function(){
    +'<button class="btn primary" type="submit">Pause</button></form></div>';
 };
 V.invite=function(){
-  return '<button class="btn small" data-action="nav" data-v="more">← More</button>'
+  return '<button class="btn small" data-action="goBack">← Back</button>'
    +'<div class="card"><h2>Invite a friend</h2>'
    +'<p>Every person you bring in makes everyone’s matches better, including yours.</p>'
    +'<p class="notice">'+esc(HONESTY)+'</p>'
@@ -1849,25 +2412,30 @@ V.invite=function(){
 };
 V.settings=function(){
   const u=me();
-  return '<button class="btn small" data-action="nav" data-v="more">← More</button>'
+  return '<button class="btn small" data-action="goBack">← Back</button>'
    +'<div class="card"><h2>Privacy: what’s shown to whom</h2>'
    +'<ul class="small">'
    +'<li><b>Before a match:</b> nobody sees anything about you. Your topics feed anonymous local lists only (names of topics, never names of people, never small counts).</li>'
    +'<li><b>After a match:</b> your match sees your profile, your background topics, and your coarse area ('+(u?esc(AREA[u.area].name):'suburb')+' level). Nothing more.</li>'
-   +'<li><b>Never shown to anyone:</b> your ORCID iD, your interest picks, your exact location, your survey answers (unless you tick share).</li>'
+   +'<li><b>Never shown to anyone:</b> your weekly picks, your exact location, your survey answers (unless you tick share).</li>'
    +'<li><b>No titles, no career stages, anywhere.</b> By design.</li></ul></div>'
+   +'<div class="card"><h2>Chat</h2>'
+   +'<label class="f">Read receipts</label><div class="seg" style="max-width:220px">'
+   +'<button class="'+((u&&u.readReceipts!==false)?'on':'')+'" data-action="setReceipts" data-v="on">On</button>'
+   +'<button class="'+((u&&u.readReceipts===false)?'on':'')+'" data-action="setReceipts" data-v="off">Off</button></div>'
+   +'<p class="muted small">With read receipts off, others can\u2019t see when you\u2019ve read their messages \u2013 and you can\u2019t see when they\u2019ve read yours.</p></div>'
    +'<div class="card"><h2>Appearance</h2><div class="chips">'
    +['auto','light','dark'].map(t=>'<button type="button" class="chip'+(S.theme===t?' on':'')+'" data-action="theme" data-t="'+t+'">'+t[0].toUpperCase()+t.slice(1)+'</button>').join('')
    +'</div></div>'
    +'<div class="card"><h2>Account</h2>'
-   +'<div class="notice good small">✓ Verified with ORCID (simulated). Your iD is used only to confirm you’re a real, unique person. It is never displayed or shared.</div>'
+   +'<div class="notice good small">✓ Verified with ORCID (simulated). Your iD is shown on your profile to your matches.</div>'
    +'<button class="btn danger" data-action="deleteAccount">Delete my account (demo)</button></div>';
 };
 V.explain=function(){
   const u=me();
   const wk=weekRun(S.week)?S.week:S.runWeeks[S.runWeeks.length-1];
   const d=wk!=null?S.diag[wk]:null;
-  let out='<button class="btn small" data-action="nav" data-v="home">← Back</button>'
+  let out='<button class="btn small" data-action="goBack">← Back</button>'
    +'<div class="card diag"><h2>How was this decided?</h2>'
    +'<p class="notice warn small"><b>Demo/admin view only.</b> Real users never see this: it exposes other people’s private interests via scores.</p>';
   if(!d){ out+='<p>No matching run yet. Use "Run this week’s matching" in the control centre.</p></div>'; return out; }
@@ -1963,6 +2531,8 @@ function renderDemo(){
    +'</div>'
    +'<div class="cctile wide"><span class="cclabel">Layout</span><div class="seg">'
    +['auto','mobile','desktop'].map(l=>'<button class="'+(S.layout===l?'on':'')+'" data-action="layoutSet" data-l="'+l+'">'+l[0].toUpperCase()+l.slice(1)+'</button>').join('')+'</div>'
+   +'<span class="cclabel">Phone size (mobile view)</span><div class="seg">'
+   +[['SE',375,667],['14',390,844],['Max',430,932]].map(x=>'<button class="'+(S.phone&&S.phone.w===x[1]?'on':'')+'" data-action="phoneSet" data-w="'+x[1]+'" data-h="'+x[2]+'">'+x[0]+'</button>').join('')+'</div>'
    +'<span class="cclabel">Theme</span><div class="seg">'
    +['auto','light','dark'].map(t=>'<button class="'+(S.theme===t?'on':'')+'" data-action="theme" data-t="'+t+'">'+t[0].toUpperCase()+t.slice(1)+'</button>').join('')+'</div></div>'
    +'</div>';
@@ -1978,7 +2548,28 @@ function render(){
   const app=document.getElementById('app');
   app.classList.toggle('noanim',SKIPANIM); SKIPANIM=false;
   app.innerHTML=v();
+  app.classList.toggle('vcenter',!!app.querySelector(':scope > .herofit'));
+  if(document.querySelector('.chatcard.docked'))sizeChat();
+  const welcomeNow=!S.me&&S.view!=='onboard';
+  app.classList.toggle('introing',welcomeNow&&!window.INTRO_DONE);
+  if(welcomeNow&&!window.INTRO_DONE&&!window.INTRO_T){
+    window.INTRO_T=setTimeout(()=>{
+      window.INTRO_DONE=true; window.INTRO_T=null; window.WSTEP=0;
+      const wi=document.getElementById('wintro');
+      const w2=document.getElementById('wrest');
+      const done=()=>{
+        if(wi)wi.style.display='none';
+        if(w2){ w2.style.display=''; w2.classList.add('show'); }
+        app.classList.remove('introing');
+        scrollTopAll();
+        initSrev();
+      };
+      if(wi){ wi.style.transition='opacity .6s ease'; wi.style.opacity='0'; setTimeout(done,620); }
+      else done();
+    },3800);
+  }
   renderNav(); renderDemo(); renderMenu();
+  initSrev();
   rollOdos();
   layoutCarousel();
   xexpand();
@@ -1986,10 +2577,23 @@ function render(){
   save();
 }
 /* ============ actions ============ */
-function goto(v){ S.view=v; S.sel=(v==='match')?S.sel:null; PICK.q=''; PICK.kind=null; resetMstate(); S.ccOpen=false; S.pickEdit=false; render(); scrollTopAll(); }
+const VSTACK=[];
+function pushHist(){
+  VSTACK.push({view:S.view,sel:S.sel,pickEdit:!!S.pickEdit,plan:!!MSTATE.plan});
+  if(VSTACK.length>30)VSTACK.shift();
+}
+function goBack(){
+  const st=VSTACK.pop();
+  PICK.q=''; PICK.kind=null; resetMstate(); S.ccOpen=false;
+  if(!st){ S.view='home'; S.sel=null; S.pickEdit=false; }
+  else{ S.view=st.view; S.sel=st.sel; S.pickEdit=st.pickEdit; if(st.plan)MSTATE.plan=true; }
+  render(); scrollTopAll();
+  if(MSTATE.plan)scrollChatBottom();
+}
+function goto(v){ pushHist(); S.view=v; S.sel=(v==='match')?S.sel:null; PICK.q=''; PICK.kind=null; resetMstate(); S.ccOpen=false; S.pickEdit=false; render(); scrollTopAll(); }
 const ACTIONS={
   nav:d=>goto(d.v),
-  startOnboard:()=>{ S.view='onboard'; S.onb={step:1,draft:{availability:[],backgroundTopics:[],interestTopics:[]}}; render(); },
+  startOnboard:()=>{ S.view='onboard'; S.onb={step:0,auth:{},draft:{availability:[],backgroundTopics:[],interestTopics:[]}}; render(); scrollTopAll(); },
   exploreSample:()=>{ S.me='sam'; goto('home'); toast('Viewing as Sam, a fictional pain researcher'); },
   orcidLoginOpen:()=>{ S.onb.login=true; render(); },
   orcidCancel:()=>{ S.onb.login=false; render(); },
@@ -2002,17 +2606,51 @@ const ACTIONS={
        sign-in (3-legged OAuth) and we never see the password at all */
     const e=document.getElementById('orc-em'),pw=document.getElementById('orc-pw');
     if(!e||!e.value.trim()||!pw||!pw.value.trim()){ toast('Enter the sample email and password (simulated)'); return; }
+    const typed=(e&&e.value?e.value.trim():'');
+    S.onb.draft.orcid=(typeof orcidValid==='function'&&orcidValid(typed))?typed:genOrcid(typed||('me-'+Date.now()));
     S.onb.draft.orcidVerified=true; S.onb.login=false;
-    toast('Signed in with ORCID (simulated). Your iD stays private.');
+    toast('Signed in with ORCID (simulated)');
     ACTIONS.onbFinish();
   },
   onbNext:()=>{ S.onb.step++; render(); },
   onbBack:()=>{ S.onb.step=Math.max(1,S.onb.step-1); render(); },
+  onbEmailNext:()=>{
+    const au=S.onb.auth=S.onb.auth||{};
+    const em=(document.getElementById('a-em')||{value:''}).value.trim();
+    if(!/.+@.+\..+/.test(em)){ toast('Enter a valid email'); return; }
+    au.email=em; au.stage='pw'; render(); scrollTopAll();
+  },
+  onbEmailBack:()=>{
+    const au=S.onb.auth=S.onb.auth||{};
+    au.stage='email'; au.sent=false; render();
+  },
+  onbSendCode:()=>{
+    const au=S.onb.auth=S.onb.auth||{};
+    const pw=(document.getElementById('a-pw')||{value:''}).value;
+    const pw2=(document.getElementById('a-pw2')||{value:''}).value;
+    if(pw.length<6){ toast('Password needs at least 6 characters'); return; }
+    if(pw!==pw2){ toast('Passwords don\u2019t match'); return; }
+    au.sent=true; au.code=String(1000+Math.floor(Math.random()*9000));
+    render(); toast('Verification code sent (simulated)');
+  },
+  onbVerifyCode:()=>{
+    const au=S.onb.auth||{};
+    const c=(document.getElementById('a-code')||{value:''}).value.trim();
+    if(c!==au.code){ toast('That code doesn\u2019t match \u2013 check the demo note'); return; }
+    S.onb.draft.authed=true; S.onb.step=1; render(); scrollTopAll();
+    toast('Email verified');
+  },
+  onbOauth:d=>{
+    S.onb.draft.authed=true;
+    if(d.prov==='ORCID'){ S.onb.draft.viaOrcid=true; S.onb.draft.orcidVerified=true; S.onb.draft.orcid=genOrcid('oauth-'+Date.now()); }
+    S.onb.step=1; render(); scrollTopAll();
+    toast('Signed in with '+d.prov+' (simulated)');
+  },
   onbStep2Next:()=>{
     const d=S.onb.draft, g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
     d.displayName=g('f-name')||d.displayName;
     if(!d.displayName){ toast('A first name or display name is the one thing we need'); return; }
-    d.pronouns=g('f-pr'); d.institution=g('f-inst');
+    d.pronouns=g('f-pr'); d.favCafe=g('f-fav');
     S.onb.step=2; render(); scrollTopAll();
   },
   onbAboutNext:()=>{
@@ -2020,28 +2658,42 @@ const ACTIONS={
     d.background=g('f-bg'); d.stuckOn=g('f-stuck'); d.wantExplained=g('f-want'); d.canExplain=g('f-can'); d.nonWork=g('f-fun');
     S.onb.step=3; render(); scrollTopAll();
   },
+  locCurrent:()=>{
+    const d=S.onb.draft; d.locMode='current'; d.uniName=null; d.area=null; d.locLabel='Requesting location\u2026';
+    render();
+    const fallback=()=>{ d.area='camperdown'; d.locLabel='Current location (simulated \u00b7 Camperdown)'; if(!d.maxKm)d.maxKm=10; render(); };
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(pos=>{
+        let best=null,bd=1e9;
+        AREAS.forEach(a=>{ const dd=haversine({lat:pos.coords.latitude,lon:pos.coords.longitude},a); if(dd<bd){bd=dd;best=a;} });
+        d.area=best.id; d.locLabel='Current location \u00b7 near '+best.name;
+        if(!d.maxKm)d.maxKm=10;
+        render();
+      },err=>{ toast('Location unavailable \u2013 simulated for the demo'); fallback(); },{timeout:5000});
+    } else fallback();
+  },
+  locUni:()=>{
+    const d=S.onb.draft; d.locMode='uni'; d.area=null; d.locLabel=null; d.uniName=null;
+    render();
+  },
+  uniPick:d=>{
+    const dr=S.onb.draft;
+    dr.uniName=d.n; dr.area=d.a; dr.locLabel=d.n;
+    if(!dr.maxKm)dr.maxKm=10;
+    render();
+  },
   onbStep3Next:()=>{
     const d=S.onb.draft;
-    const km=document.getElementById('f-km'); if(km)d.maxKm=+km.value;
-    if(!d.area){ toast('Search and pick your home area first'); return; }
+    if(!d.locMode||!d.area){ toast('Choose where you\u2019re located first'); return; }
+    if(!d.maxKm)d.maxKm=10;
     S.onb.step=4; render(); scrollTopAll();
   },
   onbTopicsNext:()=>{
     const d=S.onb.draft;
     if(!(d.backgroundTopics||[]).length){ toast('Add at least one topic you know about'); return; }
     if(!(d.interestTopics||[]).length){ toast('Pick at least one thing you\u2019d love to learn about'); return; }
+    if(d.viaOrcid){ ACTIONS.onbFinish(); return; }
     S.onb.step=5; render(); scrollTopAll();
-  },
-  addCustom:d=>{
-    const label=PICK.q.trim(); if(label.length<2)return;
-    const id='custom-'+label.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40);
-    if(!TOPIC[id]){
-      TOPIC[id]={id,label,syn:[],sub:'sub-'+id,subLabel:'Custom topics',div:'div-'+id,divLabel:'Custom'};
-      S.customTopics=S.customTopics||[]; S.customTopics.push({id,label});
-    }
-    const arr=topicArr(d.kind); if(!arr.includes(id))arr.push(id);
-    PICK.q=''; SKIPANIM=true; render();
-    toast('Added \u201C'+label+'\u201D');
   },
   areaPick:d=>{
     S.onb.draft.area=d.a;
@@ -2054,9 +2706,9 @@ const ACTIONS={
     const d=S.onb.draft;
     if(!(d.backgroundTopics||[]).length){ toast('Add at least one topic you know about'); return; }
     if(!(d.interestTopics||[]).length){ toast('Pick at least one thing you’d love to learn about'); return; }
-    S.users.me={id:'me',displayName:d.displayName,pronouns:d.pronouns||'',institution:d.institution||'',
+    S.users.me={id:'me',displayName:d.displayName,pronouns:d.pronouns||'',institution:d.uniName||d.institution||'',
       verified:true,background:d.background||'',stuckOn:d.stuckOn||'',wantExplained:d.wantExplained||'',
-      canExplain:d.canExplain||'',nonWork:d.nonWork||'',backgroundTopics:d.backgroundTopics,
+      canExplain:d.canExplain||'',nonWork:d.nonWork||'',favCafe:d.favCafe||'',orcid:d.orcid||genOrcid('me-'+(d.displayName||'x')),backgroundTopics:d.backgroundTopics,
       interestTopics:d.interestTopics,area:d.area,maxKm:d.maxKm,availability:['wm','wl','we','wk'],
       pausedUntilWeek:0,pauseReason:'',unmatchedLastWeek:false,blocked:[],matchedBefore:[]};
     S.me='me'; goto('home'); toast('Welcome aboard.');
@@ -2081,7 +2733,8 @@ const ACTIONS={
     if(k>=0)arr.splice(k,1);
     refreshPicksUI();
   },
-  editTopics:()=>{ S.pickEdit=true; S.view='home'; S.sel=null; resetMstate(); render(); scrollTopAll(); },
+  goBack:()=>{ goBack(); },
+  editTopics:()=>{ pushHist(); S.pickEdit=true; S.view='home'; S.sel=null; resetMstate(); render(); scrollTopAll(); },
   editTopicsDone:()=>{ S.pickEdit=false; render(); scrollTopAll(); },
   lockPicks:()=>{
     const u=me(); if(!u)return;
@@ -2090,37 +2743,163 @@ const ACTIONS={
   },
   unlockPicks:()=>{ const u=me(); if(!u)return; u.lockedWeek=null; render(); scrollTopAll(); },
   toggleAvail:d=>{ const a=me().availability; const i=a.indexOf(d.w); if(i>=0){ if(a.length===1){toast('Keep at least one window');return;} a.splice(i,1);} else a.push(d.w); render(); },
-  openMatch:d=>{ S.sel=d.m; S.view='match'; resetMstate(); render(); scrollTopAll(); },
+  openMatch:d=>{ pushHist(); S.sel=d.m; S.view='match'; resetMstate(); render(); scrollTopAll(); },
   proposeSlot:d=>{
     const m=S.matches.find(x=>x.id===d.m);
-    const day=PROP.day, win=PROP.win, ven=PROP.ven, dur=PROP.dur;
-    m.slots.push({day,window:win,venue:ven,duration:dur,by:S.me});
+    captureBlocks();
+    const pairs=[];
+    PSTEP.days.forEach(day=>day.blocks.forEach(b=>{ if(b&&b.trim())pairs.push({day,b:b.trim()}); }));
+    if(!pairs.length||!PSTEP.dur){ toast('Finish the steps first'); return; }
+    const partner=partnerOf(m,S.me);
+    pairs.forEach(x=>m.slots.push({day:x.day.label,ts:x.day.ts,window:null,blocks:[x.b],
+      venue:'Caf\u00e9',duration:PSTEP.dur,cafe:null,by:S.me}));
     save();
     const box=document.getElementById('mineslots');
-    if(!box){ render(); return; }
-    if(!box.querySelector('h3'))box.insertAdjacentHTML('afterbegin','<h3>Your proposals</h3>');
-    const partner=partnerOf(m,S.me);
-    box.insertAdjacentHTML('beforeend','<div class="slot">'+esc(day)+', '+esc(WNAME[win].toLowerCase())
-      +(ven?' \u00b7 '+esc(ven.toLowerCase()):'')+(dur?' \u00b7 '+esc(dur.toLowerCase()):'')
-      +'<span class="muted small" style="margin-left:auto">waiting for '+esc(partner.displayName)+'</span></div>');
-    if(m.slots.filter(x=>x.by===S.me).length>=3){
-      const pr=document.getElementById('proposerow'); if(pr)pr.style.display='none';
+    if(box){
+      box.innerHTML='<h3>Your proposals</h3>'+m.slots.filter(x=>x.by===S.me).map(x=>'<div class="slot">'+slotText(x)
+        +'<span class="muted small" style="margin-left:auto">waiting for '+esc(partner.displayName)+'</span></div>').join('');
     }
+    PSTEP={step:1,days:[],dur:null};
+    const ps=document.getElementById('pstep');
+    if(ps)ps.innerHTML='<div class="center"><button class="btn" data-action="editPropose" data-m="'+m.id+'">Edit my proposed times</button></div>';
+    toast('Proposed');
   },
+  editPropose:d=>{
+    const m=S.matches.find(x=>x.id===d.m); if(!m)return;
+    const own=m.slots.filter(x=>x.by===S.me);
+    const days=[];
+    own.forEach(x=>{
+      let day=days.find(dd=>dd.ts===x.ts&&dd.label===x.day);
+      if(!day){ day={ts:x.ts,label:x.day,blocks:[]}; days.push(day); }
+      day.blocks.push((x.blocks&&x.blocks[0])||'');
+    });
+    days.sort((a,b)=>(a.ts||0)-(b.ts||0));
+    PSTEP={step:2,days,dur:own.length?own[0].duration:null};
+    m.slots=m.slots.filter(x=>x.by!==S.me);
+    save();
+    const box=document.getElementById('mineslots'); if(box)box.innerHTML='';
+    const ps=document.getElementById('pstep'); if(ps)ps.innerHTML=pstepHtml(m);
+  },
+  pstepDayToggle:(d,el)=>{
+    captureBlocks();
+    const ts=+d.ts, k=PSTEP.days.findIndex(x=>x.ts===ts);
+    if(k>=0)PSTEP.days.splice(k,1);
+    else PSTEP.days.push({ts,label:d.label,blocks:['']});
+    PSTEP.days.sort((a,b)=>a.ts-b.ts);
+    if(el){ el.classList.toggle('on',k<0); el.setAttribute('aria-pressed',k<0?'true':'false'); }
+  },
+  pstepDaysNext:()=>{
+    if(!PSTEP.days.length){ toast('Pick at least one day'); return; }
+    PSTEP.step=2; renderPstep();
+  },
+  pstepBlockAdd:d=>{
+    captureBlocks();
+    const day=PSTEP.days[+d.di]; if(!day)return;
+    day.blocks.push(''); renderPstep();
+  },
+  pstepBlocksNext:()=>{
+    captureBlocks();
+    const empty=PSTEP.days.find(day=>!day.blocks.some(b=>b&&b.trim()));
+    if(empty){ toast('Add a time for '+empty.label); return; }
+    PSTEP.days.forEach(day=>{ day.blocks=day.blocks.filter(b=>b&&b.trim()); });
+    PSTEP.step=3; renderPstep();
+  },
+  pstepDur:d=>{ PSTEP.dur=d.v; PSTEP.step=4; renderPstep(); },
+  pstepRmBlock:d=>{
+    const day=PSTEP.days[+d.di]; if(!day)return;
+    day.blocks.splice(+d.bi,1);
+    if(!day.blocks.length)PSTEP.days.splice(+d.di,1);
+    if(!PSTEP.days.length)PSTEP.step=1;
+    renderPstep();
+  },
+  pstepGoto:d=>{ if(d.s==='3')PSTEP.dur=null; PSTEP.step=+d.s; renderPstep(); },
   acceptSlot:d=>{
     const m=S.matches.find(x=>x.id===d.m);
     m.chosenSlot={...m.slots[+d.i],i:+d.i}; m.status='scheduled';
     if(m.chosenSlot.venue)m.venueType=m.chosenSlot.venue;
     if(m.chosenSlot.duration)m.duration=m.chosenSlot.duration;
-    m.meetAt=nextDayDate(m.chosenSlot.day,WHOUR[m.chosenSlot.window]!==undefined?WHOUR[m.chosenSlot.window]:12);
+    m.meetAt=m.chosenSlot.ts
+      ?(m.chosenSlot.ts+Math.round(((m.chosenSlot.window&&WHOUR[m.chosenSlot.window]!==undefined)?WHOUR[m.chosenSlot.window]:(blockStartHour(m.chosenSlot.blocks)||10))*3600000))
+      :nextDayDate(m.chosenSlot.day,WHOUR[m.chosenSlot.window]!==undefined?WHOUR[m.chosenSlot.window]:12);
     render(); toast('Meet up organised!');
   },
   planCoffee:()=>{
-    PROP={day:'Monday',win:'wm',ven:'Caf\u00e9',dur:'30 minutes'};
-    MSTATE.plan=true; render(); scrollTopAll();
+    PROP={day:'Monday',win:'wm',ven:'Caf\u00e9',dur:'30 minutes',cafe:null};
+    PSTEP={step:1,days:[],dur:null};
+    pushHist(); MSTATE.plan=true; render(); scrollChatBottom();
+  },
+  ovlNoop:()=>{},
+  chatPlus:()=>{
+    const mn=document.getElementById('plusmenu');
+    if(mn)mn.style.display=mn.style.display==='none'?'':'none';
+  },
+  menuCafes:()=>{ MSTATE.cafesOpen=true; MSTATE.schedOpen=false; const mn=document.getElementById('plusmenu'); if(mn)mn.style.display='none'; showOvl(); },
+  menuCafesClose:()=>{ closeOvl(()=>{ MSTATE.cafesOpen=false; removeTopOvl(); }); },
+  menuSched:()=>{ SCHED={ts:null,label:null,time:'',dur:null}; MSTATE.schedOpen=true; MSTATE.cafesOpen=false; const mn=document.getElementById('plusmenu'); if(mn)mn.style.display='none'; showOvl(); },
+  schedClose:()=>{ closeOvl(()=>{ MSTATE.schedOpen=false; removeTopOvl(); }); },
+  schedDay:(d,el)=>{
+    SCHED.ts=+d.ts; SCHED.label=d.label;
+    SCHED.time=schedTimeVal()||SCHED.time;
+    if(el)el.parentElement.querySelectorAll('.ditem').forEach(b=>{b.classList.toggle('on',b===el); b.setAttribute('aria-pressed',b===el?'true':'false');});
+  },
+  schedDur:(d,el)=>{
+    SCHED.dur=d.v;
+    SCHED.time=schedTimeVal()||SCHED.time;
+    if(el)el.parentElement.querySelectorAll('.daypill').forEach(b=>b.classList.toggle('on',b===el));
+  },
+  schedSend:d=>{
+    const m=S.matches.find(x=>x.id===d.m); if(!m)return;
+    SCHED.time=schedTimeVal()||SCHED.time;
+    if(!SCHED.ts){ toast('Pick a date'); return; }
+    if(!SCHED.time){ toast('Pick a time'); return; }
+    if(!SCHED.dur){ toast('Pick how long'); return; }
+    if(SCHED.ts+timeToMs(SCHED.time)<=Date.now()){ toast('That time has already passed'); return; }
+    const changing=!!m.chosenSlot;
+    const sl=SCHED.label,st=SCHED.time,sd=SCHED.dur;
+    m.messages.push({from:S.me,kind:'sched',schedTs:SCHED.ts,schedLabel:sl,time:st,duration:sd,status:'pending'});
+    m.seen=m.seen||{}; m.seen[S.me]=m.messages.length;
+    if(changing)m.timeChangeBy=S.me;
+    MSTATE.schedOpen=false;
+    save();
+    const c=ovlCtx();
+    closeOvl(()=>{
+      removeTopOvl();
+      const msgs=document.getElementById('msgs');
+      if(msgs&&c){
+        const calIco='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>';
+        msgs.insertAdjacentHTML('beforeend','<div class="schedmsg me">'+calIco+'<div><b>Coffee</b>'
+         +'<div class="small" style="font-weight:700">'+esc(sl||'')+' · '+esc(st||'')+' · '+esc((sd||'').toLowerCase())+'</div>'
+         +'<div class="schedstat">waiting for '+esc(c.p.displayName)+'</div></div></div>');
+      }
+      scrollChatBottom();
+    });
+    toast(changing?'Change request sent':'Sent to chat');
+  },
+  schedAccept:d=>{
+    const m=S.matches.find(x=>x.id===S.sel); if(!m)return;
+    const msg=m.messages[+d.mi];
+    if(!msg||msg.kind!=='sched'||msg.status!=='pending')return;
+    const changed=!!m.timeChangeBy;
+    msg.status='accepted';
+    m.chosenSlot={day:msg.schedLabel,ts:msg.schedTs,blocks:[msg.time],duration:msg.duration,by:msg.from};
+    m.duration=msg.duration; m.venueType='Caf\u00e9'; m.status='scheduled';
+    m.meetAt=msg.schedTs+Math.round((blockStartHour([msg.time])||10)*3600000);
+    m.timeChangeBy=null;
+    MSTATE.chatOpen=false;
+    save(); render(); scrollTopAll();
+    toast(changed?'New time locked in':'Meet up organised!');
+  },
+  cafePick:(d,el)=>{
+    const m=S.matches.find(x=>x.id===S.sel); if(!m)return;
+    m.cafes=m.cafes||{}; m.cafes[S.me]=m.cafes[S.me]||[];
+    const arr=m.cafes[S.me]; const k=arr.indexOf(d.name);
+    k>=0?arr.splice(k,1):arr.push(d.name);
+    if(el){ el.classList.toggle('on',k<0); el.setAttribute('aria-pressed',k<0?'true':'false'); }
+    save();
   },
   propSet:(d,el)=>{
     PROP[d.k]=d.v;
+    if(d.k==='ven'){ PROP.cafe=null; document.querySelectorAll('.caferow').forEach(r=>{r.classList.remove('on'); r.setAttribute('aria-pressed','false');}); }
     if(el){ el.parentElement.querySelectorAll('.daypill').forEach(b=>b.classList.toggle('on',b===el)); }
     const sp=document.getElementById('sumpill'); if(sp)sp.textContent=propSummary();
   },
@@ -2158,6 +2937,8 @@ const ACTIONS={
     if(!was)el.classList.add('zoom');
   },
   paperLink:()=>{},
+  coverSet:d=>{ const u=me(); if(!u)return; u.cover=(u.cover===d.c?null:d.c); save(); render(); },
+  photoRemove:()=>{ const u=me(); if(!u)return; u.photo=null; save(); render(); toast('Photo removed'); },
   rateSet:d=>{
     const wrap=document.querySelector('.rate[data-rate="'+d.name+'"]'); if(!wrap)return;
     wrap.querySelector('input[type=hidden]').value=d.v;
@@ -2166,7 +2947,7 @@ const ACTIONS={
     if(btn){ void btn.offsetWidth; btn.classList.add('pop'); }
   },
   proposeOther:()=>{ MSTATE.proposeOpen=true; render(); },
-  openChat:()=>{ MSTATE.chatOpen=!MSTATE.chatOpen; render(); },
+  openChat:()=>{ pushHist(); MSTATE.chatOpen=true; render(); scrollChatBottom(); },
   openNotes:()=>{ MSTATE.notesOpen=true; render(); },
   openSurvey:()=>{ MSTATE.surveyOpen=true; render(); },
   changeTime:d=>{
@@ -2187,11 +2968,60 @@ const ACTIONS={
     const i=document.getElementById('chatIn'); const t=i?i.value.trim():'';
     if(!t)return;
     const m=S.matches.find(x=>x.id===d.m);
+    const p2=partnerOf(m,S.me);
     m.messages.push({from:S.me,text:t});
     m.seen=m.seen||{}; m.seen[S.me]=m.messages.length;
     const box=document.getElementById('msgs');
-    if(box)box.insertAdjacentHTML('beforeend','<div class="msg me"><span class="who">'+esc(S.users[S.me]?S.users[S.me].displayName:S.me)+'</span>'+esc(t)+'</div>');
-    i.value=''; i.focus(); save();
+    if(box){
+      const old=box.querySelector('.receipt'); if(old)old.remove();
+      const mi=m.messages.length-1;
+      box.insertAdjacentHTML('beforeend','<div class="msg me anim-in" data-mi="'+mi+'"><span class="who">'+esc(S.users[S.me]?S.users[S.me].displayName:S.me)+'</span>'+esc(t)+'</div>');
+      const u2=me();
+      if(u2&&(u2.readReceipts!==false)&&(p2.readReceipts!==false))box.insertAdjacentHTML('beforeend','<div class="receipt">Delivered</div>');
+    }
+    i.value=''; i.focus(); save(); scrollChatBottom();
+  },
+  reactSet:(d,el)=>{
+    const m=S.matches.find(x=>x.id===S.sel); if(!m)return;
+    const msg=m.messages[+d.mi]; if(!msg)return;
+    msg.r=msg.r||{};
+    if(msg.r[S.me]===d.t)delete msg.r[S.me]; else msg.r[S.me]=d.t;
+    save();
+    const mg=document.querySelector('#msgs .msg[data-mi="'+d.mi+'"]');
+    if(mg){
+      const old=mg.querySelector('.rbadge'); if(old)old.remove();
+      const html=msgReactsHtml(msg); if(html)mg.insertAdjacentHTML('beforeend',html);
+    }
+    closeReactPicker();
+  },
+  completeMeet:d=>{
+    const m=S.matches.find(x=>x.id===d.m); if(!m)return;
+    m.status='happened'; m.logged={happened:'yes'};
+    MSTATE.surveyOpen=false; MSTATE.notesOpen=false;
+    render(); scrollTopAll();
+  },
+  uncompleteMeet:d=>{
+    const m=S.matches.find(x=>x.id===d.m); if(!m)return;
+    m.status='scheduled'; m.logged=null; MSTATE.plan=true;
+    render(); scrollTopAll();
+  },
+  addToCal:d=>{
+    const m=S.matches.find(x=>x.id===d.m); if(!m||!m.meetAt)return;
+    const p2=partnerOf(m,S.me);
+    const durMin=m.duration==='1 hour'?60:m.duration==='30 minutes'?30:90;
+    const fmt=t=>new Date(t).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+    const loc=(m.chosenSlot&&m.chosenSlot.cafe)?m.chosenSlot.cafe:(m.venueType||'Caf\u00e9');
+    const ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//RCT demo//EN\r\nBEGIN:VEVENT\r\nUID:'+m.id+'@rct.demo\r\nDTSTAMP:'+fmt(Date.now())+'\r\nDTSTART:'+fmt(m.meetAt)+'\r\nDTEND:'+fmt(m.meetAt+durMin*60000)+'\r\nSUMMARY:Coffee with '+p2.displayName+' (RCT)\r\nLOCATION:'+loc+'\r\nDESCRIPTION:Randomised Coffee Trial meet-up. Meet in a public place.\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
+    const blob=new Blob([ics],{type:'text/calendar'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='rct-coffee.ics';
+    document.body.appendChild(a); a.click(); a.remove();
+    toast('Calendar file downloaded');
+  },
+  setReceipts:d=>{
+    const u=me(); if(!u)return;
+    u.readReceipts=d.v==='on';
+    render();
+    toast(u.readReceipts?'Read receipts on':'Read receipts off \u2013 you also won\u2019t see theirs');
   },
   cantMake:d=>{
     if(!confirm('End this match for the week? No penalty, and it’s logged kindly.'))return;
@@ -2218,6 +3048,7 @@ const ACTIONS={
   menuToggle:()=>{ MENU.open=!MENU.open; renderMenu(); },
   menuNav:d=>{ MENU.open=false; goto(d.v); },
   layoutSet:d=>{ S.layout=d.l; render(); },
+  phoneSet:d=>{ S.phone={w:+d.w,h:+d.h}; save(); render(); },
   resumeNow:()=>{ const u=me(); u.pausedUntilWeek=0; u.pauseReason=''; render(); toast('Welcome back.'); },
   copyInvite:()=>{
     const txt='Fancy a coffee with a curious stranger? I’m trying the Randomised Coffee Trial: one researcher, one coffee, once a week. (Demo link: this prototype runs locally.)';
@@ -2240,7 +3071,7 @@ const ACTIONS={
 const FORMS={
   editProfile:(f)=>{
     const u=me(); const fd=new FormData(f);
-    ['displayName','pronouns','institution','background','stuckOn','wantExplained','canExplain','nonWork','area'].forEach(k=>u[k]=String(fd.get(k)||'').trim());
+    ['displayName','pronouns','institution','background','stuckOn','wantExplained','canExplain','nonWork','favCafe','area'].forEach(k=>u[k]=String(fd.get(k)||'').trim());
     u.papers=[];
     for(let i=0;i<5;i++){
       const t=String(fd.get('pt'+i)||'').trim();
@@ -2292,6 +3123,9 @@ const FORMS={
 };
 /* ============ event wiring ============ */
 document.addEventListener('click',e=>{
+  if(REACT.open&&Date.now()-REACT.just>300&&!(e.target.closest&&e.target.closest('.rpick')))closeReactPicker();
+  const pm=document.getElementById('plusmenu');
+  if(pm&&pm.style.display!=='none'&&!(e.target.closest&&e.target.closest('.pluswrap')))pm.style.display='none';
   const el=e.target.closest('[data-action]');
   if(!el)return;
   const fn=ACTIONS[el.dataset.action];
@@ -2305,6 +3139,29 @@ document.addEventListener('submit',e=>{
   if(fn)fn(f,f.dataset);
 });
 document.addEventListener('input',e=>{
+  const uq=e.target.closest('[data-input="uniq"]');
+  if(uq){
+    const q=uq.value.trim().toLowerCase();
+    const res=document.getElementById('uniRes'); if(!res)return;
+    if(!q){ res.style.display='none'; res.innerHTML=''; return; }
+    const hits=UNIS.filter(x=>x[0].toLowerCase().includes(q)).slice(0,8);
+    res.innerHTML=hits.length
+      ?hits.map(x=>'<button type="button" data-action="uniPick" data-n="'+esc(x[0])+'" data-a="'+x[1]+'">'+esc(x[0])+'</button>').join('')
+      :'<div class="grp">No match in the demo list</div>';
+    res.style.display='';
+    return;
+  }
+  const rad=e.target.closest('[data-input="radius"]');
+  if(rad){
+    const km=+rad.value;
+    S.onb.draft.maxKm=km;
+    const lb=document.getElementById('radLabel');
+    if(lb)lb.innerHTML='<b>'+km+' km</b> from '+esc(S.onb.draft.locLabel||'your location');
+    const c=document.getElementById('radCirc');
+    if(c)c.setAttribute('r',Math.min(82,10+km*1.2).toFixed(0));
+    save();
+    return;
+  }
   const aq=e.target.closest('[data-input="areaq"]');
   if(aq){
     const q=aq.value.trim().toLowerCase();
@@ -2328,6 +3185,26 @@ document.addEventListener('input',e=>{
   if(again){ again.focus(); try{again.setSelectionRange(pos,pos);}catch(err){} }
 });
 document.addEventListener('change',e=>{
+  if(e.target&&e.target.id==='pfile'&&e.target.files&&e.target.files[0]){
+    const f=e.target.files[0];
+    if(!/^image\//.test(f.type)){ toast('Please choose an image'); return; }
+    const rd=new FileReader();
+    rd.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const sz=128,c=document.createElement('canvas'); c.width=sz; c.height=sz;
+        const x=c.getContext('2d');
+        const s=Math.min(img.width,img.height);
+        x.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,sz,sz);
+        const u=me(); if(!u)return;
+        u.photo=c.toDataURL('image/jpeg',0.82);
+        save(); render(); toast('Photo updated');
+      };
+      img.src=rd.result;
+    };
+    rd.readAsDataURL(f);
+    return;
+  }
   const el=e.target.closest('[data-change="persona"]');
   if(!el)return;
   if(!el.value)return;
@@ -2343,7 +3220,21 @@ function orcidValid(str){
   return (res===10?'X':String(res))===s[15];
 }
 /* ============ init ============ */
-window.addEventListener('resize',()=>{ applyLayout(); layoutCarousel(); xexpand(); });
+window.addEventListener('resize',()=>{ applyLayout(); layoutCarousel(); xexpand(); sizeChat(); });
+if(window.visualViewport){
+  visualViewport.addEventListener('resize',()=>{
+    const dk=document.querySelector('.chatcard.docked .chatbox');
+    if(!dk)return;
+    const lift=Math.max(0,window.innerHeight-visualViewport.height-visualViewport.offsetTop);
+    dk.style.transform=lift>40?'translateY(-'+lift+'px)':'';
+  });
+}
+document.addEventListener('wheel',e=>{
+  if(!welcomeActive())return;
+  if(Date.now()-WSW.t<550)return;
+  if(e.deltaY>25){ wNext(); WSW.t=Date.now(); }
+  else if(e.deltaY<-25){ wPrev(); WSW.t=Date.now(); }
+},{passive:true});
 window.addEventListener('scroll',()=>{ xexpand(); },{passive:true});
 document.getElementById('app').addEventListener('scroll',()=>{ xexpand(); },{passive:true});
 document.addEventListener('click',e=>{
@@ -2364,6 +3255,13 @@ document.addEventListener('click',e=>{
   if(best)ACTIONS.carCard({idx:best.dataset.idx,topic:best.dataset.topic});
 });
 document.addEventListener('pointerdown',e=>{
+  if(welcomeActive()){ WSW.y=e.clientY; WSW.active=true; }
+  const mg=e.target.closest&&e.target.closest('#msgs:not(.locked) .msg');
+  if(mg){
+    REACT.sx=e.clientX; REACT.sy=e.clientY;
+    clearTimeout(REACT.t);
+    REACT.t=setTimeout(()=>{ REACT.t=null; openReactPicker(mg); },450);
+  }
   const ff=e.target.closest&&e.target.closest('#flipcard .face.front');
   if(ff){
     FLIP.drag={x:e.clientX}; FLIP.dx=0; FLIP.dragged=false;
@@ -2398,6 +3296,7 @@ document.addEventListener('pointermove',e=>{
   }
   const stg=e.target.closest&&e.target.closest('.carousel');
   CAR.hover=!!stg;
+  if(REACT.t&&(Math.abs(e.clientX-REACT.sx)>8||Math.abs(e.clientY-REACT.sy)>8)){ clearTimeout(REACT.t); REACT.t=null; }
   if(FLIP.drag){
     FLIP.dx=e.clientX-FLIP.drag.x;
     if(Math.abs(FLIP.dx)>8)FLIP.dragged=true;
@@ -2433,7 +3332,12 @@ document.addEventListener('pointermove',e=>{
   el.style.setProperty('--mx',(e.clientX-r.left)+'px');
   el.style.setProperty('--my',(e.clientY-r.top)+'px');
 });
-document.addEventListener('pointerup',()=>{
+document.addEventListener('pointerup',e=>{
+  if(WSW.active){
+    const dy=e.clientY-WSW.y; WSW.active=false;
+    if(dy<-50)wNext(); else if(dy>50)wPrev();
+  }
+  if(REACT.t){ clearTimeout(REACT.t); REACT.t=null; }
   if(FLIP.drag){
     const inner=document.querySelector('#flipcard .flipinner');
     if(inner){ inner.style.transition=''; inner.style.transform=''; }
@@ -2464,6 +3368,12 @@ document.addEventListener('pointerup',()=>{
   }
 });
 document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target&&e.target.id==='chatIn'){
+    e.preventDefault();
+    const b=document.querySelector('[data-action=sendMsg]');
+    if(b)b.dispatchEvent(new MouseEvent('click',{bubbles:true}));
+    return;
+  }
   if(e.key==='Escape'&&MENU.open){ MENU.open=false; renderMenu(); return; }
   if(!document.getElementById('carousel'))return;
   if(e.target.closest&&e.target.closest('input,textarea,select'))return;
