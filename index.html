@@ -297,7 +297,7 @@ html[data-layout="desktop"] .ovlcard{border-radius:22px; border-bottom:var(--bw)
 /* ---- v22: rounded chat header, ghost base, cov hero title, no-anim backdrop ---- */
 .chatcard .darkhead{margin:10px 10px 0; border-radius:14px; border:var(--bw) solid var(--line)}
 .btn.ghost{background:transparent; color:var(--ink); border-color:var(--line)}
-.bluehero.cov-blue .pagetitle,.bluehero.cov-pink .pagetitle,.bluehero.cov-green .pagetitle,.bluehero.cov-orange .pagetitle{color:var(--ink)}
+.bluehero.cov-pink .pagetitle,.bluehero.cov-green .pagetitle{color:var(--ink)}
 #app>.ovl{animation:none !important}
 /* ---- v21: pinned overlay chat, sched days/time, covers, photos, hero fit ---- */
 .ovlcard.chatovl{height:84%; display:flex; flex-direction:column; overflow:hidden}
@@ -310,14 +310,12 @@ html[data-layout="desktop"] .ovlcard{border-radius:22px; border-bottom:var(--bw)
 .timerow select{flex:1 1 auto; width:auto; min-width:0; margin:0}
 .timerow .tcolon{font-weight:800}
 .avatar img{width:100%; height:100%; object-fit:cover; border-radius:50%; display:block}
-.cov-blue{background-color:color-mix(in srgb,var(--blue) 24%,var(--card));
-  background-image:radial-gradient(color-mix(in srgb,var(--blue) 50%,transparent) 2.5px,transparent 3px); background-size:17px 17px}
-.cov-pink{background-color:color-mix(in srgb,var(--pink) 50%,var(--card));
-  background-image:radial-gradient(color-mix(in srgb,var(--pink) 80%,var(--ink) 20%) 2.5px,transparent 3px); background-size:17px 17px}
-.cov-green{background-color:color-mix(in srgb,var(--green) 45%,var(--card));
-  background-image:radial-gradient(color-mix(in srgb,var(--green) 70%,var(--ink) 25%) 2.5px,transparent 3px); background-size:17px 17px}
-.cov-orange{background-color:color-mix(in srgb,var(--orange) 26%,var(--card));
-  background-image:radial-gradient(color-mix(in srgb,var(--orange) 55%,transparent) 2.5px,transparent 3px); background-size:17px 17px}
+.cov-blue{background:var(--blue)}
+.cov-pink{background:var(--pink)}
+.cov-green{background:var(--green)}
+.cov-orange{background:var(--orange)}
+.pcard.cov-blue,.pcard.cov-orange{color:#fff}
+.pcard.cov-blue .muted,.pcard.cov-orange .muted{color:rgba(255,255,255,.78)}
 .lookrow{display:flex; gap:9px; align-items:center; padding:0 16px 14px; flex-wrap:wrap; position:relative; z-index:2}
 .lookrow .lbl{font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em}
 .covdot{width:26px; height:26px; border-radius:50%; border:var(--bw) solid var(--line); cursor:pointer; padding:0; box-shadow:var(--sh)}
@@ -1702,11 +1700,6 @@ function profileCard(u,showArea,editBtn){
    +(showArea?'<div class="muted small">'+esc(AREA[u.area].name)+', '+esc(AREA[u.area].city)+'</div>':'')
    +(u.orcid?'<div class="muted small" style="margin-top:3px"><span class="orcbadge">iD</span> '+esc(u.orcid)+'</div>':'')
    +'</div>'
-   +(editBtn?'<div class="lookrow"><span class="lbl">Card colour</span>'
-     +['blue','pink','green','orange'].map(c=>'<button type="button" class="covdot cov-'+c+(u.cover===c?' on':'')+'" data-action="coverSet" data-c="'+c+'" aria-label="'+c+' card background" aria-pressed="'+(u.cover===c?'true':'false')+'"></button>').join('')
-     +'<label class="btn small">'+(u.photo?'Change photo':'Add photo')+'<input type="file" id="pfile" accept="image/*" hidden></label>'
-     +(u.photo?'<button type="button" class="linkbtn" data-action="photoRemove" style="margin:0">Remove</button>':'')
-     +'</div>':'')
    +'</div>'
    +'<div class="qawrap">'+qaListHtml(u)+'</div>';
 }
@@ -2286,8 +2279,8 @@ V.topics=function(){
 };
 V.profile=function(){
   const u=me(); if(!u)return V.welcome();
+  if(MSTATE.editOpen)return profileEditHtml(u);
   return profileCard(u,true,true)
-   +(MSTATE.editOpen?editFormHtml(u):'')
    +papersHtml(u,true)
    +'<hr class="soft">'
    +'<div class="sectlabel">Profile sections</div>'
@@ -2296,27 +2289,45 @@ V.profile=function(){
    +'<button class="listlink spot tool" data-action="nav" data-v="history"><span><b>History</b></span><span class="chev" aria-hidden="true">›</span></button>'
    +'</div>';
 };
-function editFormHtml(u){
-  return '<div class="card"><h2>Edit profile</h2>'
-   +'<form data-form="editProfile">'
+function profileEditHtml(u){
+  const initial=esc((u.displayName||'?').trim().charAt(0).toUpperCase());
+  return '<form data-form="editProfile">'
+   +'<div class="pcard'+(u.cover?' cov-'+u.cover:'')+'">'
+   +'<div class="pcover"></div>'
+   +'<div class="avatar" aria-hidden="true">'+(u.photo?'<img src="'+u.photo+'" alt="">':initial)+'</div>'
+   +'<div class="phead">'
+   +'<button type="button" class="btn small" style="float:right;margin-top:6px" data-action="toggleEdit">Cancel</button>'
+   +'<div class="lookrow" style="padding:8px 0 2px">'
+   +'<label class="btn small" style="margin:0">'+(u.photo?'Change photo':'Add photo')+'<input type="file" id="pfile" accept="image/*" hidden></label>'
+   +(u.photo?'<button type="button" class="linkbtn" data-action="photoRemove" style="margin:0">Remove</button>':'')
+   +'</div>'
+   +'<div class="lookrow" style="padding:2px 0 10px"><span class="lbl">Card colour</span>'
+   +['blue','pink','green','orange'].map(c=>'<button type="button" class="covdot cov-'+c+(u.cover===c?' on':'')+'" data-action="coverSet" data-c="'+c+'" aria-label="'+c+' card background" aria-pressed="'+(u.cover===c?'true':'false')+'"></button>').join('')
+   +'</div>'
    +'<label class="f" for="e-name">Display name</label><input type="text" id="e-name" name="displayName" value="'+esc(u.displayName)+'">'
    +'<label class="f" for="e-pr">Pronouns <span class="opt">(optional)</span></label><input type="text" id="e-pr" name="pronouns" value="'+esc(u.pronouns)+'">'
    +'<label class="f" for="e-inst">Where you’re based <span class="opt">(optional)</span></label><input type="text" id="e-inst" name="institution" value="'+esc(u.institution)+'">'
-   +'<label class="f" for="e-bg">My background</label><textarea id="e-bg" name="background">'+esc(u.background)+'</textarea>'
-   +'<label class="f" for="e-stuck">A question I’m stuck on</label><textarea id="e-stuck" name="stuckOn">'+esc(u.stuckOn)+'</textarea>'
-   +'<label class="f" for="e-want">Something I’d love someone to explain to me</label><input type="text" id="e-want" name="wantExplained" value="'+esc(u.wantExplained)+'">'
-   +'<label class="f" for="e-can">Something I can explain over coffee</label><input type="text" id="e-can" name="canExplain" value="'+esc(u.canExplain)+'">'
-   +'<label class="f" for="e-fun">One non-work thing about me</label><input type="text" id="e-fun" name="nonWork" value="'+esc(u.nonWork)+'">'
-   +'<label class="f" for="e-fav">Favourite caf\u00e9 <span class="opt">(optional)</span></label><input type="text" id="e-fav" name="favCafe" value="'+esc(u.favCafe||'')+'">'
    +'<label class="f" for="e-area">Home area</label><select id="e-area" name="area">'+AREAS.map(a=>'<option value="'+a.id+'"'+(u.area===a.id?' selected':'')+'>'+esc(a.name)+' ('+esc(a.city)+')</option>').join('')+'</select>'
    +'<label class="f" for="e-km">Max travel</label><select id="e-km" name="maxKm">'+MAXKM.map(k=>'<option value="'+k.v+'"'+(u.maxKm===k.v?' selected':'')+'>'+esc(k.l)+'</option>').join('')+'</select>'
-   +'<h3>Optional reads</h3><p class="muted small" style="margin-top:0">Attach three to five papers others can optionally read. Title, plus a link if you have one.</p>'
+   +'<div style="height:6px"></div>'
+   +'</div></div>'
+   +'<div class="qawrap">'
+   +'<div class="qa"><div class="q">My background</div><textarea name="background" aria-label="My background">'+esc(u.background)+'</textarea></div>'
+   +'<div class="qa"><div class="q">A question I’m stuck on</div><textarea name="stuckOn" aria-label="A question I’m stuck on">'+esc(u.stuckOn)+'</textarea></div>'
+   +'<div class="qa"><div class="q">Something I’d love someone to explain to me</div><input type="text" name="wantExplained" value="'+esc(u.wantExplained)+'" aria-label="Something I’d love someone to explain to me"></div>'
+   +'<div class="qa"><div class="q">Something I can explain over coffee</div><input type="text" name="canExplain" value="'+esc(u.canExplain)+'" aria-label="Something I can explain over coffee"></div>'
+   +'<div class="qa"><div class="q">One non-work thing about me</div><input type="text" name="nonWork" value="'+esc(u.nonWork)+'" aria-label="One non-work thing about me"></div>'
+   +'<div class="qa"><div class="q">Favourite café</div><input type="text" name="favCafe" value="'+esc(u.favCafe||'')+'" aria-label="Favourite café"></div>'
+   +'<div class="qa"><div class="q">Optional reads</div>'
+   +'<p class="muted small" style="margin:6px 0 0">Three to five papers others can optionally read. Title, plus a link if you have one.</p>'
    +[0,1,2,3,4].map(i=>{const pp=(u.papers||[])[i]||{};
-      return '<div class="chatbox"><input type="text" name="pt'+i+'" placeholder="Paper title" value="'+esc(pp.t||'')+'" aria-label="Paper '+(i+1)+' title">'
+      return '<div class="chatbox" style="margin-top:8px"><input type="text" name="pt'+i+'" placeholder="Paper title" value="'+esc(pp.t||'')+'" aria-label="Paper '+(i+1)+' title">'
        +'<input type="text" name="pu'+i+'" placeholder="Link (optional)" value="'+esc(pp.u||'')+'" aria-label="Paper '+(i+1)+' link" style="max-width:38%">'
        +'</div>';}).join('')
-   +'<label class="f">Availability</label><div class="chips">'+WINDOWS.map(w=>'<button type="button" class="chip'+(u.availability.includes(w.id)?' on':'')+'" data-action="toggleAvail" data-w="'+w.id+'">'+esc(w.label)+'</button>').join('')+'</div>'
-   +'<button class="btn primary" type="submit">Save</button></form></div>';
+   +'</div>'
+   +'</div>'
+   +'<div class="center" style="margin-top:14px"><button class="btn primary" type="submit">Save</button></div>'
+   +'</form>';
 }
 V.history=function(){
   const u=me(); if(!u)return V.welcome();
@@ -2937,8 +2948,15 @@ const ACTIONS={
     if(!was)el.classList.add('zoom');
   },
   paperLink:()=>{},
-  coverSet:d=>{ const u=me(); if(!u)return; u.cover=(u.cover===d.c?null:d.c); save(); render(); },
-  photoRemove:()=>{ const u=me(); if(!u)return; u.photo=null; save(); render(); toast('Photo removed'); },
+  coverSet:d=>{ const u=me(); if(!u)return; u.cover=(u.cover===d.c?null:d.c); save();
+    const pc=document.querySelector('.pcard');
+    if(pc)pc.className='pcard'+(u.cover?' cov-'+u.cover:'');
+    document.querySelectorAll('.covdot').forEach(b=>{const on=b.dataset.c===u.cover; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false');});
+  },
+  photoRemove:()=>{ const u=me(); if(!u)return; u.photo=null; save();
+    const av=document.querySelector('.pcard .avatar');
+    if(av)av.innerHTML=esc((u.displayName||'?').trim().charAt(0).toUpperCase());
+    toast('Photo removed'); },
   rateSet:d=>{
     const wrap=document.querySelector('.rate[data-rate="'+d.name+'"]'); if(!wrap)return;
     wrap.querySelector('input[type=hidden]').value=d.v;
@@ -3198,7 +3216,10 @@ document.addEventListener('change',e=>{
         x.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,sz,sz);
         const u=me(); if(!u)return;
         u.photo=c.toDataURL('image/jpeg',0.82);
-        save(); render(); toast('Photo updated');
+        save();
+        const av=document.querySelector('.pcard .avatar');
+        if(av)av.innerHTML='<img src="'+u.photo+'" alt="">';
+        toast('Photo updated');
       };
       img.src=rd.result;
     };
@@ -3229,6 +3250,17 @@ if(window.visualViewport){
     dk.style.transform=lift>40?'translateY(-'+lift+'px)':'';
   });
 }
+document.addEventListener('touchstart',e=>{
+  if(welcomeActive()&&e.touches.length===1){ WSW.y=e.touches[0].clientY; WSW.active=true; }
+},{passive:true});
+document.addEventListener('touchend',e=>{
+  if(!WSW.active||!welcomeActive())return;
+  const dy=e.changedTouches[0].clientY-WSW.y; WSW.active=false;
+  if(Date.now()-WSW.t>550){
+    if(dy<-50){ wNext(); WSW.t=Date.now(); }
+    else if(dy>50){ wPrev(); WSW.t=Date.now(); }
+  }
+},{passive:true});
 document.addEventListener('wheel',e=>{
   if(!welcomeActive())return;
   if(Date.now()-WSW.t<550)return;
@@ -3335,7 +3367,10 @@ document.addEventListener('pointermove',e=>{
 document.addEventListener('pointerup',e=>{
   if(WSW.active){
     const dy=e.clientY-WSW.y; WSW.active=false;
-    if(dy<-50)wNext(); else if(dy>50)wPrev();
+    if(Date.now()-WSW.t>550){
+      if(dy<-50){ wNext(); WSW.t=Date.now(); }
+      else if(dy>50){ wPrev(); WSW.t=Date.now(); }
+    }
   }
   if(REACT.t){ clearTimeout(REACT.t); REACT.t=null; }
   if(FLIP.drag){
